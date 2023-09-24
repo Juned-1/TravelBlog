@@ -1,0 +1,60 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title> Signup </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="container">
+    <form (ngSubmit)="signup()" #signupForm="ngForm">
+      <ion-item>
+        <ion-label position="floating">Full Name</ion-label>
+        <ion-input
+          type="text"
+          name="fullname"
+          [(ngModel)]="formData.fullname"
+          required
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Email</ion-label>
+        <ion-input
+          type="email"
+          name="email"
+          [(ngModel)]="formData.email"
+          required
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Date of Birth</ion-label>
+        <ion-input
+          type="date"
+          placeholder=""
+          name="dateOfBirth"
+          [(ngModel)]="formData.dob"
+          required
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Password</ion-label>
+        <ion-input
+          type="password"
+          name="password"
+          [(ngModel)]="formData.password"
+          required
+        ></ion-input>
+      </ion-item>
+      <br />
+      <ion-button expand="full" type="submit">Sign Up</ion-button>
+    </form>
+
+    <div>or signup using</div>
+
+    <div>
+      Already have an account?<a class="AllreadysignedIn" href="#">Login</a>
+    </div>
+  </div>
+</ion-content>

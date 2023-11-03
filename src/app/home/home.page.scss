@@ -52,7 +52,7 @@ app-searchbar {
 #label-logo{
   font-size: 24px;
   font-weight: bold;
-  color: #dc5de8;
+  color: #FBEEC1;
   
 }
 #travel-logo{
@@ -68,4 +68,13 @@ app-searchbar {
   overflow: auto; /* Enable both vertical and horizontal scrolling when content overflows */
   //border: 1px solid red; /* Optional: Add a border for visualization */
   white-space: nowrap; /* Prevent text from wrapping */
+}
+
+.fixed-fab-container {
+  position: fixed;
+  bottom: 20px; /* Adjust the desired distance from the bottom */
+  right: 50vw; /* Adjust the desired distance from the right */
+}
+.home-cards:hover{
+    cursor: pointer;
 }

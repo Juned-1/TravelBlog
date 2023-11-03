@@ -1,11 +1,8 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title> Signup </ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true">
   <div class="container">
+    <div class="signup-header">
+      <h1>Create a new account</h1>
+    </div>
     <form (ngSubmit)="signup()" #signupForm="ngForm">
       <ion-item>
         <ion-label position="floating">Full Name</ion-label>
@@ -39,6 +36,16 @@
       </ion-item>
 
       <ion-item>
+        <ion-label>Gender</ion-label>
+        <ion-select [(ngModel)]="formData.gender" name="gender" required>
+          <ion-select-option value="male">Male</ion-select-option>
+          <ion-select-option value="female">Female</ion-select-option>
+          <ion-select-option value="other">Other</ion-select-option>
+          <!-- You can add more gender options as needed -->
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
         <ion-label position="floating">Password</ion-label>
         <ion-input
           type="password"
@@ -51,10 +58,8 @@
       <ion-button expand="full" type="submit">Sign Up</ion-button>
     </form>
 
-    <div>or signup using</div>
-
-    <div>
-      Already have an account?<a class="AllreadysignedIn" href="#">Login</a>
+    <div class="AllreadysignedIn">
+      Already have an account?<a  href="#">Login</a>
     </div>
   </div>
 </ion-content>

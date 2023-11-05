@@ -1,0 +1,20 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="success"> 
+    Editor
+    <ion-buttons slot="end">
+      <ion-button (click) = "clearEditor()">
+        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click) = "preview()">
+        <ion-icon slot="icon-only" name="save-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div id="editor">
+  </div>
+  <!--h4 style="font-family: Arial, Helvetica, sans-serif;">Hello</h4-->
+  <ion-button shape="round" (click)="post()">Post</ion-button>
+  <ion-button shape="round" (click)="routeToHome()">Cancel</ion-button>
+</ion-content>

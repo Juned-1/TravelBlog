@@ -8,12 +8,12 @@ import { ToolbarComponent } from '../toolbar/toolbar.component';
 import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-signup',
-  templateUrl: './signup.component.html',
-  styleUrls: ['./signup.component.scss'],
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss'],
   standalone: true,
   imports: [IonicModule, CommonModule, ExploreContainerComponent,FormsModule,MatDatepickerModule,ToolbarComponent],
 })
-export class SignupComponent  implements OnInit {
+export class LoginComponent  implements OnInit {
   isSetToolbar  : any;
   formData = {
     fullname: '',
@@ -31,7 +31,7 @@ export class SignupComponent  implements OnInit {
       this.isSetToolbar = false;
     }
   }
-  signup(){
+  login(){
 
   }
 }

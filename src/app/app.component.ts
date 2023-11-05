@@ -1,9 +1,9 @@
-import { Component, EnvironmentInjector, inject } from '@angular/core';
+import { Component, EnvironmentInjector, OnInit, inject } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { SignupComponent } from './signup/signup.component';
 import { HomePage } from './home/home.page';
-import { RouterModule } from '@angular/router';
+import { RouterModule,ActivatedRoute,Router } from '@angular/router';
 import { SearchbarComponent } from './searchbar/searchbar.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
@@ -22,8 +22,11 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     MatToolbarModule,
   ],
 })
-export class AppComponent {
+export class AppComponent implements OnInit{
   public environmentInjector = inject(EnvironmentInjector);
 
-  constructor() {}
+  constructor(private route : ActivatedRoute, private router : Router) {}
+  ngOnInit(): void {
+    //console.log(this.router.url);
+  }
 }

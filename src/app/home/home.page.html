@@ -1,3 +1,6 @@
+<ng-template [ngIf]="isSetToolbar">
+  <app-toolbar></app-toolbar>
+</ng-template>
 <ion-content [fullscreen]="true" class="ion-padding">
   <div id="scrollable-home">
     <ion-card *ngFor="let post of blogPosts" class="home-cards">
@@ -11,7 +14,7 @@
 
     <div class="fixed-fab-container">
       <ion-fab vertical="bottom" horizontal="center" slot="fixed">
-        <ion-fab-button href="/signup">
+        <ion-fab-button (click)="LogIn()">
           <ion-icon
             *ngIf="!signedIn"
             name=""

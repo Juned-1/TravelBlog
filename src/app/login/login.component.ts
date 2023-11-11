@@ -6,11 +6,14 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
 import { CommonModule } from '@angular/common';
-import { credentials } from '../login/dummy';
+import { credentials } from './dummy';
+import { HomePage } from '../home/home.page';
+import { LoginService } from '../login.service';
+
 @Component({
   selector: 'app-signup',
-  templateUrl: './signup.component.html',
-  styleUrls: ['./signup.component.scss'],
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss'],
   standalone: true,
   imports: [
     IonicModule,
@@ -19,18 +22,16 @@ import { credentials } from '../login/dummy';
     FormsModule,
     MatDatepickerModule,
     ToolbarComponent,
+    HomePage,
   ],
 })
-export class SignupComponent implements OnInit {
+export class LoginComponent implements OnInit {
   isSetToolbar: any;
   formData = {
-    fullname: '',
     email: '',
     password: '',
-    dob: '',
-    gender: '',
   };
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  constructor(private route: ActivatedRoute, private router: Router, private loginService: LoginService) {}
   ngOnInit(): void {
     if (this.router.url !== '/texteditor') {
       this.isSetToolbar = true;
@@ -39,21 +40,23 @@ export class SignupComponent implements OnInit {
       this.isSetToolbar = false;
     }
   }
-  signup() {
-    let valid = true;
-    credentials.forEach((credential) => {
-      if (credential.email == this.formData.email) {
-        valid = false;
+  login() {
+    const username = this.formData.email;
+    const password = this.formData.password;
+
+    credentials.forEach((check) => {
+      if (check.email === username && check.password === password) {
+        
+        this.loginService.credentials = check;
+        console.log(check);
+        this.loginService.loggedIn = true;
+        this.router.navigate(['/']);
       }
     });
 
-    if (valid) {
-      credentials.push(this.formData);
-      this.router.navigate(['/login']);
+    if(!this.loginService.loggedIn){
+      alert('Invalid credentials');
+      console.log("Not logged iN");
     }
-    else{
-      alert('email already taken!!')
-    }
-    console.log(credentials);
   }
 }

@@ -1,0 +1,42 @@
+<!-- <ng-template [ngIf]="isSetToolbar">
+  <app-toolbar></app-toolbar>
+</ng-template> -->
+
+<ion-content [fullscreen]="true">
+  <div class="container">
+    <div class="signup-header">
+      <h1>Log in into your account</h1>
+    </div>
+    <form (ngSubmit)="login()" #signupForm="ngForm">
+      <ion-item>
+        <!-- <ion-label position="floating">Email</ion-label> -->
+        <ion-input
+          id="username"
+          label="Username"
+          type="email"
+          name="email"
+          [(ngModel)]="formData.email"
+          required
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <!-- <ion-label position="floating">Password</ion-label> -->
+        <ion-input
+          id="password"
+          label="Password"
+          type="password"
+          name="password"
+          [(ngModel)]="formData.password"
+          required
+        ></ion-input>
+      </ion-item>
+      <br />
+      <ion-button expand="full" type="submit">Log In</ion-button>
+    </form>
+
+    <div class="AllreadysignedIn">
+      Do not have an account?<a href="/signup">Signup</a>
+    </div>
+  </div>
+</ion-content>

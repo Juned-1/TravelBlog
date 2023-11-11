@@ -3,9 +3,11 @@ import { IonicModule } from '@ionic/angular';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { data } from './dummyData';
 import { CommonModule } from '@angular/common';
-import { Router, ActivatedRoute } from '@angular/router';
+import { SearchbarComponent } from '../searchbar/searchbar.component';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
+import { Router, ActivatedRoute } from '@angular/router';
 import { LoginService } from '../login.service';
+
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',

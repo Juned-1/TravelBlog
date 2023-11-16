@@ -3,13 +3,21 @@ import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { SearchbarComponent } from '../searchbar/searchbar.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
+<<<<<<< HEAD
 import { ActivatedRoute, Router } from '@angular/router';
 import { APIService } from 'src/apiservice.service';
 import { Subject } from "rxjs";
+=======
+import { Router } from '@angular/router';
+import { LoginService } from '../login.service';
+import { CommonModule } from '@angular/common';
+
+>>>>>>> origin
 @Component({
   selector: 'app-toolbar',
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.scss'],
+<<<<<<< HEAD
   standalone : true,
   imports : [IonicModule, SearchbarComponent, MatToolbarModule,CommonModule]
 })
@@ -34,3 +42,18 @@ export class ToolbarComponent  implements OnInit {
     // )
   }
 }
+=======
+  standalone: true,
+  imports: [IonicModule, SearchbarComponent, MatToolbarModule, CommonModule],
+})
+export class ToolbarComponent implements OnInit {
+  constructor(private router: Router, public loginService: LoginService) {}
+
+  ngOnInit() {}
+
+  logout() {
+    this.loginService.loggedIn = false;
+    this.router.navigate(['/login']);
+  }
+}
+>>>>>>> origin

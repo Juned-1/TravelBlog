@@ -3,65 +3,69 @@ import { IonicModule } from '@ionic/angular';
 import Quill from 'quill';
 import { ModalController } from '@ionic/angular';
 import { PreviewComponent } from './preview/preview.component';
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, Router } from '@angular/router';
+import { data } from '../home/dummyData';
 
 @Component({
   selector: 'app-texteditor',
   templateUrl: './texteditor.component.html',
   styleUrls: ['./texteditor.component.scss'],
-  standalone : true,
-  imports : [IonicModule, PreviewComponent]
+  standalone: true,
+  imports: [IonicModule, PreviewComponent],
 })
-export class TexteditorComponent  implements OnInit {
-  isSetToolbar : any;
+export class TexteditorComponent implements OnInit {
+  isSetToolbar: any;
   linkCount: number = 0;
   maxLinks: number = 1;
   imageCount: number = 0;
   maxImage: number = 1;
-  videoCount : number = 0;
-  maxVideo : number = 1;
+  videoCount: number = 0;
+  maxVideo: number = 1;
   editor!: Quill;
   options = {
     modules: {
       toolbar: [
-        ['bold', 'italic', 'underline', 'strike'],        
+        ['bold', 'italic', 'underline', 'strike'],
         ['blockquote', 'code-block'],
-    
-        [{ 'header': 1 }, { 'header': 2 }],               
-        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-        [{ 'script': 'sub'}, { 'script': 'super' }],      
-        [{ 'indent': '-1'}, { 'indent': '+1' }],          
-        [{ 'direction': 'rtl' }],                         
-      
-        [{ 'size': ['small', false, 'large', 'huge'] }],  
-        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-      
-        [{ 'color': [] }, { 'background': [] }],          
-        [{ 'font': [] }],
-        [{ 'align': [] }],
-      
-        ['clean'],                                         
-      
-        ['link', 'image', 'video']                         
-      ]
+
+        [{ header: 1 }, { header: 2 }],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        [{ script: 'sub' }, { script: 'super' }],
+        [{ indent: '-1' }, { indent: '+1' }],
+        [{ direction: 'rtl' }],
+
+        [{ size: ['small', false, 'large', 'huge'] }],
+        [{ header: [1, 2, 3, 4, 5, 6, false] }],
+
+        [{ color: [] }, { background: [] }],
+        [{ font: [] }],
+        [{ align: [] }],
+
+        ['clean'],
+
+        ['link', 'image', 'video'],
+      ],
     },
-    placeholder: 'start writing',
+    placeholder: 'HEADING\nSUB-HEADING\nContent',
     theme: 'snow',
   };
-  constructor(private modalCtrl : ModalController, private router : Router, private route : ActivatedRoute) {
-  }
+  constructor(
+    private modalCtrl: ModalController,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
   ngOnInit() {
     let container = document.getElementById('editor');
     this.editor = new Quill(container!, this.options);
     let toolbar = this.editor.getModule('toolbar');
-    if(this.router.url !== '/texteditor'){
+    if (this.router.url !== '/texteditor') {
       this.isSetToolbar = true;
-    }else{
+    } else {
       this.isSetToolbar = false;
     }
   }
   ngAfterViewInit() {
-    this.editor.getModule('toolbar').addHandler('font', (value : any) => {
+    this.editor.getModule('toolbar').addHandler('font', (value: any) => {
       this.editor.format('font', value);
     });
     // Add a handler to track link additions
@@ -78,10 +82,12 @@ export class TexteditorComponent  implements OnInit {
     });
 
     this.toggleLinkButton(); // Initial state
-
   }
-  post(){
+  post() {
     console.log(this.editor.root.innerHTML);
+    //Write on dummy JS file
+    data.unshift(this.parseHTMLText(this.editor.root.innerHTML));
+    this.routeToHome();
   }
   countLinksInEditor(): any {
     const content = this.editor.root.innerHTML;
@@ -119,14 +125,13 @@ export class TexteditorComponent  implements OnInit {
     const imageButton = this.editor
       .getModule('toolbar')
       .container.querySelector('.ql-image');
-    if(this.imageCount >= this.maxImage){
+    if (this.imageCount >= this.maxImage) {
       imageButton.disabled = true;
-      
-    }else{
+    } else {
       imageButton.disabled = false;
     }
   }
-  countIframeInEditor(){
+  countIframeInEditor() {
     const content = this.editor.root.innerHTML;
     const regex = /<iframe class="(.*?)"/g;
     let match;
@@ -136,29 +141,65 @@ export class TexteditorComponent  implements OnInit {
     }
     return iframeURL;
   }
-  toggleIframeButton(){
+  toggleIframeButton() {
     const videoButton = this.editor
       .getModule('toolbar')
       .container.querySelector('.ql-video');
-    if(this.videoCount >= this.maxVideo){
+    if (this.videoCount >= this.maxVideo) {
       videoButton.disabled = true;
-    }else{
+    } else {
       videoButton.disabled = false;
     }
   }
-  async preview(){
+  async preview() {
     //console.log(this.editor.root.innerHTML);
     const modal = await this.modalCtrl.create({
-      component : PreviewComponent,
-      componentProps : {data : this.editor.root.innerHTML}
+      component: PreviewComponent,
+      componentProps: { data: this.editor.root.innerHTML },
     });
     await modal.present();
   }
-  async clearEditor(){
+  async clearEditor() {
     this.editor.setText('');
   }
 
-  routeToHome(){
+  routeToHome() {
     this.router.navigate(['/']);
+  }
+
+  parseHTMLText(htmlText: string): { title: string; subtitle: string; content: string } {
+    // Create a temporary div element to parse the HTML content
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = htmlText;
+  
+    // Find all <p> elements in the div
+    const pElements = tempDiv.querySelectorAll('p');
+  
+    // Initialize the result object
+    const result = {
+      title: '',
+      subtitle: '',
+      content: '',
+    };
+  
+    // Extract content from the first two <p> elements
+    if (pElements.length > 0) {
+      result.title = pElements[0].textContent || '';
+    }
+  
+    if (pElements.length > 1) {
+      result.subtitle = pElements[1].textContent || '';
+    }
+  
+    // Extract the content from the remaining <p> elements
+    if (pElements.length > 2) {
+      for (let i = 2; i < pElements.length; i++) {
+        result.content += pElements[i].textContent || '';
+      }
+    }
+  
+    console.log(result);
+
+    return result;
   }
 }

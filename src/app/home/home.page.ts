@@ -3,17 +3,23 @@ import { IonicModule } from '@ionic/angular';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { data } from './dummyData';
 import { CommonModule } from '@angular/common';
-import { Router, ActivatedRoute } from "@angular/router";
+import { SearchbarComponent } from '../searchbar/searchbar.component';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
+<<<<<<< HEAD
 import { APIService } from 'src/apiservice.service';
+=======
+import { Router, ActivatedRoute } from '@angular/router';
+import { LoginService } from '../login.service';
+>>>>>>> origin
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
   standalone: true,
-  imports: [IonicModule, MatToolbarModule, CommonModule,ToolbarComponent],
+  imports: [IonicModule, MatToolbarModule, CommonModule, ToolbarComponent],
 })
+<<<<<<< HEAD
 export class HomePage implements OnInit, AfterViewInit{
   isLoggedIn = false;
   blogPosts = data;
@@ -38,10 +44,26 @@ export class HomePage implements OnInit, AfterViewInit{
       this.isSetToolbar = true;
     }else{
       this.isSetToolbar = false;
+=======
+export class HomePage implements OnInit, AfterViewInit {
+  blogPosts = data;
+  isSetToolbar: any;
+  constructor(private route: ActivatedRoute, private router: Router, public loginService: LoginService) {
+    if (!this.loginService.loggedIn) {
+      this.router.navigate(['/login']);
+      console.log('Constructor logged out');
+>>>>>>> origin
     }
   }
-  ngAfterViewInit(){
+  ngOnInit(): void {
+    if (this.router.url !== '/texteditor') {
+      this.isSetToolbar = true;
+    } else {
+      this.isSetToolbar = false;
+    }
+    console.log('ngOnInit');
   }
+<<<<<<< HEAD
 
   goToEditor(){
     this.router.navigate(['/texteditor']);
@@ -60,3 +82,14 @@ export class HomePage implements OnInit, AfterViewInit{
     }
   }
 }
+=======
+  ngAfterViewInit() {}
+  LogIn() {
+    if (this.loginService.loggedIn) {
+      this.router.navigate(['/texteditor']);
+    } else {
+      this.router.navigate(['/login']);
+    }
+  }
+}
+>>>>>>> origin

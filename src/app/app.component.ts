@@ -6,6 +6,7 @@ import { HomePage } from './home/home.page';
 import { RouterModule,ActivatedRoute,Router } from '@angular/router';
 import { SearchbarComponent } from './searchbar/searchbar.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { ToolbarComponent } from './toolbar/toolbar.component';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +21,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     RouterModule,
     SearchbarComponent,
     MatToolbarModule,
+    ToolbarComponent
   ],
 })
 export class AppComponent implements OnInit{

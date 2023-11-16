@@ -1,5 +1,5 @@
 <ng-template [ngIf]="isSetToolbar">
-  <app-toolbar></app-toolbar>
+  <app-toolbar [isLoggedIn]="isLoggedIn" (logoutButton)="logoutHandle($event)"></app-toolbar>
 </ng-template>
 <ion-content [fullscreen]="true" class="ion-padding">
   <div id="scrollable-home">
@@ -14,7 +14,7 @@
 
     <div class="fixed-fab-container">
       <ion-fab vertical="bottom" horizontal="center" slot="fixed">
-        <ion-fab-button (click)="LogIn()">
+        <ion-fab-button *ngIf="!isLoggedIn" (click)="goToEditor()">
           <ion-icon
             *ngIf="!signedIn"
             name=""

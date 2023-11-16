@@ -6,6 +6,10 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
 import { Router, ActivatedRoute } from "@angular/router";
 import { ToolbarComponent } from '../toolbar/toolbar.component';
 import { CommonModule } from '@angular/common';
+import { ToastrService } from 'ngx-toastr';
+//import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { APIService } from 'src/apiservice.service';
+import { HttpErrorResponse } from '@angular/common/http';
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
@@ -14,7 +18,6 @@ import { CommonModule } from '@angular/common';
   imports: [IonicModule, CommonModule, ExploreContainerComponent,FormsModule,MatDatepickerModule,ToolbarComponent],
 })
 export class SignupComponent  implements OnInit {
-  isSetToolbar  : any;
   formData = {
     fullname: '',
     email: '',
@@ -22,16 +25,27 @@ export class SignupComponent  implements OnInit {
     dob:'',
     gender:''
   };
-  constructor(private route : ActivatedRoute, private router : Router) {}
+  constructor(private route : ActivatedRoute, private router : Router, private api : APIService, private toast : ToastrService) {}
   ngOnInit(): void {
-    if(this.router.url !== '/texteditor'){
-      this.isSetToolbar = true;
-      console.log(this.isSetToolbar)
-    }else{
-      this.isSetToolbar = false;
-    }
-  }
-  signup(){
 
+  }
+  signup(data : any){
+      this.api.signup(this.formData).subscribe((response)=>{
+        if(response instanceof Object){
+          this.toast.success("Signup Successful");
+          this.router.navigate(['/']);
+        }
+      },
+      (err) => {
+        console.log(err);
+        if(err.status === 401){
+          this.toast.error("User already registered");
+        }
+        else if(err.status === 422){
+          const data = JSON.parse(JSON.stringify(err.error.errors));
+          this.toast.warning(data[0].msg);
+        }
+      }
+      );
   }
 }

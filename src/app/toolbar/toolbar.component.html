@@ -1,13 +1,10 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <div class="header-content">
+  <ion-toolbar class="header-content">
       <img src="../../assets/icon/travel_blog_icon.png" class="custom-logo" />
-      <mat-toolbar class="floating-header">
-        <div id="travel-logo">
-          <span id="label-logo">Travel Blogging</span>
-        </div>
-      </mat-toolbar>
-      <app-searchbar></app-searchbar>
-    </div>
+    <app-searchbar></app-searchbar>
+    <ion-buttons slot="end">
+      <ion-button *ngIf="isLoggedIn" size="small" (click)="LogIn()">Login</ion-button>
+      <ion-button *ngIf="!isLoggedIn" size="small" (click)="Logout()">Logout</ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>

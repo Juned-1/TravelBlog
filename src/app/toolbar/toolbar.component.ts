@@ -1,18 +1,36 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
 import { SearchbarComponent } from '../searchbar/searchbar.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { ActivatedRoute, Router } from '@angular/router';
+import { APIService } from 'src/apiservice.service';
+import { Subject } from "rxjs";
 @Component({
   selector: 'app-toolbar',
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.scss'],
   standalone : true,
-  imports : [IonicModule, SearchbarComponent, MatToolbarModule]
+  imports : [IonicModule, SearchbarComponent, MatToolbarModule,CommonModule]
 })
 export class ToolbarComponent  implements OnInit {
-
-  constructor() { }
+  @Input() isLoggedIn! : Boolean;
+  @Output() logoutButton : EventEmitter<string> = new EventEmitter<string>();
+  constructor(private route : ActivatedRoute, private router : Router, private api : APIService) { }
 
   ngOnInit() {}
-
+  LogIn(){
+    this.router.navigate(['/login']);
+  }
+  Logout(){
+    this.logoutButton.emit('logout');
+    // this.api.logout().subscribe(
+    //   (response) => {
+    //     console.log(response);
+    //   },
+    //   (err) => {
+    //     console.log(err.error.message);
+    //   }
+    // )
+  }
 }

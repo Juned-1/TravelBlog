@@ -1,12 +1,9 @@
-<div *ngIf="isSetToolbar">
-  <app-toolbar></app-toolbar>
-</div>
 <ion-content [fullscreen]="true">
   <div class="container">
     <div class="signup-header">
       <h1>Create a new account</h1>
     </div>
-    <form (ngSubmit)="signup()" #signupForm="ngForm">
+    <form #signupForm="ngForm" (ngSubmit)="signup(signupForm)">
       <ion-item>
         <ion-label position="floating">Full Name</ion-label>
         <ion-input

@@ -1,0 +1,71 @@
+<ion-header [translucent]="true">
+<<<<<<< HEAD
+  <ion-toolbar class="header-content">
+      <img src="../../assets/icon/travel_blog_icon.png" class="custom-logo" />
+    <app-searchbar></app-searchbar>
+    <ion-buttons slot="end">
+      <ion-button *ngIf="isLoggedIn" size="small" (click)="LogIn()">Login</ion-button>
+      <ion-button *ngIf="!isLoggedIn" size="small" (click)="Logout()">Logout</ion-button>
+=======
+  <ion-toolbar>
+    <!-- Add your logo on the left -->
+    <ion-buttons slot="start">
+      <ion-img
+        (click)="routeToHome()"
+        src="../../assets/icon/travel_blog_icon.png"
+        alt="Logo"
+        id="logo"
+      ></ion-img>
+      <h1 id="brand-name" class="toolbar-front-items" (click)="routeToHome()">
+        {{ "Travel Blogging" }}
+      </h1>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-searchbar animated="true" placeholder="Search"></ion-searchbar>
+      <ion-label *ngIf="this.loginService.loggedIn" class="toolbar-end-items"
+        ><h3 id="welcome-msg">
+          Logged as,
+          <strong> {{ this.loginService.credentials.firstName }}</strong>
+        </h3></ion-label
+      >
+<<<<<<< HEAD
+      <ion-button
+        class="toolbar-end-items"
+        *ngIf="this.loginService.loggedIn"
+        shape="round"
+        fill="solid"
+        color="dark"
+        (click)="routeToMyBlogs()"
+        >My Blogs</ion-button
+      >
+      <ion-button
+        class="toolbar-end-items"
+        *ngIf="this.loginService.loggedIn"
+        (click)="logout()"
+        fill="outline"
+        shape="round"
+        >Logout</ion-button
+      >
+      <ion-button
+        class="toolbar-end-items"
+        *ngIf="!this.loginService.loggedIn"
+        shape="round"
+        fill="solid"
+        (click)="login()"
+        >LogIn</ion-button
+      >
+      <ion-button
+        class="toolbar-end-items"
+        *ngIf="!this.loginService.loggedIn"
+        shape="round"
+        fill="outline"
+        (click)="signup()"
+        >SignUp</ion-button
+      >
+=======
+      <ion-button (click)="logout()">Logout</ion-button>
+>>>>>>> origin
+>>>>>>> 931b562e5a3acf518143fe2b04051053c24d91f2
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>

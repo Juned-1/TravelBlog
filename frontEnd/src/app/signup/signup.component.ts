@@ -6,14 +6,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
 import { CommonModule } from '@angular/common';
-<<<<<<< HEAD
-import { ToastrService } from 'ngx-toastr';
-//import { HttpClientModule, HttpClient } from '@angular/common/http';
-import { APIService } from 'src/apiservice.service';
-import { HttpErrorResponse } from '@angular/common/http';
-=======
 import { credentials } from '../login/dummy';
->>>>>>> origin
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
@@ -28,12 +21,8 @@ import { credentials } from '../login/dummy';
     ToolbarComponent,
   ],
 })
-<<<<<<< HEAD
-export class SignupComponent  implements OnInit {
-=======
 export class SignupComponent implements OnInit {
   isSetToolbar: any;
->>>>>>> origin
   formData = {
     firstName: '',
     lastName: '',
@@ -42,10 +31,6 @@ export class SignupComponent implements OnInit {
     dob: '',
     gender: '',
   };
-<<<<<<< HEAD
-  constructor(private route : ActivatedRoute, private router : Router, private api : APIService, private toast : ToastrService) {}
-  ngOnInit(): void {
-=======
   constructor(private route: ActivatedRoute, private router: Router) {}
   ngOnInit(): void {
     if (this.router.url !== '/texteditor') {
@@ -62,7 +47,6 @@ export class SignupComponent implements OnInit {
         valid = false;
       }
     });
->>>>>>> origin
 
     if (valid) {
       credentials.push(this.formData);
@@ -72,24 +56,5 @@ export class SignupComponent implements OnInit {
       alert('email already taken!!')
     }
     console.log(credentials);
-  }
-  signup(data : any){
-      this.api.signup(this.formData).subscribe((response)=>{
-        if(response instanceof Object){
-          this.toast.success("Signup Successful");
-          this.router.navigate(['/']);
-        }
-      },
-      (err) => {
-        console.log(err);
-        if(err.status === 401){
-          this.toast.error("User already registered");
-        }
-        else if(err.status === 422){
-          const data = JSON.parse(JSON.stringify(err.error.errors));
-          this.toast.warning(data[0].msg);
-        }
-      }
-      );
   }
 }

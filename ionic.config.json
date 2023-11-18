@@ -1,7 +1,0 @@
-{
-  "name": "TB-app",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "angular-standalone"
-}

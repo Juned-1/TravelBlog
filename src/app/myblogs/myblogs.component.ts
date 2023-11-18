@@ -9,20 +9,20 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { LoginService } from '../login.service';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: 'home.page.html',
-  styleUrls: ['home.page.scss'],
+  selector: 'app-myblogs',
+  templateUrl: 'myblogs.component.html',
+  styleUrls: ['myblogs.component.scss'],
   standalone: true,
   imports: [IonicModule, MatToolbarModule, CommonModule, ToolbarComponent],
 })
-export class HomePage implements OnInit, AfterViewInit {
+export class MyblogsComponent implements OnInit, AfterViewInit {
   blogPosts = data;
   isSetToolbar: any;
   constructor(private route: ActivatedRoute, private router: Router, public loginService: LoginService) {
-    if (!this.loginService.loggedIn) {
-      this.router.navigate(['/login']);
-      console.log('Constructor logged out');
-    }
+    // if (!this.loginService.loggedIn) {
+    //   this.router.navigate(['/login']);
+    //   console.log('Constructor logged out');
+    // }
   }
   ngOnInit(): void {
     if (this.router.url !== '/texteditor') {
@@ -33,11 +33,11 @@ export class HomePage implements OnInit, AfterViewInit {
     console.log('ngOnInit');
   }
   ngAfterViewInit() {}
-  LogIn() {
-    if (this.loginService.loggedIn) {
-      this.router.navigate(['/texteditor']);
-    } else {
-      this.router.navigate(['/login']);
-    }
+ 
+  openBlog(){
+    this.router.navigate(['/blog']);
+  }
+  openEditor(){
+    this.router.navigate(['/texteditor']);
   }
 }

@@ -7,7 +7,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
 import { CommonModule } from '@angular/common';
 import { credentials } from './dummy';
-import { HomePage } from '../home/home.page';
+import { MyblogsComponent } from '../myblogs/myblogs.component';
 import { LoginService } from '../login.service';
 
 @Component({
@@ -22,7 +22,7 @@ import { LoginService } from '../login.service';
     FormsModule,
     MatDatepickerModule,
     ToolbarComponent,
-    HomePage,
+    MyblogsComponent,
   ],
 })
 export class LoginComponent implements OnInit {

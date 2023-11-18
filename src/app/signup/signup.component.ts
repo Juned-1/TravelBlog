@@ -24,7 +24,8 @@ import { credentials } from '../login/dummy';
 export class SignupComponent implements OnInit {
   isSetToolbar: any;
   formData = {
-    fullname: '',
+    firstName: '',
+    lastName: '',
     email: '',
     password: '',
     dob: '',

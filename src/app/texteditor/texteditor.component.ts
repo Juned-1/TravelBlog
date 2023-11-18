@@ -4,7 +4,7 @@ import Quill from 'quill';
 import { ModalController } from '@ionic/angular';
 import { PreviewComponent } from './preview/preview.component';
 import { ActivatedRoute, Router } from '@angular/router';
-import { data } from '../home/dummyData';
+import { data } from '../myblogs/dummyData';
 
 @Component({
   selector: 'app-texteditor',
@@ -86,7 +86,17 @@ export class TexteditorComponent implements OnInit {
   post() {
     console.log(this.editor.root.innerHTML);
     //Write on dummy JS file
-    data.unshift(this.parseHTMLText(this.editor.root.innerHTML));
+    // "title": "Sample Blog Post",
+    // "subtitle": "A subtitle for the blog post",
+    // "author": "John Doe",
+    // "date": "November 11, 2023",
+    // "picture": ["assets/images/sample-image.jpg"],
+    // "videos": ["https://www.youtube.com/embed/your-video-id"],
+    // "content":
+    const post = {
+
+    }
+    data.unshift(this.parseContent(this.editor.root.innerHTML));
     this.routeToHome();
   }
   countLinksInEditor(): any {
@@ -164,42 +174,66 @@ export class TexteditorComponent implements OnInit {
   }
 
   routeToHome() {
-    this.router.navigate(['/']);
+    this.router.navigate(['/myblogs']);
   }
 
-  parseHTMLText(htmlText: string): { title: string; subtitle: string; content: string } {
-    // Create a temporary div element to parse the HTML content
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = htmlText;
+ parseContent(htmlString: string): {
+    title: string;
+    subtitle: string;
+    author: string;
+    date: string;
+    picture: string[];
+    videos: string[];
+    content: string;
+  } {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlString, 'text/html');
   
-    // Find all <p> elements in the div
-    const pElements = tempDiv.querySelectorAll('p');
-  
-    // Initialize the result object
+    // Initialize result object
     const result = {
       title: '',
       subtitle: '',
+      author: 'John Doe', // Dummy author
+      date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+      picture: [],
+      videos: [],
       content: '',
     };
   
-    // Extract content from the first two <p> elements
+    // Extract title, subtitle, and content
+    const pElements = doc.querySelectorAll('p');
     if (pElements.length > 0) {
-      result.title = pElements[0].textContent || '';
+      result.title = this.capitalizeFirstLetter(pElements[0].textContent || '');
     }
   
     if (pElements.length > 1) {
       result.subtitle = pElements[1].textContent || '';
     }
   
-    // Extract the content from the remaining <p> elements
-    if (pElements.length > 2) {
-      for (let i = 2; i < pElements.length; i++) {
-        result.content += pElements[i].textContent || '';
+    // Extract pictures and videos from the content
+    for (let i = 2; i < pElements.length; i++) {
+      const contentParagraph = pElements[i].textContent || '';
+      result.content += contentParagraph;
+  
+      // Extract pictures
+      const pictureMatches = contentParagraph.match(/<img.*?src=["'](.*?)["']/g);
+      if (pictureMatches) {
+        // result.picture.push(pictureMatches.map(match => match.match(/src=["'](.*?)["']/)![1]));
+      }
+  
+      // Extract videos
+      const videoMatches = contentParagraph.match(/<iframe.*?src=["'](.*?)["']/g);
+      if (videoMatches) {
+        // result.videos = result.videos.concat(videoMatches.map(match => match.match(/src=["'](.*?)["']/)![1]));
       }
     }
   
-    console.log(result);
-
     return result;
   }
+  
+  // Helper function to capitalize the first letter of a string
+  capitalizeFirstLetter(str: string): string {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+  
 }

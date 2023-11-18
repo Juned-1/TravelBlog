@@ -22,4 +22,16 @@ export class ToolbarComponent implements OnInit {
     this.loginService.loggedIn = false;
     this.router.navigate(['/login']);
   }
+  login() {
+    this.router.navigate(['/login']);
+  }
+  signup() {
+    this.router.navigate(['/signup']);
+  }
+  routeToHome() {
+    this.router.navigate(['/']);
+  }
+  routeToMyBlogs(){
+    this.router.navigate(['/myblogs']);
+  }
 }

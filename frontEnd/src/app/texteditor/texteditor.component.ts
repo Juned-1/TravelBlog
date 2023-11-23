@@ -4,7 +4,8 @@ import Quill from 'quill';
 import { ModalController } from '@ionic/angular';
 import { PreviewComponent } from './preview/preview.component';
 import { ActivatedRoute, Router } from '@angular/router';
-import { data } from '../myblogs/dummyData';
+import { APIService } from 'src/apiservice.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-texteditor',
@@ -14,7 +15,6 @@ import { data } from '../myblogs/dummyData';
   imports: [IonicModule, PreviewComponent],
 })
 export class TexteditorComponent implements OnInit {
-  isSetToolbar: any;
   linkCount: number = 0;
   maxLinks: number = 1;
   imageCount: number = 0;
@@ -52,17 +52,15 @@ export class TexteditorComponent implements OnInit {
   constructor(
     private modalCtrl: ModalController,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private api : APIService,
+    private toast : ToastrService
   ) {}
   ngOnInit() {
     let container = document.getElementById('editor');
     this.editor = new Quill(container!, this.options);
     let toolbar = this.editor.getModule('toolbar');
-    if (this.router.url !== '/texteditor') {
-      this.isSetToolbar = true;
-    } else {
-      this.isSetToolbar = false;
-    }
+
   }
   ngAfterViewInit() {
     this.editor.getModule('toolbar').addHandler('font', (value: any) => {
@@ -84,20 +82,25 @@ export class TexteditorComponent implements OnInit {
     this.toggleLinkButton(); // Initial state
   }
   post() {
-    console.log(this.editor.root.innerHTML);
-    //Write on dummy JS file
-    // "title": "Sample Blog Post",
-    // "subtitle": "A subtitle for the blog post",
-    // "author": "John Doe",
-    // "date": "November 11, 2023",
-    // "picture": ["assets/images/sample-image.jpg"],
-    // "videos": ["https://www.youtube.com/embed/your-video-id"],
-    // "content":
-    const post = {
-
+    let title = this.getTitle();
+    let subtitle = '';
+    let postDetails = {
+      title,
+      subtitle,
+      post : this.editor.root.innerHTML,
     }
-    data.unshift(this.parseContent(this.editor.root.innerHTML));
-    this.routeToHome();
+    this.api.post(postDetails).subscribe((response) => {
+      if('message' in response && response.message === 'ok'){
+        this.toast.success("Posted successfully");
+        this.router.navigate(["/"]);
+      }
+    }, (err) => {
+        this.toast.error("Post unsuccessful");
+        console.log(err);
+    });
+    //Write on dummy JS file
+    //data.unshift(this.parseHTMLText(this.editor.root.innerHTML));
+    //this.routeToHome();
   }
   countLinksInEditor(): any {
     const content = this.editor.root.innerHTML;
@@ -161,6 +164,22 @@ export class TexteditorComponent implements OnInit {
       videoButton.disabled = false;
     }
   }
+  getTitle(){
+    let regTitle = /<h[1-6][^>]*>.*?<\/h[1-6]>/g;
+    const content = this.editor.root.innerHTML;
+    let match;
+    let ListOfHeadings : any = [];
+    while ((match = regTitle.exec(content)) !== null) {
+      ListOfHeadings.push(match);
+    }
+    let val = '';
+    if(ListOfHeadings.length !== 0){
+      val = ListOfHeadings[0][0];
+      val = val.replace(/<h[1-6][^>]*>/,'');
+      val = val.replace(/<\/h[1-6]>/,'');
+    }
+    return val;
+  }
   async preview() {
     //console.log(this.editor.root.innerHTML);
     const modal = await this.modalCtrl.create({
@@ -174,66 +193,42 @@ export class TexteditorComponent implements OnInit {
   }
 
   routeToHome() {
-    this.router.navigate(['/myblogs']);
+    this.router.navigate(['/']);
   }
 
- parseContent(htmlString: string): {
-    title: string;
-    subtitle: string;
-    author: string;
-    date: string;
-    picture: string[];
-    videos: string[];
-    content: string;
-  } {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(htmlString, 'text/html');
+  /*parseHTMLText(htmlText: string): { title: string; subtitle: string; content: string } {
+    // Create a temporary div element to parse the HTML content
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = htmlText;
   
-    // Initialize result object
+    // Find all <p> elements in the div
+    const pElements = tempDiv.querySelectorAll('p');
+  
+    // Initialize the result object
     const result = {
       title: '',
       subtitle: '',
-      author: 'John Doe', // Dummy author
-      date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-      picture: [],
-      videos: [],
       content: '',
     };
   
-    // Extract title, subtitle, and content
-    const pElements = doc.querySelectorAll('p');
+    // Extract content from the first two <p> elements
     if (pElements.length > 0) {
-      result.title = this.capitalizeFirstLetter(pElements[0].textContent || '');
+      result.title = pElements[0].textContent || '';
     }
   
     if (pElements.length > 1) {
       result.subtitle = pElements[1].textContent || '';
     }
   
-    // Extract pictures and videos from the content
-    for (let i = 2; i < pElements.length; i++) {
-      const contentParagraph = pElements[i].textContent || '';
-      result.content += contentParagraph;
-  
-      // Extract pictures
-      const pictureMatches = contentParagraph.match(/<img.*?src=["'](.*?)["']/g);
-      if (pictureMatches) {
-        // result.picture.push(pictureMatches.map(match => match.match(/src=["'](.*?)["']/)![1]));
-      }
-  
-      // Extract videos
-      const videoMatches = contentParagraph.match(/<iframe.*?src=["'](.*?)["']/g);
-      if (videoMatches) {
-        // result.videos = result.videos.concat(videoMatches.map(match => match.match(/src=["'](.*?)["']/)![1]));
+    // Extract the content from the remaining <p> elements
+    if (pElements.length > 2) {
+      for (let i = 2; i < pElements.length; i++) {
+        result.content += pElements[i].textContent || '';
       }
     }
   
+    console.log(result);
+
     return result;
-  }
-  
-  // Helper function to capitalize the first letter of a string
-  capitalizeFirstLetter(str: string): string {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
-  
+  }*/
 }

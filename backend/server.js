@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 dotenv.config();
 const app = express();
-app.use(express.json());
+app.use(express.json({limit : '50mb'}));
 app.use(cors({ credentials : true, origin : 'http://localhost:8100'}));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use("/",appRouter);

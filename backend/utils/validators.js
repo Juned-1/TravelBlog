@@ -24,7 +24,8 @@ const loginValidator = [
 ];
 //validator chain
 const signUpValidator = [
-    body("fullname").notEmpty().withMessage("Name is required"),
+    body("firstName").notEmpty().withMessage("First Name is required"),
+    body("lastName").notEmpty().withMessage("Last Name is required"),
     body("dob").notEmpty().withMessage("DOB is required"),
     body("gender").notEmpty().withMessage("Gender is required"),
     ...loginValidator,

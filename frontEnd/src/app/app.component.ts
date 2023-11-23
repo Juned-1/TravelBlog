@@ -2,7 +2,7 @@ import { Component, EnvironmentInjector, OnInit, inject } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { SignupComponent } from './signup/signup.component';
-import { MyblogsComponent } from './myblogs/myblogs.component';
+import { HomeComponent } from './home/home.component';
 import { RouterModule,ActivatedRoute,Router } from '@angular/router';
 import { SearchbarComponent } from './searchbar/searchbar.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -17,7 +17,7 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
     IonicModule,
     CommonModule,
     SignupComponent,
-    MyblogsComponent,
+    HomeComponent,
     RouterModule,
     SearchbarComponent,
     MatToolbarModule,

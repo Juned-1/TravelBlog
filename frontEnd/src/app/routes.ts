@@ -1,41 +1,55 @@
 import { Routes } from '@angular/router';
-import { MyblogsComponent } from './myblogs/myblogs.component';
+import { HomeComponent } from './home/home.component';
 import { SignupComponent } from './signup/signup.component';
 import { TexteditorComponent } from './texteditor/texteditor.component';
 import { LoginComponent } from './login/login.component';
-import { BlogComponent } from './blog/blog.component';
-import { HomeComponent } from './home/home.component';
+import { Authguard } from './authorization/authguard';
+import { MyblogsComponent } from './myblogs/myblogs.component';
 
 const routeConfig: Routes = [
   {
     path: '',
     component: HomeComponent,
-    title: 'Welcome Page'
+    title: 'Home page',
+    canActivate : [Authguard],
+    data : {
+      userType : 'guest'
+    }
   },
   {
     path: 'signup',// details/:id
     component: SignupComponent,
     title: 'Sign Up',
+    canActivate : [Authguard],
+    data : {
+      userType : 'non-loggedin',
+    }
   },
   {
     path : 'texteditor',
     component : TexteditorComponent,
     title : 'Editor',
+    canActivate : [Authguard],
+    data  : {
+      userType : 'logged-in',
+    }
   },
   {
     path : 'login',
     component : LoginComponent,
-    title : 'Log In'
+    title : 'Log In',
+    canActivate : [Authguard],
+    data : {
+      userType : 'non-loggedin'
+    }
   },
   {
-    path: 'blog',
-    component: BlogComponent,
-    title: 'Home page',
-  },
-  {
-    path: 'myblogs',
-    component: MyblogsComponent,
-    title: 'My Blogs',
+    path : 'userblog',
+    component  : MyblogsComponent,
+    canActivate : [Authguard],
+    data : {
+      userType : 'logged-in'
+    }
   }
 ];
 

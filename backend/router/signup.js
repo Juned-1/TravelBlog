@@ -19,13 +19,14 @@ export const userSignup = async (req, res, next) => {
         .json({ message: "error", result: "user already exist" });
     else {
       let hashedPassword = await hash(password, 10);
-      const sql = `INSERT INTO users (fullname, email, password, dob, gender) VALUES (?, ?, ?, ?, ?)`;
+      const sql = `INSERT INTO users (firstName,lastName, email, dob, gender, password) VALUES (?, ?, ?, ?, ?, ?)`;
       const values = [
-        req.body.fullname,
+        req.body.firstName,
+        req.body.lastName,
         email,
-        hashedPassword,
         req.body.dob,
         req.body.gender,
+        hashedPassword,
       ];
       await conn.query(sql, values, async(err, result) => {
         if (err) {
@@ -42,6 +43,7 @@ export const userSignup = async (req, res, next) => {
           const token = createToken(
             result.insertId.toString(),
             email,
+            req.body.firstName + ' ' + req.body.lastName,
             "7d"
           );
           
@@ -55,13 +57,13 @@ export const userSignup = async (req, res, next) => {
             httpOnly: true,
             signed: true,
           });
-          return res.status(200).json({ message: "ok", result: result });
+          return res.status(200).json({ message: "ok", result: req.body.firstName + ' ' +  req.body.lastName });
         }
       });
     }
   } catch (error) {
     console.log(error);
-    return res.status(200).json({ message: "ERROR", cause: error.message });
+    return res.status(201).json({ message: "ERROR", cause: error.message });
   }
 };
 const checkIfUserExist = async (email) => {

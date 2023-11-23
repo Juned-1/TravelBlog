@@ -2,7 +2,6 @@ import { Injectable } from "@angular/core";
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree} from "@angular/router";
 import { Observable, of, switchMap } from "rxjs";
 import { APIService } from "src/apiservice.service";
-import { HomePage } from "../home/home.page";
 @Injectable({
     providedIn : 'root'
 })

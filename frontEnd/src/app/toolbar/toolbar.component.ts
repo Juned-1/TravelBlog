@@ -1,11 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { SearchbarComponent } from '../searchbar/searchbar.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { Router } from '@angular/router';
-import { LoginService } from '../login.service';
+import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
-
+import { APIService } from 'src/apiservice.service';
 @Component({
   selector: 'app-toolbar',
   templateUrl: './toolbar.component.html',
@@ -14,16 +13,21 @@ import { CommonModule } from '@angular/common';
   imports: [IonicModule, SearchbarComponent, MatToolbarModule, CommonModule],
 })
 export class ToolbarComponent implements OnInit {
-  constructor(private router: Router, public loginService: LoginService) {}
+  @Input() isLoggedIn! : Boolean;
+  @Output() logoutButton : EventEmitter<string> = new EventEmitter<string>();
+  user  : string | null = '';
+  constructor(private route : ActivatedRoute, private router : Router, private api : APIService) { }
 
-  ngOnInit() {}
-
-  logout() {
-    this.loginService.loggedIn = false;
+  ngOnInit() {
+    if(localStorage.getItem('travel-blog') !== null){
+      this.user = localStorage.getItem('travel-blog');
+    }
+  }
+  LogIn(){
     this.router.navigate(['/login']);
   }
-  login() {
-    this.router.navigate(['/login']);
+  Logout(){
+    this.logoutButton.emit('logout');
   }
   signup() {
     this.router.navigate(['/signup']);
@@ -32,6 +36,6 @@ export class ToolbarComponent implements OnInit {
     this.router.navigate(['/']);
   }
   routeToMyBlogs(){
-    this.router.navigate(['/myblogs']);
+    this.router.navigate(['/userblog']);
   }
 }

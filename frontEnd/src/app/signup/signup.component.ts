@@ -7,6 +7,10 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
 import { CommonModule } from '@angular/common';
 import { credentials } from '../login/dummy';
+import { ToastrService } from 'ngx-toastr';
+//import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { APIService } from 'src/apiservice.service';
+import { HttpErrorResponse } from '@angular/common/http';
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
@@ -21,40 +25,41 @@ import { credentials } from '../login/dummy';
     ToolbarComponent,
   ],
 })
-export class SignupComponent implements OnInit {
-  isSetToolbar: any;
+
+export class SignupComponent  implements OnInit {
   formData = {
     firstName: '',
-    lastName: '',
+    lastName : '',
     email: '',
     password: '',
     dob: '',
     gender: '',
   };
-  constructor(private route: ActivatedRoute, private router: Router) {}
-  ngOnInit(): void {
-    if (this.router.url !== '/texteditor') {
-      this.isSetToolbar = true;
-      console.log(this.isSetToolbar);
-    } else {
-      this.isSetToolbar = false;
-    }
-  }
-  signup() {
-    let valid = true;
-    credentials.forEach((credential) => {
-      if (credential.email == this.formData.email) {
-        valid = false;
-      }
-    });
+  constructor(private route : ActivatedRoute, private router : Router, private api : APIService, private toast : ToastrService) {}
 
-    if (valid) {
-      credentials.push(this.formData);
-      this.router.navigate(['/login']);
-    }
-    else{
-      alert('email already taken!!')
-    }
-    console.log(credentials);
+  ngOnInit(): void {
+    
+  }
+  signup(){
+      this.api.signup(this.formData).subscribe((response)=>{
+        if('message' in response && response.message === 'ok' && 'result' in response){
+            localStorage.setItem('travel-blog',String(response.result));
+            this.toast.success("Signup Successful");
+            this.router.navigate(['/']);
+        }
+        if(response){
+        }
+      },
+      (err) => {
+        console.log(err);
+        if(err.status === 401){
+          this.toast.error("User already registered");
+        }
+        else if(err.status === 422){
+          const data = JSON.parse(JSON.stringify(err.error.errors));
+          this.toast.warning(data[0].msg);
+        }
+      }
+      );
   }
 }

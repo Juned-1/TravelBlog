@@ -9,11 +9,11 @@
         id="logo"
       ></ion-img>
       <h1 id="brand-name" class="toolbar-front-items" (click)="routeToHome()">
-        {{ "Travel Blogging" }}
+        {{ "TravelBlog" }}
       </h1>
     </ion-buttons>
-    <ion-buttons slot="end">
-      <ion-searchbar animated="true" placeholder="Search"></ion-searchbar>
+    <ion-buttons slot="end" id="right-btns">
+      <!-- <ion-searchbar animated="true" placeholder="Search"></ion-searchbar> -->
       <ion-label *ngIf="this.loginService.loggedIn" class="toolbar-end-items"
         ><h3 id="welcome-msg">
           Logged as,
@@ -54,5 +54,18 @@
         >SignUp</ion-button
       >
     </ion-buttons>
+    <div id="options-button">
+      <ion-select
+        justify="start"
+        label="Options"
+        name="gender"
+        required
+        interface="popover"
+      >
+        <ion-select-option value="signup">SignUp</ion-select-option>
+        <ion-select-option value="login">Login</ion-select-option>
+        <ion-select-option value="myblogs">My Blogs</ion-select-option>
+      </ion-select>
+    </div>
   </ion-toolbar>
 </ion-header>

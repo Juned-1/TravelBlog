@@ -33,5 +33,5 @@ export class ToolbarComponent implements OnInit {
   }
   routeToMyBlogs(){
     this.router.navigate(['/myblogs']);
-  }
+  } 
 }

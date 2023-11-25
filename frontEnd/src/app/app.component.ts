@@ -7,6 +7,8 @@ import { RouterModule,ActivatedRoute,Router } from '@angular/router';
 import { SearchbarComponent } from './searchbar/searchbar.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ToolbarComponent } from './toolbar/toolbar.component';
+import { IonMenu } from '@ionic/angular';
+
 
 @Component({
   selector: 'app-root',
@@ -21,7 +23,7 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
     RouterModule,
     SearchbarComponent,
     MatToolbarModule,
-    ToolbarComponent
+    ToolbarComponent,
   ],
 })
 export class AppComponent implements OnInit{

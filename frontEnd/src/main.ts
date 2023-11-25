@@ -8,6 +8,9 @@ import { environment } from './environments/environment';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import routeConfig from './app/routes';
+import { APIService } from './apiservice.service';
+import { HttpClientModule } from '@angular/common/http';
+import {ToastrService, ToastrModule} from "ngx-toastr";
 
 if (environment.production) {
   enableProdMode();
@@ -20,6 +23,12 @@ bootstrapApplication(AppComponent, {
     provideAnimations(),
     provideAnimations(),
     provideProtractorTestingSupport(),
-      provideRouter(routeConfig)
+    provideRouter(routeConfig),
+    APIService, importProvidersFrom(HttpClientModule),
+    ToastrService, importProvidersFrom(ToastrModule.forRoot({
+      positionClass: 'toast-top-right',
+      timeOut: 3000,
+      closeButton: true
+    }))
 ],
 });

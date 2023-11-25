@@ -1,9 +1,9 @@
-#logo{
+#logo {
   width: 60px; /* Set your desired width */
   height: auto; /* Maintain the aspect ratio */
 }
-#welcome-msg{
-  margin: auto auto
+#welcome-msg {
+  margin: auto auto;
 }
 #logo:hover {
   cursor: pointer;
@@ -11,22 +11,34 @@
 #brand-name:hover {
   cursor: pointer;
 }
-#brand-name{
+#brand-name {
   font-weight: 750;
   font-family: Arial, Helvetica, sans-serif;
   padding: auto 0;
   margin: 0;
 }
-.toolbar-end-items{
+.toolbar-end-items {
   padding: 0 10px;
 }
-.toolbar-front-items{
+.toolbar-front-items {
   padding: 0 20px;
   margin: 0;
 }
-ion-header{
+ion-header {
   background-color: black;
 }
-ion-searchbar{
+ion-searchbar {
   width: 200px;
+}
+#right-btns {
+  // display: none;
+}
+ion-select {
+  font-size: 18px;
+  font-weight: 500;
+}
+@media screen and (max-width: 768px) {
+  #options-buttton {
+    display: none;
+  }
 }

@@ -41,6 +41,8 @@ export class MyblogsComponent implements OnInit, AfterViewInit {
       if('result' in response){
        this.posts = response.result;
        for (let post of this.posts) {
+         post.post_time = new Date(post.post_time).toDateString().toString();
+
          let imageURL = this.extractFirstImageURL(post.post_content);
          if (imageURL === null) {
            imageURL = '../../assets/travelImage/no-image.jpg';

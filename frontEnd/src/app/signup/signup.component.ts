@@ -1,16 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
-import { ExploreContainerComponent } from '../explore-container/explore-container.component';
 import { FormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
 import { CommonModule } from '@angular/common';
-import { credentials } from '../login/dummy';
 import { ToastrService } from 'ngx-toastr';
-//import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { APIService } from 'src/apiservice.service';
-import { HttpErrorResponse } from '@angular/common/http';
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
@@ -19,7 +15,6 @@ import { HttpErrorResponse } from '@angular/common/http';
   imports: [
     IonicModule,
     CommonModule,
-    ExploreContainerComponent,
     FormsModule,
     MatDatepickerModule,
     ToolbarComponent,
@@ -27,6 +22,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 
 export class SignupComponent  implements OnInit {
+  isLoggedIn = false;
   formData = {
     firstName: '',
     lastName : '',
@@ -61,5 +57,8 @@ export class SignupComponent  implements OnInit {
         }
       }
       );
+  }
+  change(){
+    this.router.navigate(['/login']);
   }
 }

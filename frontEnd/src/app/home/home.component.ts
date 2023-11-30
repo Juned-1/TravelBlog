@@ -4,9 +4,10 @@ import { SearchbarComponent } from '../searchbar/searchbar.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { data } from '../myblogs/dummyData';
 import { APIService } from 'src/apiservice.service';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
+import { Observable } from 'rxjs';
+import { DomSanitizer } from '@angular/platform-browser';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -15,11 +16,10 @@ import { ToolbarComponent } from '../toolbar/toolbar.component';
   standalone: true
 })
 export class HomeComponent implements OnInit {
+  slideIndex : number = 0;
+  posts! : any;
   isLoggedIn = false;
-  blogPosts = data;
-  signedIn = true;//If the user is signed in then show create post button otherwise signIn button
-  isSetToolbar : any;
-  constructor(private route : ActivatedRoute, private router : Router, private api : APIService) {
+  constructor(private route : ActivatedRoute, private router : Router, private api : APIService, private sanitizer : DomSanitizer) {
 
   }
   ngOnInit(): void {
@@ -37,9 +37,20 @@ export class HomeComponent implements OnInit {
     );
   }
   ngAfterViewInit() {
-    let search : string = "";
-    this.api.getPost(search)?.subscribe((response) => {
-      console.log(response);
+    this.api.getPost()?.subscribe((response) => {
+     if('result' in response){
+      this.posts = response.result;
+      for (let post of this.posts) {
+        // Extract the first image URL from post.post_content
+        let imageURL = this.extractFirstImageURL(post.post_content);
+        if (imageURL === null) {
+          imageURL = '';
+        }
+        imageURL = (this.sanitizer.bypassSecurityTrustResourceUrl(imageURL) as any).changingThisBreaksApplicationSecurity;
+        post.imageURL = imageURL;
+      }
+      console.log(this.posts);
+     }
     },
     (err) => {
       console.log(err);
@@ -49,19 +60,36 @@ export class HomeComponent implements OnInit {
   goToEditor(){
     this.router.navigate(['/texteditor']);
   }
-  logoutHandle(value : any){
-    if(value === 'logout'){
-      this.api.logout().subscribe(
-      (response) => {
-        localStorage.removeItem('travel-blog');
-        this.isLoggedIn = false;
-        console.log(response);
-      },
-      (err) => {
-        console.log(err.error.message);
-      }
-    );
+  extractFirstImageURL(postContent: string): string | null {
+    const regex = /<img src="(.*?)"/g;
+    const match = regex.exec(postContent);
+    if (match) {
+      return match[1];
+    } else {
+      return null;
     }
   }
-  openBlog(){}
+  
+  openBlog(post_id : any){
+    this.router.navigate(['/blog-details'], { queryParams: { id : post_id} });
+  }
+
+  showSlides(): void {
+    let i: number;
+    let slides: HTMLCollectionOf<Element> =
+      document.getElementsByClassName('mySlides');
+
+    for (i = 0; i < slides.length; i++) {
+      (slides[i] as HTMLElement).style.display = 'none';
+    }
+
+    this.slideIndex++;
+
+    if (this.slideIndex > slides.length) {
+      this.slideIndex = 1;
+    }
+
+    (slides[this.slideIndex - 1] as HTMLElement).style.display = 'block';
+    setTimeout(() => this.showSlides(), 3000); // Change image every 2 seconds
+  }
 }

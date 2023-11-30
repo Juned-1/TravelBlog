@@ -16,11 +16,11 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class TexteditorComponent implements OnInit {
   linkCount: number = 0;
-  maxLinks: number = 1;
+  maxLinks: number = 5;
   imageCount: number = 0;
-  maxImage: number = 1;
+  maxImage: number = 5;
   videoCount: number = 0;
-  maxVideo: number = 1;
+  maxVideo: number = 5;
   editor!: Quill;
   options = {
     modules: {
@@ -83,7 +83,7 @@ export class TexteditorComponent implements OnInit {
   }
   post() {
     let title = this.getTitle();
-    let subtitle = '';
+    let subtitle = this.editor.getText(0,600);
     let postDetails = {
       title,
       subtitle,
@@ -92,15 +92,12 @@ export class TexteditorComponent implements OnInit {
     this.api.post(postDetails).subscribe((response) => {
       if('message' in response && response.message === 'ok'){
         this.toast.success("Posted successfully");
-        this.router.navigate(["/"]);
+        this.router.navigate(["/userblog"]);
       }
     }, (err) => {
         this.toast.error("Post unsuccessful");
         console.log(err);
     });
-    //Write on dummy JS file
-    //data.unshift(this.parseHTMLText(this.editor.root.innerHTML));
-    //this.routeToHome();
   }
   countLinksInEditor(): any {
     const content = this.editor.root.innerHTML;
@@ -175,13 +172,11 @@ export class TexteditorComponent implements OnInit {
     let val = '';
     if(ListOfHeadings.length !== 0){
       val = ListOfHeadings[0][0];
-      val = val.replace(/<h[1-6][^>]*>/,'');
-      val = val.replace(/<\/h[1-6]>/,'');
+      val = val.replace(/<(\/)?(?:b|i|u|s|span|sub|sup|h[1-6]|em)[^>]*>/g, '');
     }
     return val;
   }
   async preview() {
-    //console.log(this.editor.root.innerHTML);
     const modal = await this.modalCtrl.create({
       component: PreviewComponent,
       componentProps: { data: this.editor.root.innerHTML },
@@ -193,42 +188,6 @@ export class TexteditorComponent implements OnInit {
   }
 
   routeToHome() {
-    this.router.navigate(['/']);
+    this.router.navigate(['/userblog']);
   }
-
-  /*parseHTMLText(htmlText: string): { title: string; subtitle: string; content: string } {
-    // Create a temporary div element to parse the HTML content
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = htmlText;
-  
-    // Find all <p> elements in the div
-    const pElements = tempDiv.querySelectorAll('p');
-  
-    // Initialize the result object
-    const result = {
-      title: '',
-      subtitle: '',
-      content: '',
-    };
-  
-    // Extract content from the first two <p> elements
-    if (pElements.length > 0) {
-      result.title = pElements[0].textContent || '';
-    }
-  
-    if (pElements.length > 1) {
-      result.subtitle = pElements[1].textContent || '';
-    }
-  
-    // Extract the content from the remaining <p> elements
-    if (pElements.length > 2) {
-      for (let i = 2; i < pElements.length; i++) {
-        result.content += pElements[i].textContent || '';
-      }
-    }
-  
-    console.log(result);
-
-    return result;
-  }*/
 }

@@ -27,7 +27,16 @@ export class ToolbarComponent implements OnInit {
     this.router.navigate(['/login']);
   }
   Logout(){
-    this.logoutButton.emit('logout');
+    this.api.logout().subscribe(
+      (response) => {
+        localStorage.removeItem('travel-blog');
+        this.isLoggedIn = false;
+      },
+      (err) => {
+        console.log(err.error.message);
+      }
+    );
+    this.router.navigate(["/"]);
   }
   signup() {
     this.router.navigate(['/signup']);

@@ -5,6 +5,7 @@ import { TexteditorComponent } from './texteditor/texteditor.component';
 import { LoginComponent } from './login/login.component';
 import { Authguard } from './authorization/authguard';
 import { MyblogsComponent } from './myblogs/myblogs.component';
+import { BlogComponent } from './blog/blog.component';
 
 const routeConfig: Routes = [
   {
@@ -49,6 +50,14 @@ const routeConfig: Routes = [
     canActivate : [Authguard],
     data : {
       userType : 'logged-in'
+    }
+  },
+  {
+    path : 'blog-details',
+    component  : BlogComponent,
+    canActivate : [Authguard],
+    data : {
+      userType : 'guest'
     }
   }
 ];

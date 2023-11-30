@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
-import { ExploreContainerComponent } from '../explore-container/explore-container.component';
 import { FormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -16,13 +15,13 @@ import { ToastrService } from 'ngx-toastr';
   imports: [
     IonicModule,
     CommonModule,
-    ExploreContainerComponent,
     FormsModule,
     MatDatepickerModule,
     ToolbarComponent,
   ],
 })
 export class LoginComponent  implements OnInit {
+  isLoggedIn = false;
   formData = {
     email: '',
     password: ''
@@ -51,5 +50,8 @@ export class LoginComponent  implements OnInit {
       }
     }
     );
+  }
+  change(){
+    this.router.navigate(['/signup']);
   }
 }

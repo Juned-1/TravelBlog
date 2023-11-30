@@ -7,6 +7,7 @@ import { userlogout } from "./logout.js";
 import { writePost } from "./post.js";
 import { getPost } from "./getPost.js";
 import { userPost } from "./userPost.js";
+import { getSpecificPost } from "./getSpecificPost.js";
 const appRouter = Router();
 
 appRouter.post("/signup",validate(signUpValidator),userSignup);
@@ -16,4 +17,5 @@ appRouter.get("/logout",userlogout);
 appRouter.post("/writePost",writePost);
 appRouter.get("/getPost",getPost);
 appRouter.get("/userPost",userPost);
+appRouter.get("/getSpecificPost",getSpecificPost);
 export default appRouter;

@@ -22,14 +22,13 @@ export class APIService {
   post(data : any){
     return this.http.post('http://localhost:8081/writePost',data,{withCredentials : true});
   }
-  getPost(serachQuery : string){
-    if(serachQuery === ""){
-      return this.http.get("http://localhost:8081/getPost",{withCredentials : true});
-    }else{
-      return this.http.get("http://localhost:8081/getPost?search="+serachQuery,{withCredentials : true});
-    }
+  getPost(){
+    return this.http.get("http://localhost:8081/getPost",{withCredentials : true});
   }
   userPost(){
     return this.http.get("http://localhost:8081/userPost",{withCredentials : true});
+  }
+  getSpecificPost(search : number){
+    return this.http.get("http://localhost:8081/getSpecificPost?search="+search,{withCredentials : true});
   }
 }

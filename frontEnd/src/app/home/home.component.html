@@ -1,0 +1,73 @@
+<app-toolbar [isLoggedIn]="isLoggedIn"></app-toolbar>
+<ion-content>
+  <header class="header">
+    <div class="header__title">
+      <h1>
+        When
+        <!-- Green highlight effect -->
+        <span class="highlight">TRAVELLER</span>
+        meets<br />
+        <span class="highlight">BLOGGER</span>
+      </h1>
+      <h4>A simple blogging experience for a traveller.</h4>
+      <!-- <button id="btn-read-blog">Read Blog &DownArrow;</button> -->
+      <!-- Slideshow container -->
+    </div>
+      <div class="slideshow-container">
+        <!-- Full-width images with number and caption text -->
+        <div class="mySlides fade">
+          <img
+            class="slide-img"
+            src="../../assets/travelImage/manwithwidehandsopen.jpg"
+            style="width: 100%"
+          />
+        </div>
+
+        <div class="mySlides fade">
+          <img
+            class="slide-img"
+            src="../../assets/travelImage/pexels-te-lensfix-1371360.jpg"
+            style="width: 100%"
+          />
+        </div>
+
+        <div class="mySlides fade">
+          <img
+            class="slide-img"
+            src="../../assets/travelImage/pexels-pawan-yadav-2577274.jpg"
+            style="width: 100%"
+          />
+        </div>
+
+      </div>
+      <br />
+  </header>
+  <ion-grid>
+    <ion-row>
+      <ion-col
+        size="12"
+        sizeMd="6"
+        *ngFor="let post of posts"
+        class="home-cards"
+        (click)="openBlog(post.post_id)"
+      >
+        <ion-card>
+          <ion-card-header>
+            <div>
+              <ion-card-title [innerHTML]="post.post_title"></ion-card-title>
+              <ion-card-subtitle
+                [innerHTML]="post.post_subtitle"
+              ></ion-card-subtitle>
+              <div id="blog-info">
+                <span id="blog-author">{{post.firstName + ' ' + post.lastName}}</span>
+                <span id="blog-date">{{post.post_time}}</span>
+              </div>
+            </div>
+            <img id="card-img" *ngIf="post.imageURL" [src]="post.imageURL" alt="Blog Post Image" 
+            style="width: 100px; height: 100px; margin-left: 10px"/>
+          </ion-card-header>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

@@ -1,0 +1,45 @@
+<app-toolbar [isLoggedIn]="isLoggedIn"></app-toolbar>
+<ion-content [fullscreen]="true">
+  <ion-content [fullscreen]="true">
+    <div class="container">
+      <h2 class="heading">👋 Welcome<br /><br /></h2>
+      <br>
+      <br>
+      <p class="para">Sign in to continue!</p>
+      <form (ngSubmit)="login()" #signupForm="ngForm">
+        <ion-item lines="none" class="ion-item">
+          <fieldset class="input-item">
+            <legend>Email Id</legend>
+            <ion-input
+            id="username"
+            type="email"
+            name="email"
+            [(ngModel)]="formData.email"
+            required
+            placeholder="name@domain.com"
+          ></ion-input>
+          </fieldset>
+        </ion-item>
+        <ion-item lines="none" class="ion-item">
+          <fieldset class="input-item">
+            <legend>Password</legend>
+            <ion-input
+            id="password"
+            type="password"
+            name="password"
+            [(ngModel)]="formData.password"
+            required
+            placeholder="**********"
+          ></ion-input>
+          </fieldset>
+        </ion-item>
+        <br>
+        <p class="signup-text">
+          I'm a new user&nbsp;<a (click)="change()">Sign Up?</a>
+        </p>
+        <ion-button class="login-button" (click)="login()" expand="block"
+          >Login</ion-button
+        >
+      </form>
+    </div>
+</ion-content>

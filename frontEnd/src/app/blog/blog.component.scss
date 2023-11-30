@@ -1,0 +1,50 @@
+@media screen and (min-width: 1030px) {
+  ion-content {
+    --ion-padding: 250px;
+  }
+}
+ion-content {
+  font-family: "Arial", sans-serif;
+  line-height: 1.9;
+  font-size: 16px;
+  color: #333;
+  background-color: #fff;
+  margin: 0;
+  height:90%;
+}
+p {
+}
+#blog-content-container {
+  padding-top: 50px;
+}
+#blog-heading {
+  font-size: 36px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+#blog-subheading {
+  // color: #777777;
+  margin-bottom: 8px;
+}
+
+#blog-content {
+  font-size: 18px;
+}
+#blog-image1 {
+  padding: 28px 0;
+  width: 100%;
+}
+#blog-author {
+  margin-right: 20px;
+  text-decoration: solid;
+  color: #777777;
+}
+#blog-date {
+  // font-size: 14px;
+  color: #777777;
+  text-decoration: solid;
+  margin-bottom: 10px;
+}
+#extra-details{
+  margin-bottom: 36px;
+}

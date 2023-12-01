@@ -13,34 +13,33 @@
       <!-- <button id="btn-read-blog">Read Blog &DownArrow;</button> -->
       <!-- Slideshow container -->
     </div>
-      <div class="slideshow-container">
-        <!-- Full-width images with number and caption text -->
-        <div class="mySlides fade">
-          <img
-            class="slide-img"
-            src="../../assets/travelImage/manwithwidehandsopen.jpg"
-            style="width: 100%"
-          />
-        </div>
-
-        <div class="mySlides fade">
-          <img
-            class="slide-img"
-            src="../../assets/travelImage/pexels-te-lensfix-1371360.jpg"
-            style="width: 100%"
-          />
-        </div>
-
-        <div class="mySlides fade">
-          <img
-            class="slide-img"
-            src="../../assets/travelImage/pexels-pawan-yadav-2577274.jpg"
-            style="width: 100%"
-          />
-        </div>
-
+    <div class="slideshow-container">
+      <!-- Full-width images with number and caption text -->
+      <div class="mySlides fade">
+        <img
+          class="slide-img"
+          src="../../assets/travelImage/manwithwidehandsopen.jpg"
+          style="width: 100%"
+        />
       </div>
-      <br />
+
+      <div class="mySlides fade">
+        <img
+          class="slide-img"
+          src="../../assets/travelImage/pexels-te-lensfix-1371360.jpg"
+          style="width: 100%"
+        />
+      </div>
+
+      <div class="mySlides fade">
+        <img
+          class="slide-img"
+          src="../../assets/travelImage/pexels-pawan-yadav-2577274.jpg"
+          style="width: 100%"
+        />
+      </div>
+    </div>
+    <br />
   </header>
   <ion-grid>
     <ion-row>
@@ -59,12 +58,19 @@
                 [innerHTML]="post.post_subtitle"
               ></ion-card-subtitle>
               <div id="blog-info">
-                <span id="blog-author">{{post.firstName + ' ' + post.lastName}}</span>
-                <span id="blog-date">{{post.post_time}}</span>
+                <span id="blog-author">{{
+                  post.firstName + " " + post.lastName
+                }}</span>
+                <span id="blog-date">{{ post.post_time }}</span>
               </div>
             </div>
-            <img id="card-img" *ngIf="post.imageURL" [src]="post.imageURL" alt="Blog Post Image" 
-            style="width: 100px; height: 100px; margin-left: 10px"/>
+            <img
+              id="card-img"
+              *ngIf="post.imageURL"
+              [src]="post.imageURL"
+              alt="Blog Post Image"
+              style="width: 100px; height: 100px; margin-left: 10px"
+            />
           </ion-card-header>
         </ion-card>
       </ion-col>

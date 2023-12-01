@@ -47,4 +47,14 @@ export class ToolbarComponent implements OnInit {
   routeToMyBlogs(){
     this.router.navigate(['/userblog']);
   }
+  handleChange(e: any ) {
+    console.log('ionChange fired with value: ' + e.detail.value);
+    if(e.detail.value == 'logout')  this.Logout();
+    if(e.detail.value == 'login')  this.LogIn();
+    if(e.detail.value == 'signup')  this.signup();
+    if(e.detail.value == 'myblogs')  this.routeToMyBlogs();
+  }
 }
+// interface SelectChangeEventDetail<T = any> {
+//   value: T;
+// }

@@ -15,7 +15,7 @@ export const userPost = async(req, res, next) => {
                     secret : process.env.JWT_SECRET
                 });
                 const email = decodedToken.email;
-                const sql = `SELECT posts.post_id, posts.post_title, posts.post_subtitle, posts.post_content, users.firstName, users.lastName, posts.post_time FROM users,posts WHERE users.id = posts.user_id AND users.email = ?;`;
+                const sql = `SELECT posts.post_id, posts.post_title, posts.post_subtitle, posts.post_content, posts.post_video_url, users.firstName, users.lastName, posts.post_time FROM users,posts WHERE users.id = posts.user_id AND users.email = ?;`;
                 await conn.query(sql,email,(err,result) => {
                     if(err){
                         return res.status(500).json({ message: "error", result: err.message });

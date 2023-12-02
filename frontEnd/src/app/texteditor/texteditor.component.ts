@@ -6,6 +6,8 @@ import { PreviewComponent } from './preview/preview.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { APIService } from 'src/apiservice.service';
 import { ToastrService } from 'ngx-toastr';
+import * as cheerio from 'cheerio';
+
 
 @Component({
   selector: 'app-texteditor',
@@ -83,14 +85,16 @@ export class TexteditorComponent implements OnInit {
   }
   post() {
     this.blog_content = this.editor.root.innerHTML;
-    console.log(this.blog_content);
     let title = this.getTitle();
-    console.log(this.blog_content);
     let subtitle = this.getSubTitle();
+    let url = this.getUrl();
+    // console.log(url);
+
     let postDetails = {
       title,
       subtitle,
       post : this.blog_content,
+      url
     }
     this.api.post(postDetails).subscribe((response) => {
       if('message' in response && response.message === 'ok'){
@@ -211,4 +215,26 @@ export class TexteditorComponent implements OnInit {
   routeToHome() {
     this.router.navigate(['/userblog']);
   }
+
+getUrl(){
+  // Load the HTML content using cheerio
+  const $ = cheerio.load(this.blog_content);
+
+  // Find the iframe element
+  const iframe = $('iframe');
+
+  // Check if an iframe element is found
+  if (iframe.length > 0) {
+    // Get the value of the src attribute
+    this.blog_content = this.blog_content.replace(iframe.toString(),"");
+    console.log(this.blog_content);
+    const srcValue = iframe.attr('src');
+    console.log(srcValue);
+    return srcValue || null;
+  } else {
+    // Return null if no iframe element is found
+    return null;
+  }
+}
+
 }

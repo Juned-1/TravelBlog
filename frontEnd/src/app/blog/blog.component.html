@@ -34,7 +34,9 @@
     <div
       id="blog-content"
       *ngIf="post !== undefined"
-      [innerHTML]="post.post_content"
+      [innerHTML]="content"
     ></div>
+    <!-- <iframe class="e2e-iframe-trusted-src" *ngIf="post !== undefined" [src]="url" frameborder="0"></iframe> -->
+    <iframe id="embedded_video" *ngIf="post !== undefined" class="e2e-iframe-trusted-src" width="640" height="390" [src]="url" title="trusted video url"></iframe>
   </div>
 </ion-content>

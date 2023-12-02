@@ -18,9 +18,10 @@ export const writePost = async(req, res, next) => {
                     decodedToken.id,
                     req.body.title,
                     req.body.subtitle,
-                    req.body.post
+                    req.body.post,
+                    req.body.url
                 ];
-                const sql = `INSERT INTO posts (user_id, post_title, post_subtitle, post_content) VALUES(?,?,?,?)`;
+                const sql = `INSERT INTO posts (user_id, post_title, post_subtitle, post_content,post_video_url) VALUES(?,?,?,?,?)`;
                 await conn.query(sql,values,(err,result) => {
                     if(err){
                         console.log(err);

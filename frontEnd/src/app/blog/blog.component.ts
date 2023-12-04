@@ -23,7 +23,7 @@ export class BlogComponent  implements OnInit, OnDestroy, AfterViewInit {
   post:any;
   time:String="";
   content: string = "";
-  url:any;
+  url:any=null;
   constructor(private route: ActivatedRoute, private sanitizer: DomSanitizer, private router : Router, private api : APIService, private toast : ToastrService) {
 
   }
@@ -49,12 +49,13 @@ export class BlogComponent  implements OnInit, OnDestroy, AfterViewInit {
       this.post = data.result[0];
       this.content = this.post.post_content;
       this.time = new Date(this.post.post_time).toDateString().toString();
-      this.url = this.sanitizer.bypassSecurityTrustResourceUrl(this.post.post_video_url);
-      console.log(this.url);
-      console.log(this.post);
+      if(this.post.post_video_url){
+        this.url = this.sanitizer.bypassSecurityTrustResourceUrl(this.post.post_video_url);
+      }
+  
     },(err) => {
       this.toast.error("Error loading post");
-      console.log(err);
+      // console.log(err);
     })
   }
   ngOnDestroy(): void {

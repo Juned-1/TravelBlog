@@ -31,4 +31,7 @@ export class APIService {
   getSpecificPost(search : number){
     return this.http.get("http://localhost:8081/getSpecificPost?search="+search,{withCredentials : true});
   }
+  deletePost(search : number){
+    return this.http.get("http://localhost:8081/deletePost?search="+search,{withCredentials : true});
+  }
 }

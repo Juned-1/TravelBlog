@@ -8,6 +8,7 @@ import { writePost } from "./post.js";
 import { getPost } from "./getPost.js";
 import { userPost } from "./userPost.js";
 import { getSpecificPost } from "./getSpecificPost.js";
+import { deletePost } from "./deletePost.js";
 const appRouter = Router();
 
 appRouter.post("/signup",validate(signUpValidator),userSignup);
@@ -18,4 +19,5 @@ appRouter.post("/writePost",writePost);
 appRouter.get("/getPost",getPost);
 appRouter.get("/userPost",userPost);
 appRouter.get("/getSpecificPost",getSpecificPost);
+appRouter.get("/deletePost",deletePost);
 export default appRouter;

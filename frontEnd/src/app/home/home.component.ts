@@ -19,6 +19,7 @@ export class HomeComponent implements OnInit {
   slideIndex : number = 0;
   posts! : any;
   isLoggedIn = false;
+  timeoutid: any = 0;
   constructor(private route : ActivatedRoute, private router : Router, private api : APIService, private sanitizer : DomSanitizer) {
   }
   ngOnInit(): void {
@@ -51,7 +52,6 @@ export class HomeComponent implements OnInit {
         imageURL = (this.sanitizer.bypassSecurityTrustResourceUrl(imageURL) as any).changingThisBreaksApplicationSecurity;
         post.imageURL = imageURL;
       }
-      console.log(this.posts);
      }
     },
     (err) => {
@@ -92,6 +92,9 @@ export class HomeComponent implements OnInit {
     }
 
     (slides[this.slideIndex - 1] as HTMLElement).style.display = 'block';
-    setTimeout(() => this.showSlides(), 3000); // Change image every 2 seconds
+    this.timeoutid = setTimeout(() => this.showSlides(), 3000); // Change image every 2 seconds
+  }
+  ngOnDestroy(){
+    clearTimeout(this.timeoutid);
   }
 }

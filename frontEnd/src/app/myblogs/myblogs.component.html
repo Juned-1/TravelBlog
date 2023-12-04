@@ -21,8 +21,9 @@
               </div>
             </div>
             <img id="blog-img" *ngIf="post.imageURL" [src]="post.imageURL" alt="Blog Post Image" 
-            style="width: 100px; height: 100px; margin-left: 10px"/>
+            />
           </ion-card-header>
+          <ion-button id="{{post.post_id}}" color="danger" fill="clear" (click)="deleteBlog($event)">Delete</ion-button>
         </ion-card>
       </ion-col>
     </ion-row>

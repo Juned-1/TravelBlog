@@ -160,6 +160,9 @@ h4 {
   height: auto;
 }
 #card-img{
-  position: absolute;
-  right: 10px;
+  position: relative;
+  right: auto;
+  // float: right;
+  // position: fixed;
+  display: inline;
 }

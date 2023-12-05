@@ -19,6 +19,7 @@ export class MyblogsComponent implements OnInit, AfterViewInit {
   isLoggedIn = true;
   posts!: any;
   isSetToolbar: any;
+  blogCount: number = -1;
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -46,6 +47,7 @@ export class MyblogsComponent implements OnInit, AfterViewInit {
       (response) => {
         if ('result' in response) {
           this.posts = response.result;
+          this.blogCount = this.posts.length;
           for (let post of this.posts) {
             post.post_time = new Date(post.post_time).toDateString().toString();
 

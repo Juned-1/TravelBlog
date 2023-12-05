@@ -7,6 +7,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { APIService } from 'src/apiservice.service';
 import { ToastrService } from 'ngx-toastr';
 import * as cheerio from 'cheerio';
+import { ToolbarComponent } from '../toolbar/toolbar.component';
+import { FormsModule } from '@angular/forms';
 
 
 @Component({
@@ -14,7 +16,7 @@ import * as cheerio from 'cheerio';
   templateUrl: './texteditor.component.html',
   styleUrls: ['./texteditor.component.scss'],
   standalone: true,
-  imports: [IonicModule, PreviewComponent],
+  imports: [IonicModule, PreviewComponent, ToolbarComponent,FormsModule,],
 })
 export class TexteditorComponent implements OnInit {
   linkCount: number = 0;
@@ -22,7 +24,7 @@ export class TexteditorComponent implements OnInit {
   imageCount: number = 0;
   maxImage: number = 5;
   videoCount: number = 0;
-  maxVideo: number = 5;
+  maxVideo: number = 1;
   editor!: Quill;
   options = {
     modules: {
@@ -48,10 +50,13 @@ export class TexteditorComponent implements OnInit {
         ['link', 'image', 'video'],
       ],
     },
-    placeholder: 'HEADING\nSUB-HEADING\nContent',
+    placeholder: 'Content',
     theme: 'snow',
   };
   blog_content: string = "";
+  isLoggedIn = false;
+  title:String='';
+  sub_title:String='';
   constructor(
     private modalCtrl: ModalController,
     private router: Router,
@@ -63,6 +68,19 @@ export class TexteditorComponent implements OnInit {
     let container = document.getElementById('editor');
     this.editor = new Quill(container!, this.options);
     let toolbar = this.editor.getModule('toolbar');
+
+    this.api.authorise().subscribe(
+      (response) => {
+        const data = JSON.parse(JSON.stringify(response));
+        if(data.message === "Token verified"){
+          this.isLoggedIn = true;
+        }
+      },
+      (err) => {
+        localStorage.removeItem('travel-blog');
+        this.isLoggedIn = false;
+      }
+    );
   }
   ngAfterViewInit() {
     this.editor.getModule('toolbar').addHandler('font', (value: any) => {
@@ -84,11 +102,24 @@ export class TexteditorComponent implements OnInit {
     this.toggleLinkButton(); // Initial state
   }
   post() {
+
     this.blog_content = this.editor.root.innerHTML;
-    let title = this.getTitle();
-    let subtitle = this.getSubTitle();
+    if(this.blog_content.length <50){
+      this.toast.warning("Content too small!!!");
+      return;
+    }
+    let title = this.title        //        this.getTitle();
+    if(title.length===0){
+      this.toast.warning("Title missing!");
+      return;
+    }
+    let subtitle = this.sub_title //     this.getSubTitle();
+    if(subtitle.length===0){
+      this.toast.warning("Sub Title missing!");
+      return;
+    }
     let url = this.getUrl();
-    // console.log(url);
+    console.log(title,subtitle);
 
     let postDetails = {
       title,

@@ -6,7 +6,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { APIService } from 'src/apiservice.service';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
-import { Observable } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
 @Component({
   selector: 'app-home',
@@ -92,7 +91,7 @@ export class HomeComponent implements OnInit {
     }
 
     (slides[this.slideIndex - 1] as HTMLElement).style.display = 'block';
-    this.timeoutid = setTimeout(() => this.showSlides(), 3000); // Change image every 2 seconds
+    this.timeoutid = setTimeout(() => this.showSlides(), 3000); // Change image every 3 seconds
   }
   ngOnDestroy(){
     clearTimeout(this.timeoutid);

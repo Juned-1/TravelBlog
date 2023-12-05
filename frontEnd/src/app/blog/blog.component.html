@@ -37,6 +37,7 @@
       [innerHTML]="content"
     ></div>
     <!-- <iframe class="e2e-iframe-trusted-src" *ngIf="post !== undefined" [src]="url" frameborder="0"></iframe> -->
-    <iframe id="embedded_video" *ngIf="post !== undefined && url!=null" class="e2e-iframe-trusted-src" width="640" height="390" [src]="url" title="trusted video url"></iframe>
+    <iframe id="embedded_video" *ngIf="post !== undefined && url!=null" class="e2e-iframe-trusted-src" allowfullscreen="true" width="640" height="390" [src]="url" title="trusted video url"></iframe>
   </div>
+  <br>
 </ion-content>

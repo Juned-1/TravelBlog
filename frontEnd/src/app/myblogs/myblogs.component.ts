@@ -77,7 +77,7 @@ export class MyblogsComponent implements OnInit, AfterViewInit {
     }
   }
   openBlog(post_id: number) {
-    this.router.navigate(['/blog-details'], { queryParams: { id: post_id } });
+    this.router.navigate(['/blogdetails'], { queryParams: { id: post_id } });
   }
   openEditor() {
     this.router.navigate(['/texteditor']);
@@ -99,4 +99,9 @@ export class MyblogsComponent implements OnInit, AfterViewInit {
       }
     );
   }
+  editBlog(e: any){
+    e.stopPropagation();
+    const id = e.srcElement.id;
+    this.router.navigate(['/texteditor'],{ queryParams: { id: id} });
+  } 
 }

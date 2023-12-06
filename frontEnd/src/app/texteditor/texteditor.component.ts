@@ -9,6 +9,8 @@ import { ToastrService } from 'ngx-toastr';
 import * as cheerio from 'cheerio';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
 import { FormsModule } from '@angular/forms';
+import ImageCompress from 'quill-image-compress';
+Quill.register('modules/imageCompress', ImageCompress);
 
 
 @Component({
@@ -16,7 +18,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './texteditor.component.html',
   styleUrls: ['./texteditor.component.scss'],
   standalone: true,
-  imports: [IonicModule, PreviewComponent, ToolbarComponent,FormsModule,],
+  imports: [IonicModule, PreviewComponent, ToolbarComponent, FormsModule],
 })
 export class TexteditorComponent implements OnInit {
   linkCount: number = 0;
@@ -28,6 +30,15 @@ export class TexteditorComponent implements OnInit {
   editor!: Quill;
   options = {
     modules: {
+      imageCompress: {
+        quality: 0.7, // default
+        maxWidth: 800, // default
+        maxHeight: 800, // default
+        imageType: 'image/webp', // default
+        debug: true, // default
+        suppressErrorLogging: false, // default
+        insertIntoEditor: undefined, // default
+      },
       toolbar: [
         ['bold', 'italic', 'underline', 'strike'],
         ['blockquote', 'code-block'],
@@ -50,19 +61,21 @@ export class TexteditorComponent implements OnInit {
         ['link', 'image', 'video'],
       ],
     },
-    placeholder: 'Content',
+    placeholder: 'CONTENT\nNote: max images: 4,\n\t\t max video: 1(appended at the end)\n',
     theme: 'snow',
   };
-  blog_content: string = "";
+  blog_content: string = '';
   isLoggedIn = false;
-  title:String='';
-  sub_title:String='';
+  title: String = '';
+  sub_title: String = '';
+  id: number = -1;
+  edit: boolean = false;
   constructor(
     private modalCtrl: ModalController,
     private router: Router,
     private route: ActivatedRoute,
-    private api : APIService,
-    private toast : ToastrService
+    private api: APIService,
+    private toast: ToastrService
   ) {}
   ngOnInit() {
     let container = document.getElementById('editor');
@@ -72,7 +85,7 @@ export class TexteditorComponent implements OnInit {
     this.api.authorise().subscribe(
       (response) => {
         const data = JSON.parse(JSON.stringify(response));
-        if(data.message === "Token verified"){
+        if (data.message === 'Token verified') {
           this.isLoggedIn = true;
         }
       },
@@ -81,6 +94,37 @@ export class TexteditorComponent implements OnInit {
         this.isLoggedIn = false;
       }
     );
+    let id = this.route.snapshot.queryParams['id'];
+    if (id != undefined) {
+      this.edit = true;
+      this.id = id;
+      this.api.getSpecificPost(this.id).subscribe(
+        (response) => {
+          const data = JSON.parse(JSON.stringify(response));
+          let post = data.result[0];
+          this.blog_content = post.post_content;
+          this.title = post.post_title;
+          this.sub_title = post.post_subtitle;
+          if (post.post_video_url) {
+            this.blog_content = this.blog_content.concat(
+              this.prepareFrame(post.post_video_url)
+            );
+          }
+          this.editor.root.innerHTML = this.blog_content;
+        },
+        (err) => {
+          this.toast.error('Error loading post');
+          console.log(err);
+        }
+      );
+    }
+  }
+  prepareFrame(src: string) {
+    const ifrm = document.createElement('iframe');
+    ifrm.setAttribute('src', src);
+    ifrm.style.width = '640px';
+    ifrm.style.height = '480px';
+    return ifrm.outerHTML;
   }
   ngAfterViewInit() {
     this.editor.getModule('toolbar').addHandler('font', (value: any) => {
@@ -102,40 +146,64 @@ export class TexteditorComponent implements OnInit {
     this.toggleLinkButton(); // Initial state
   }
   post() {
-
     this.blog_content = this.editor.root.innerHTML;
-    if(this.blog_content.length <50){
-      this.toast.warning("Content too small!!!");
+    if (this.blog_content.length < 50) {
+      this.toast.warning('Content too small!!!');
       return;
     }
-    let title = this.title        //        this.getTitle();
-    if(title.length===0){
-      this.toast.warning("Title missing!");
+    let title = this.title; //        this.getTitle();
+    if (title.length === 0) {
+      this.toast.warning('Title missing!');
       return;
     }
-    let subtitle = this.sub_title //     this.getSubTitle();
-    if(subtitle.length===0){
-      this.toast.warning("Sub Title missing!");
+    let subtitle = this.sub_title; //     this.getSubTitle();
+    if (subtitle.length === 0) {
+      this.toast.warning('Sub Title missing!');
       return;
     }
     let url = this.getUrl();
-    console.log(title,subtitle);
 
     let postDetails = {
       title,
       subtitle,
-      post : this.blog_content,
-      url
+      post: this.blog_content,
+      url,
+    };
+    if (this.edit == true) {
+      this.editBlog(postDetails);
+      return;
     }
-    this.api.post(postDetails).subscribe((response) => {
-      if('message' in response && response.message === 'ok'){
-        this.toast.success("Posted successfully");
-        this.router.navigate(["/userblog"]);
-      }
-    }, (err) => {
-        this.toast.error("Post unsuccessful");
+
+    this.api.post(postDetails).subscribe(
+      (response) => {
+        if ('message' in response && response.message === 'ok') {
+          this.toast.success('Posted successfully');
+          this.router.navigate(['/userblog']);
+        }
+      },
+      (err) => {
+        this.toast.error('Post unsuccessful');
         console.log(err);
-    });
+      }
+    );
+  }
+  editBlog(postDetails: any) {
+    postDetails = {
+      ...postDetails,
+      post_id: this.id,
+    };
+    this.api.editPost(postDetails).subscribe(
+      (response) => {
+        if ('message' in response && response.message === 'ok') {
+          this.toast.success('Posted edited successfully');
+          this.router.navigate(['/userblog']);
+        }
+      },
+      (err) => {
+        this.toast.error('Edit unsuccessful');
+        console.log(err);
+      }
+    );
   }
   countLinksInEditor(): any {
     const content = this.editor.root.innerHTML;
@@ -199,39 +267,6 @@ export class TexteditorComponent implements OnInit {
       videoButton.disabled = false;
     }
   }
-  getTitle(){
-    let regTitle = /<h[1-6][^>]*>.*?<\/h[1-6]>/g;
-    const content = this.blog_content;
-    let match;
-    let ListOfHeadings : any = [];
-    while ((match = regTitle.exec(content)) !== null) {
-      ListOfHeadings.push(match);
-    }
-    let val = '';
-    if(ListOfHeadings.length !== 0){
-      val = ListOfHeadings[0][0];
-      this.blog_content = content.replace(val,"");
-      val = val.replace(/<(\/)?(?:b|i|u|s|span|sub|sup|h[1-6]|em)[^>]*>/g, '');
-    }
-    return val;
-  }
-  getSubTitle(){
-    let regTitle = /<h[1-6][^>]*>.*?<\/h[1-6]>/g;
-    let content = this.blog_content;
-    let match;
-    let ListOfHeadings : any = [];
-    while ((match = regTitle.exec(content)) !== null) {
-      ListOfHeadings.push(match);
-    }
-    let val = '';
-    if(ListOfHeadings.length !== 0){
-      console.log(ListOfHeadings);
-      val = ListOfHeadings[0][0];
-      this.blog_content = content.replace(val,"");
-      val = val.replace(/<(\/)?(?:b|i|u|s|span|sub|sup|h[1-6]|em)[^>]*>/g, '');
-    }
-    return val;
-  }
   async preview() {
     const modal = await this.modalCtrl.create({
       component: PreviewComponent,
@@ -247,25 +282,22 @@ export class TexteditorComponent implements OnInit {
     this.router.navigate(['/userblog']);
   }
 
-getUrl(){
-  // Load the HTML content using cheerio
-  const $ = cheerio.load(this.blog_content);
+  getUrl() {
+    // Load the HTML content using cheerio
+    const $ = cheerio.load(this.blog_content);
 
-  // Find the iframe element
-  const iframe = $('iframe');
+    // Find the iframe element
+    const iframe = $('iframe');
 
-  // Check if an iframe element is found
-  if (iframe.length > 0) {
-    // Get the value of the src attribute
-    this.blog_content = this.blog_content.replace(iframe.toString(),"");
-    console.log(this.blog_content);
-    const srcValue = iframe.attr('src');
-    console.log(srcValue);
-    return srcValue || null;
-  } else {
-    // Return null if no iframe element is found
-    return null;
+    // Check if an iframe element is found
+    if (iframe.length > 0) {
+      // Get the value of the src attribute
+      this.blog_content = this.blog_content.replace(iframe.toString(), '');
+      const srcValue = iframe.attr('src');
+      return srcValue || null;
+    } else {
+      // Return null if no iframe element is found
+      return null;
+    }
   }
-}
-
 }

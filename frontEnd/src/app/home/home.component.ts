@@ -72,7 +72,7 @@ export class HomeComponent implements OnInit {
   }
   
   openBlog(post_id : any){
-    this.router.navigate(['/blog-details'], { queryParams: { id : post_id} });
+    this.router.navigate(['/blogdetails'], { queryParams: { id : post_id} });
   }
 
   showSlides(): void {

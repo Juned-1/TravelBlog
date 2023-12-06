@@ -53,7 +53,7 @@ const routeConfig: Routes = [
     }
   },
   {
-    path : 'blog-details',
+    path : 'blogdetails',
     component  : BlogComponent,
     canActivate : [Authguard],
     data : {

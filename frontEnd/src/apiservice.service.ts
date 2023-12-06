@@ -34,4 +34,7 @@ export class APIService {
   deletePost(search : number){
     return this.http.get("http://localhost:8081/deletePost?search="+search,{withCredentials : true});
   }
+  editPost(data : any){
+    return this.http.post('http://localhost:8081/editPost',data,{withCredentials : true});
+  }
 }

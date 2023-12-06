@@ -1,6 +1,6 @@
 <app-toolbar [isLoggedIn]="isLoggedIn"></app-toolbar>
 <ion-content>
-  <div id="empty-msg-container" *ngIf="blogCount===0">
+  <div id="empty-msg-container" *ngIf="blogCount === 0">
     <div id="empty-msg">
       <ion-card-title color="light">Travel Blogs is empty!</ion-card-title>
     </div>
@@ -8,11 +8,12 @@
   <ion-grid>
     <ion-row>
       <ion-col
-      size = "12"
-      sizeMd="6"
+        size="12"
+        sizeMd="6"
         *ngFor="let post of posts"
         class="home-cards"
-        (click)="openBlog(post.post_id)">
+        (click)="openBlog(post.post_id)"
+      >
         <ion-card>
           <ion-card-header>
             <div>
@@ -21,14 +22,35 @@
                 [innerHTML]="post.post_subtitle"
               ></ion-card-subtitle>
               <div id="blog-info">
-                <span id="blog-author">{{post.firstName + ' ' + post.lastName}}</span>
-                <span id="blog-date">{{post.post_time}}</span>
+                <span id="blog-author">{{
+                  post.firstName + " " + post.lastName
+                }}</span>
+                <span id="blog-date">{{ post.post_time }}</span>
               </div>
             </div>
-            <img id="blog-img" *ngIf="post.imageURL" [src]="post.imageURL" alt="Blog Post Image" 
+            <img
+              id="blog-img"
+              *ngIf="post.imageURL"
+              [src]="post.imageURL"
+              alt="Blog Post Image"
             />
           </ion-card-header>
-          <ion-button id="{{post.post_id}}" color="danger" fill="clear" (click)="deleteBlog($event)">Delete</ion-button>
+          <ion-buttons>
+            <ion-button
+              id="{{ post.post_id }}"
+              color="danger"
+              fill="clear"
+              (click)="deleteBlog($event)"
+              >Delete</ion-button
+            >
+            <ion-button
+              id="{{ post.post_id }}"
+              color="success"
+              fill="clear"
+              (click)="editBlog($event)"
+              >Edit</ion-button
+            >
+          </ion-buttons>
         </ion-card>
       </ion-col>
     </ion-row>

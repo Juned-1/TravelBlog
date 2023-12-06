@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
+import { InfiniteScrollCustomEvent, IonicModule } from '@ionic/angular';
 import { SearchbarComponent } from '../searchbar/searchbar.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -37,7 +37,7 @@ export class HomeComponent implements OnInit {
     );
   }
   ngAfterViewInit() {
-    this.api.getPost()?.subscribe((response) => {
+    this.api.getPost(0)?.subscribe((response) => {
      if('result' in response){
       this.posts = response.result;
       for (let post of this.posts) {
@@ -92,6 +92,34 @@ export class HomeComponent implements OnInit {
 
     (slides[this.slideIndex - 1] as HTMLElement).style.display = 'block';
     this.timeoutid = setTimeout(() => this.showSlides(), 3000); // Change image every 3 seconds
+  }
+
+  onIonInfinite(ev:any) {
+    // this.getPosts();
+    this.api.getPost(this.posts.length)?.subscribe((response) => {
+      if('result' in response){
+       let morePost :any = response.result;
+       for (let post of morePost) {
+         post.post_time = new Date(post.post_time).toDateString().toString();
+ 
+         // Extract the first image URL from post.post_content
+         let imageURL = this.extractFirstImageURL(post.post_content);
+         if (imageURL === null) {
+           imageURL = '../../assets/travelImage/no-image.jpg';
+         }
+         imageURL = (this.sanitizer.bypassSecurityTrustResourceUrl(imageURL) as any).changingThisBreaksApplicationSecurity;
+         post.imageURL = imageURL;
+       }
+       this.posts.push(...morePost);
+      }
+     },
+     (err) => {
+       console.log(err);
+     });
+
+    setTimeout(() => {
+      (ev as InfiniteScrollCustomEvent).target.complete();
+    }, 500);
   }
   ngOnDestroy(){
     clearTimeout(this.timeoutid);

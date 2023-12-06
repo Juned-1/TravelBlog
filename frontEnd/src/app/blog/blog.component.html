@@ -1,13 +1,4 @@
 <app-toolbar [isLoggedIn]="isLoggedIn"></app-toolbar>
-<!-- <ion-content class="ion-padding-horizontal">
-  <div style="overflow: hidden;">
-    <quill-view id="content" *ngIf="posts !== undefined" [content]="posts.post_content"></quill-view>
-  </div>
-  <div>
-    <p *ngIf="posts !== undefined">Author : {{posts.firstName + ' ' + posts.lastName}}</p>
-    <p *ngIf="posts !== undefined">Date : {{posts.post_time}}</p>
-  </div>
-</ion-content> -->
 <ion-content class="ion-padding-horizontal">
   <div id="blog-content-container">
     <div>
@@ -22,12 +13,24 @@
         [innerHTML]="post.post_subtitle"
       ></h2>
       <div id="extra-details">
-        <span id="blog-author" *ngIf="post !== undefined"><strong>{{
-           post.firstName + " " + post.lastName 
-        }}</strong></span>
-        <span id="blog-date" *ngIf="post !== undefined"><strong>{{
-          time
-        }}</strong></span>
+        <span id="blog-author" *ngIf="post !== undefined"
+          ><strong>{{ post.firstName + " " + post.lastName }}</strong></span
+        >
+        <span id="blog-date" *ngIf="post !== undefined"
+          ><strong>{{ time }}</strong></span
+        >
+        <span>
+          <ion-buttons slot="end">
+            <ion-button (click)="like()">
+              <ion-icon id="like" slot="icon-only" name="thumbs-up" ></ion-icon>
+            </ion-button>
+            {{likes}}
+            <ion-button id="dislike" (click)="dislike()">
+              <ion-icon slot="icon-only" name="thumbs-down"></ion-icon>
+            </ion-button>
+            {{dislikes}}
+          </ion-buttons>
+        </span>
       </div>
     </div>
 
@@ -37,7 +40,16 @@
       [innerHTML]="content"
     ></div>
     <!-- <iframe class="e2e-iframe-trusted-src" *ngIf="post !== undefined" [src]="url" frameborder="0"></iframe> -->
-    <iframe id="embedded_video" *ngIf="post !== undefined && url != null && url != undefined" class="e2e-iframe-trusted-src" allowfullscreen="true" width="640" height="390" [src]="url" title="trusted video url"></iframe>
+    <iframe
+      id="embedded_video"
+      *ngIf="post !== undefined && url != null && url != undefined"
+      class="e2e-iframe-trusted-src"
+      allowfullscreen="true"
+      width="640"
+      height="390"
+      [src]="url"
+      title="trusted video url"
+    ></iframe>
   </div>
-  <br>
+  <br />
 </ion-content>

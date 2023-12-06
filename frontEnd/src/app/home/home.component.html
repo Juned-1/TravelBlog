@@ -76,6 +76,9 @@
           </ion-card-header>
         </ion-card>
       </ion-col>
+      <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)">
+        <ion-infinite-scroll-content></ion-infinite-scroll-content>
+      </ion-infinite-scroll>
     </ion-row>
   </ion-grid>
 </ion-content>

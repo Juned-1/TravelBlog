@@ -10,6 +10,7 @@ import { userPost } from "./userPost.js";
 import { getSpecificPost } from "./getSpecificPost.js";
 import { deletePost } from "./deletePost.js";
 import { editPost } from "./editPost.js";
+import { likedislike } from "./likedislike.js";
 const appRouter = Router();
 
 appRouter.post("/signup",validate(signUpValidator),userSignup);
@@ -22,4 +23,5 @@ appRouter.get("/userPost",userPost);
 appRouter.get("/getSpecificPost",getSpecificPost);
 appRouter.get("/deletePost",deletePost);
 appRouter.post("/editPost",editPost);
+appRouter.post("/likedislike",likedislike);
 export default appRouter;

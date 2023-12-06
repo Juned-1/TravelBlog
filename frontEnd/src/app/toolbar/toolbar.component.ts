@@ -55,6 +55,4 @@ export class ToolbarComponent implements OnInit {
     if(e.detail.value == 'myblogs')  this.routeToMyBlogs();
   }
 }
-// interface SelectChangeEventDetail<T = any> {
-//   value: T;
-// }
+

@@ -22,8 +22,8 @@ export class APIService {
   post(data : any){
     return this.http.post('http://localhost:8081/writePost',data,{withCredentials : true});
   }
-  getPost(){
-    return this.http.get("http://localhost:8081/getPost",{withCredentials : true});
+  getPost(offset:number){
+    return this.http.get("http://localhost:8081/getPost?offset="+offset,{withCredentials : true});
   }
   userPost(){
     return this.http.get("http://localhost:8081/userPost",{withCredentials : true});
@@ -36,5 +36,8 @@ export class APIService {
   }
   editPost(data : any){
     return this.http.post('http://localhost:8081/editPost',data,{withCredentials : true});
+  }
+  like_dislike(data : any){
+    return this.http.post('http://localhost:8081/likedislike',data,{withCredentials : true});
   }
 }

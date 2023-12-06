@@ -39,15 +39,21 @@ p {
   margin-right: 20px;
   text-decoration: solid;
   color: #777777;
+  padding-top: 8px;
 }
 #blog-date {
   // font-size: 14px;
   color: #777777;
   text-decoration: solid;
   margin-bottom: 10px;
+  padding-top: 8px;
 }
 #extra-details{
   // margin-bottom: 8px;
+  display: grid;
+  grid-template-columns: 2fr 2fr 5fr;
+  // grid-auto-columns: 60px;
+
 }
 #embedded_video{
   display: block;

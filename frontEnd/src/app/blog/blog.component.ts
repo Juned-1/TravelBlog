@@ -24,6 +24,8 @@ export class BlogComponent  implements OnInit, OnDestroy, AfterViewInit {
   time:String="";
   content: string = "";
   url:any=null;
+  likes:number=0;
+  dislikes:number=0;
   constructor(private route: ActivatedRoute, private sanitizer: DomSanitizer, private router : Router, private api : APIService, private toast : ToastrService) {
 
   }
@@ -52,11 +54,40 @@ export class BlogComponent  implements OnInit, OnDestroy, AfterViewInit {
       if(this.post.post_video_url){
         this.url = this.sanitizer.bypassSecurityTrustResourceUrl(this.post.post_video_url);
       }
-  
+      this.likes = this.post.like_count;
+      this.dislikes = this.post.dislike_count;
+      console.log(this.likes,this.dislikes);
     },(err) => {
       this.toast.error("Error loading post");
       // console.log(err);
     })
+  }
+  sendLikeDislike(val:boolean){
+    this.api.like_dislike({post_id:this.id,val}).subscribe((response) =>{
+      if ('message' in response && response.message === 'ok') {
+        this.toast.success('success');
+        this.ngAfterViewInit();
+      }
+    },(err) => {
+      this.toast.error("Error");
+      // console.log(err);
+    })
+  }
+  like(){
+    if(!this.isLoggedIn){
+      this.toast.warning('Sign in to like');
+      return;
+    }
+    let val = true;
+    this.sendLikeDislike(val);
+  }
+  dislike(){
+    if(!this.isLoggedIn){
+      this.toast.warning('Sign in to dislike');
+      return;
+    }
+    let val = false;
+    this.sendLikeDislike(val);
   }
   ngOnDestroy(): void {
   }

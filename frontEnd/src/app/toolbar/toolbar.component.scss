@@ -69,7 +69,10 @@ ion-select::part(icon) {
   color: #971e49;
   opacity: 1;
 }
+#new-background-color{
+  --background: linear-gradient(90deg, rgb(177, 202, 218) 12.9%, rgb(247, 224, 229) 91.2%);
 
+}
 @media screen and (max-width: 768px) {
   #dropdown{
     display: block;

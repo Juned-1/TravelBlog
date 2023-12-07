@@ -2,7 +2,6 @@ import { COOKIE_NAME } from "../utils/constants.js";
 import { conn } from "../utils/dbconnection.js";
 export const getPost = async(req,res,next) => {
     let offsetValue = +req.query.offset;
-    console.log(offsetValue);
     let sql = "SELECT posts.post_id, posts.post_title, posts.post_subtitle, posts.post_content, posts.post_video_url, users.firstName, users.lastName, posts.post_time FROM users,posts WHERE users.id = posts.user_id ORDER BY posts.post_time DESC LIMIT 10 OFFSET ?;";
     // const searchQuery = req.body.search;
     // if(searchQuery){

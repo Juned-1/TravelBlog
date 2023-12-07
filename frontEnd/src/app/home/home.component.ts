@@ -119,7 +119,7 @@ export class HomeComponent implements OnInit {
 
     setTimeout(() => {
       (ev as InfiniteScrollCustomEvent).target.complete();
-    }, 500);
+    }, 300);
   }
   ngOnDestroy(){
     clearTimeout(this.timeoutid);

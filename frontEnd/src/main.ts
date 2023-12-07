@@ -27,7 +27,7 @@ bootstrapApplication(AppComponent, {
       provideRouter(routeConfig),
       APIService, importProvidersFrom(HttpClientModule),
       ToastrService, importProvidersFrom(ToastrModule.forRoot({
-        positionClass : 'toast-top-right',
+        positionClass : 'toast-bottom-right',
         timeOut : 3000,
         closeButton : true,
       }))

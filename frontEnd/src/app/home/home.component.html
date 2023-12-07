@@ -1,7 +1,6 @@
 <app-toolbar [isLoggedIn]="isLoggedIn"></app-toolbar>
 <ion-content>
   <header class="header">
-      
       <div class="header__title">
         <h1>
           When
@@ -23,7 +22,6 @@
           style="width: 100%"
         />
       </div>
-
       <div class="mySlides fade">
         <img
           class="slide-img"
@@ -31,7 +29,6 @@
           style="width: 100%"
         />
       </div>
-
       <div class="mySlides fade">
         <img
           class="slide-img"
@@ -40,19 +37,17 @@
         />
       </div>
     </div>
-    <br />
   </header>
-<hr>
-  <ion-grid>
+  <ion-grid >
     <ion-row>
-      <ion-col
+      <ion-col 
         size="12"
         sizeMd="6"
         *ngFor="let post of posts"
         class="home-cards"
         (click)="openBlog(post.post_id)"
       >
-        <ion-card>
+        <ion-card class="post">
           <ion-card-header>
             <div>
               <ion-card-title [innerHTML]="post.post_title"></ion-card-title>

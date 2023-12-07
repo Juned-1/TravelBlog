@@ -12,6 +12,7 @@ export const getSpecificPost = async(req,res,next) => {
                 p.post_subtitle,
                 p.post_content,
                 p.post_time,
+                p.post_video_url,
                 COUNT(CASE WHEN pl.reaction_type = TRUE THEN 1 ELSE NULL END) AS like_count,
                 COUNT(CASE WHEN pl.reaction_type = FALSE THEN 1 ELSE NULL END) AS dislike_count
             FROM

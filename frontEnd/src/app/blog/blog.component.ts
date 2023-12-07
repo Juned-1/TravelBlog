@@ -15,20 +15,30 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './blog.component.html',
   styleUrls: ['./blog.component.scss'],
   standalone: true,
-  imports: [IonicModule, MatToolbarModule, CommonModule,ToolbarComponent,QuillModule]
+  imports: [
+    IonicModule,
+    MatToolbarModule,
+    CommonModule,
+    ToolbarComponent,
+    QuillModule,
+  ],
 })
-export class BlogComponent  implements OnInit, OnDestroy, AfterViewInit {
+export class BlogComponent implements OnInit, OnDestroy, AfterViewInit {
   isLoggedIn = true;
-  id! : number;
-  post:any;
-  time:String="";
-  content: string = "";
-  url:any=null;
-  likes:number=0;
-  dislikes:number=0;
-  constructor(private route: ActivatedRoute, private sanitizer: DomSanitizer, private router : Router, private api : APIService, private toast : ToastrService) {
-
-  }
+  id!: number;
+  post: any;
+  time: String = '';
+  content: string = '';
+  url: any = null;
+  likes: number = 0;
+  dislikes: number = 0;
+  constructor(
+    private route: ActivatedRoute,
+    private sanitizer: DomSanitizer,
+    private router: Router,
+    private api: APIService,
+    private toast: ToastrService
+  ) {}
   ngOnInit() {
     this.api.authorise().subscribe(
       (response) => {
@@ -44,51 +54,58 @@ export class BlogComponent  implements OnInit, OnDestroy, AfterViewInit {
     );
     this.id = this.route.snapshot.queryParams['id'];
   }
-  ngAfterViewInit(){
+  ngAfterViewInit() {
     //this.id = localStorage.getItem()
-    this.api.getSpecificPost(this.id).subscribe((response) => {
-      const data = JSON.parse(JSON.stringify(response));
-      this.post = data.result[0];
-      this.content = this.post.post_content;
-      this.time = new Date(this.post.post_time).toDateString().toString();
-      if(this.post.post_video_url){
-        this.url = this.sanitizer.bypassSecurityTrustResourceUrl(this.post.post_video_url);
+    this.api.getSpecificPost(this.id).subscribe(
+      (response) => {
+        const data = JSON.parse(JSON.stringify(response));
+        this.post = data.result[0];
+        this.content = this.post.post_content;
+        this.time = new Date(this.post.post_time).toDateString().toString();
+        if (this.post.post_video_url) {
+          this.url = this.sanitizer.bypassSecurityTrustResourceUrl(
+            this.post.post_video_url
+          );
+        }
+        this.likes = this.post.like_count;
+        this.dislikes = this.post.dislike_count;
+        console.log(this.likes, this.dislikes);
+      },
+      (err) => {
+        this.toast.error('Error loading post');
+        // console.log(err);
       }
-      this.likes = this.post.like_count;
-      this.dislikes = this.post.dislike_count;
-      console.log(this.likes,this.dislikes);
-    },(err) => {
-      this.toast.error("Error loading post");
-      // console.log(err);
-    })
+    );
   }
-  sendLikeDislike(val:boolean){
-    this.api.like_dislike({post_id:this.id,val}).subscribe((response) =>{
-      if ('message' in response && response.message === 'ok') {
-        this.toast.success('success');
-        this.ngAfterViewInit();
+  sendLikeDislike(val: boolean) {
+    this.api.like_dislike({ post_id: this.id, val }).subscribe(
+      (response) => {
+        if ('message' in response && response.message === 'ok') {
+          this.toast.success('success');
+          this.ngAfterViewInit();
+        }
+      },
+      (err) => {
+        this.toast.error('Error');
+        // console.log(err);
       }
-    },(err) => {
-      this.toast.error("Error");
-      // console.log(err);
-    })
+    );
   }
-  like(){
-    if(!this.isLoggedIn){
+  like() {
+    if (!this.isLoggedIn) {
       this.toast.warning('Sign in to like');
       return;
     }
     let val = true;
     this.sendLikeDislike(val);
   }
-  dislike(){
-    if(!this.isLoggedIn){
+  dislike() {
+    if (!this.isLoggedIn) {
       this.toast.warning('Sign in to dislike');
       return;
     }
     let val = false;
     this.sendLikeDislike(val);
   }
-  ngOnDestroy(): void {
-  }
+  ngOnDestroy(): void {}
 }

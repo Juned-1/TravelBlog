@@ -1,13 +1,13 @@
 <app-toolbar [isLoggedIn]="isLoggedIn"></app-toolbar>
-<ion-content>
+<ion-content >
   <div id="empty-msg-container" *ngIf="blogCount === 0">
     <div id="empty-msg">
       <ion-card-title color="light">Travel Blogs is empty!</ion-card-title>
     </div>
   </div>
-  <ion-grid>
+  <ion-grid >
     <ion-row>
-      <ion-col
+      <ion-col 
         size="12"
         sizeMd="6"
         *ngFor="let post of posts"

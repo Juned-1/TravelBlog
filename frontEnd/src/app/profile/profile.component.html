@@ -1,0 +1,84 @@
+<app-toolbar [isLoggedIn]="isLoggedIn"></app-toolbar>
+<ion-content>
+  <div class="container">
+    <h2 class="heading">Your Profile</h2>
+    <p class="para">You can edit your profile!</p>
+    <form>
+      <ion-item lines="none" class="ion-item">
+        <fieldset class="input-item">
+          <legend>First Name</legend>
+          <ion-input
+            type="text"
+            name="firstName"
+            [(ngModel)]="formData.firstName"
+            required
+            placeholder="{{formData.firstName}}"
+          ></ion-input>
+        </fieldset>
+      </ion-item>
+      <ion-item lines="none" class="ion-item">
+        <fieldset class="input-item">
+          <legend>Last Name</legend>
+          <ion-input
+            type="text"
+            name="lastName"
+            [(ngModel)]="formData.lastName"
+            required
+            placeholder="{{formData.lastName}}"
+          ></ion-input>
+        </fieldset>
+      </ion-item>
+      <ion-item lines="none" class="ion-item">
+        <fieldset class="input-item">
+          <legend>Email Id</legend>
+          <ion-input
+            type="email"
+            name="email"
+            [(ngModel)]="formData.email"
+            required
+            placeholder="{{formData.email}}"
+          ></ion-input>
+        </fieldset>
+      </ion-item>
+      <ion-item lines="none" class="ion-item">
+        <fieldset class="input-item">
+          <legend>Date of Birth</legend>
+          <ion-input
+            type="date"
+            placeholder="{{formData.dob}}"
+            name="dateOfBirth"
+            [(ngModel)]="formData.dob"
+            required
+          ></ion-input>
+        </fieldset>
+      </ion-item>
+      <ion-item lines="none" class="ion-item">
+        <!--Gender input-->
+        <fieldset class="input-item">
+          <!-- <legend>Gender</legend> -->
+          <ion-select justify="space-between" label="Gender" [(ngModel)]="formData.gender" name="gender" required interface="popover" value="{{formData.gender}}">
+            <ion-select-option value="male">Male</ion-select-option>
+            <ion-select-option value="female">Female</ion-select-option>
+            <ion-select-option value="other">Other</ion-select-option>
+          </ion-select>
+        </fieldset>
+      </ion-item>
+      <ion-item lines="none" class="ion-item">
+        <fieldset class="input-item">
+          <legend>Password</legend>
+          <ion-input
+            type="password"
+            name="password"
+            [(ngModel)]="formData.password"
+            required
+            placeholder="{{formData.password}}"
+          ></ion-input>
+        </fieldset>
+      </ion-item>
+      <br>
+      <ion-button class="signup-button" (click)="makeChanges()" expand="block"
+        >Make changes</ion-button
+      >
+    </form>
+  </div>
+</ion-content>

@@ -6,6 +6,7 @@ import { LoginComponent } from './login/login.component';
 import { Authguard } from './authorization/authguard';
 import { MyblogsComponent } from './myblogs/myblogs.component';
 import { BlogComponent } from './blog/blog.component';
+import { ProfileComponent } from './profile/profile.component';
 
 const routeConfig: Routes = [
   {
@@ -58,6 +59,14 @@ const routeConfig: Routes = [
     canActivate : [Authguard],
     data : {
       userType : 'guest'
+    }
+  },
+  {
+    path : 'profile',
+    component: ProfileComponent,
+    canActivate : [Authguard],
+    data : {
+      userType : 'logged-in'
     }
   }
 ];

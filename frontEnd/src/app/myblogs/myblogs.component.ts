@@ -8,12 +8,13 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { APIService } from 'src/apiservice.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
+import { MyblogsBlogCardComponent } from "./myblogs-blog-card/myblogs-blog-card.component";
 @Component({
-  selector: 'app-myblogs',
-  templateUrl: 'myblogs.component.html',
-  styleUrls: ['myblogs.component.scss'],
-  standalone: true,
-  imports: [IonicModule, MatToolbarModule, CommonModule, ToolbarComponent],
+    selector: 'app-myblogs',
+    templateUrl: 'myblogs.component.html',
+    styleUrls: ['myblogs.component.scss'],
+    standalone: true,
+    imports: [IonicModule, MatToolbarModule, CommonModule, ToolbarComponent, MyblogsBlogCardComponent]
 })
 export class MyblogsComponent implements OnInit, AfterViewInit {
   isLoggedIn = true;
@@ -83,25 +84,5 @@ export class MyblogsComponent implements OnInit, AfterViewInit {
     this.router.navigate(['/texteditor']);
   }
 
-  deleteBlog(e: any) {
-    e.stopPropagation();
-    const id = e.srcElement.id;
-    this.api.deletePost(id).subscribe(
-      (response) => {
-        const data = JSON.parse(JSON.stringify(response));
-        this.toast.success('Successfully Deleted');
-        // this.router.navigate(['/userblog']);
-        this.ngAfterViewInit();
-      },
-      (err) => {
-        this.toast.error('Error deleting post');
-        console.log(err);
-      }
-    );
-  }
-  editBlog(e: any){
-    e.stopPropagation();
-    const id = e.srcElement.id;
-    this.router.navigate(['/texteditor'],{ queryParams: { id: id} });
-  } 
+  
 }

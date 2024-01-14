@@ -7,26 +7,39 @@ import { CommonModule } from '@angular/common';
 import { APIService } from 'src/apiservice.service';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
 import { DomSanitizer } from '@angular/platform-browser';
+import { BlogCardHomeComponent } from './blog-card-home/blog-card-home.component';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  imports:[IonicModule, SearchbarComponent, MatToolbarModule, CommonModule, ToolbarComponent],
-  standalone: true
+  standalone: true,
+  imports: [
+    IonicModule,
+    SearchbarComponent,
+    MatToolbarModule,
+    CommonModule,
+    ToolbarComponent,
+    BlogCardHomeComponent,
+  ],
 })
 export class HomeComponent implements OnInit {
-  slideIndex : number = 0;
-  posts! : any;
+  slideIndex: number = 0;
+  posts!: any;
   isLoggedIn = false;
   timeoutid: any = 0;
-  constructor(private route : ActivatedRoute, private router : Router, private api : APIService, private sanitizer : DomSanitizer) {
-  }
+  // blogCount = 0;
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private api: APIService,
+    private sanitizer: DomSanitizer
+  ) {}
   ngOnInit(): void {
     this.showSlides();
     this.api.authorise().subscribe(
       (response) => {
         const data = JSON.parse(JSON.stringify(response));
-        if(data.message === "Token verified"){
+        if (data.message === 'Token verified') {
           this.isLoggedIn = true;
         }
       },
@@ -37,30 +50,36 @@ export class HomeComponent implements OnInit {
     );
   }
   ngAfterViewInit() {
-    this.api.getPost(0)?.subscribe((response) => {
-     if('result' in response){
-      this.posts = response.result;
-      for (let post of this.posts) {
-        post.post_time = new Date(post.post_time).toDateString().toString();
+    this.api.getPost(0)?.subscribe(
+      (response) => {
+        if ('result' in response) {
+          this.posts = response.result;
+          for (let post of this.posts) {
+            // this.blogCount++;
+            post.post_time = new Date(post.post_time).toDateString().toString();
 
-        // Extract the first image URL from post.post_content
-        let imageURL = this.extractFirstImageURL(post.post_content);
-        if (imageURL === null) {
-          imageURL = '../../assets/travelImage/no-image.jpg';
+            // Extract the first image URL from post.post_content
+            let imageURL = this.extractFirstImageURL(post.post_content);
+            if (imageURL === null) {
+              imageURL = '../../assets/travelImage/no-image.jpg';
+            }
+            imageURL = (
+              this.sanitizer.bypassSecurityTrustResourceUrl(imageURL) as any
+            ).changingThisBreaksApplicationSecurity;
+            post.imageURL = imageURL;
+          }
         }
-        imageURL = (this.sanitizer.bypassSecurityTrustResourceUrl(imageURL) as any).changingThisBreaksApplicationSecurity;
-        post.imageURL = imageURL;
+      },
+      (err) => {
+        console.log(err);
       }
-     }
-    },
-    (err) => {
-      console.log(err);
-    });
+    );
   }
 
-  goToEditor(){
+  goToEditor() {
     this.router.navigate(['/texteditor']);
   }
+
   extractFirstImageURL(postContent: string): string | null {
     const regex = /<img src="(.*?)"/g;
     const match = regex.exec(postContent);
@@ -70,9 +89,9 @@ export class HomeComponent implements OnInit {
       return null;
     }
   }
-  
-  openBlog(post_id : any){
-    this.router.navigate(['/blogdetails'], { queryParams: { id : post_id} });
+
+  openBlog(post_id: any) {
+    this.router.navigate(['/blogdetails'], { queryParams: { id: post_id } });
   }
 
   showSlides(): void {
@@ -94,34 +113,38 @@ export class HomeComponent implements OnInit {
     this.timeoutid = setTimeout(() => this.showSlides(), 3000); // Change image every 3 seconds
   }
 
-  onIonInfinite(ev:any) {
+  onIonInfinite(ev: any) {
     // this.getPosts();
-    this.api.getPost(this.posts.length)?.subscribe((response) => {
-      if('result' in response){
-       let morePost :any = response.result;
-       for (let post of morePost) {
-         post.post_time = new Date(post.post_time).toDateString().toString();
- 
-         // Extract the first image URL from post.post_content
-         let imageURL = this.extractFirstImageURL(post.post_content);
-         if (imageURL === null) {
-           imageURL = '../../assets/travelImage/no-image.jpg';
-         }
-         imageURL = (this.sanitizer.bypassSecurityTrustResourceUrl(imageURL) as any).changingThisBreaksApplicationSecurity;
-         post.imageURL = imageURL;
-       }
-       this.posts.push(...morePost);
+    this.api.getPost(this.posts.length)?.subscribe(
+      (response) => {
+        if ('result' in response) {
+          let morePost: any = response.result;
+          for (let post of morePost) {
+            post.post_time = new Date(post.post_time).toDateString().toString();
+
+            // Extract the first image URL from post.post_content
+            let imageURL = this.extractFirstImageURL(post.post_content);
+            if (imageURL === null) {
+              imageURL = '../../assets/travelImage/no-image.jpg';
+            }
+            imageURL = (
+              this.sanitizer.bypassSecurityTrustResourceUrl(imageURL) as any
+            ).changingThisBreaksApplicationSecurity;
+            post.imageURL = imageURL;
+          }
+          this.posts.push(...morePost);
+        }
+      },
+      (err) => {
+        console.log(err);
       }
-     },
-     (err) => {
-       console.log(err);
-     });
+    );
 
     setTimeout(() => {
       (ev as InfiniteScrollCustomEvent).target.complete();
     }, 300);
   }
-  ngOnDestroy(){
+  ngOnDestroy() {
     clearTimeout(this.timeoutid);
   }
 }

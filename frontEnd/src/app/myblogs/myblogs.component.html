@@ -14,44 +14,7 @@
         class="home-cards"
         (click)="openBlog(post.post_id)"
       >
-        <ion-card>
-          <ion-card-header>
-            <div>
-              <ion-card-title [innerHTML]="post.post_title"></ion-card-title>
-              <ion-card-subtitle
-                [innerHTML]="post.post_subtitle"
-              ></ion-card-subtitle>
-              <div id="blog-info">
-                <span id="blog-author">{{
-                  post.firstName + " " + post.lastName
-                }}</span>
-                <span id="blog-date">{{ post.post_time }}</span>
-              </div>
-            </div>
-            <img
-              id="blog-img"
-              *ngIf="post.imageURL"
-              [src]="post.imageURL"
-              alt="Blog Post Image"
-            />
-          </ion-card-header>
-          <ion-buttons>
-            <ion-button
-              id="{{ post.post_id }}"
-              color="danger"
-              fill="clear"
-              (click)="deleteBlog($event)"
-              >Delete</ion-button
-            >
-            <ion-button
-              id="{{ post.post_id }}"
-              color="success"
-              fill="clear"
-              (click)="editBlog($event)"
-              >Edit</ion-button
-            >
-          </ion-buttons>
-        </ion-card>
+        <app-myblogs-blog-card [post]="post"></app-myblogs-blog-card>
       </ion-col>
     </ion-row>
   </ion-grid>

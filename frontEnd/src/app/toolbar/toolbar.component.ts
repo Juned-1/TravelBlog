@@ -54,5 +54,8 @@ export class ToolbarComponent implements OnInit {
     if(e.detail.value == 'signup')  this.signup();
     if(e.detail.value == 'myblogs')  this.routeToMyBlogs();
   }
+  routeToProfile(){
+    this.router.navigate(['/profile']);
+  }
 }
 

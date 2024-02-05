@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { COOKIE_NAME } from "../utils/constants.js";
+import { COOKIE_NAME } from "../../utils/constants.js";
 import { conn } from "../utils/dbconnection.js";
 export const userPost = async(req, res, next) => {
     const token = req.signedCookies[`${COOKIE_NAME}`];

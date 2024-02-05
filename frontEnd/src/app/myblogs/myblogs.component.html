@@ -10,12 +10,15 @@
       <ion-col 
         size="12"
         sizeMd="6"
-        *ngFor="let post of posts"
+        *ngFor="let post of posts; trackBy: trackByPostId"
         class="home-cards"
-        (click)="openBlog(post.post_id)"
+        (click)="openBlog(post.id)"
       >
-        <app-myblogs-blog-card [post]="post"></app-myblogs-blog-card>
+        <app-myblogs-blog-card [post]="post" (deleteEvent)="onDeletePost($event)"></app-myblogs-blog-card>
       </ion-col>
+      <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)">
+        <ion-infinite-scroll-content></ion-infinite-scroll-content>
+      </ion-infinite-scroll>
     </ion-row>
   </ion-grid>
   <div class="fixed-fab-container">

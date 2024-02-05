@@ -5,12 +5,12 @@
       <h1
         id="blog-heading"
         *ngIf="post !== undefined"
-        [innerHTML]="post.post_title"
+        [innerHTML]="post.title"
       ></h1>
       <h2
         id="blog-subheading"
         *ngIf="post !== undefined"
-        [innerHTML]="post.post_subtitle"
+        [innerHTML]="post.subtitle"
       ></h2>
       <div id="extra-details">
         <span id="blog-author" *ngIf="post !== undefined"

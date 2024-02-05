@@ -32,21 +32,36 @@ export class LoginComponent  implements OnInit {
   }
   login(){
     this.api.login(this.formData).subscribe((response)=>{
-      if('id' in response){
-        localStorage.setItem('travel-blog',String(response.id));
+      //console.log(response);
+      if('status' in response && response.status === 'success' && 'data' in response){
+        interface userData {
+          user: {
+            id: String;
+            email: String;
+            firstName: String;
+            lastName: String;
+          };
+        }
+        const Data = response.data as userData;
+        let fullName = '';
+        if(typeof Data.user.firstName === 'string' && typeof Data.user.lastName === 'string'){
+          fullName = Data.user.firstName + " " + Data.user.lastName
+        }
+        //console.log(fullName)
+        localStorage.setItem(
+          'travel-blog',
+          String(fullName)
+        );
       }
       this.toast.success("Login successful");
       this.router.navigate(["/"]);  
     },
     (err) => {
-      console.log(err);
-      if(err.status === 401){
-        this.toast.error(err.error);
-      }else if(err.status === 403){
-        this.toast.warning(err.error);
-      }else if(err.status = 422){
-        const data = JSON.parse(JSON.stringify(err.error.errors));
-        this.toast.warning(data[0].msg);
+      //console.log(err);
+      if(err.status === 401 && err.error.status === 'fail'){
+        this.toast.warning(err.error.message);
+      }else if(err.status = 422 && err.error.status === "error"){
+        this.toast.error(err.error.message);
       }
     }
     );

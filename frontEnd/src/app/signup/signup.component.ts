@@ -20,45 +20,75 @@ import { APIService } from 'src/apiservice.service';
     ToolbarComponent,
   ],
 })
-
-export class SignupComponent  implements OnInit {
+export class SignupComponent implements OnInit {
   isLoggedIn = false;
   formData = {
     firstName: '',
-    lastName : '',
+    lastName: '',
     email: '',
     password: '',
+    passwordConfirm: '',
     dob: '',
     gender: '',
   };
-  constructor(private route : ActivatedRoute, private router : Router, private api : APIService, private toast : ToastrService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private api: APIService,
+    private toast: ToastrService
+  ) {}
 
-  ngOnInit(): void {
-    
-  }
-  signup(){
-      this.api.signup(this.formData).subscribe((response)=>{
-        if('message' in response && response.message === 'ok' && 'result' in response){
-            localStorage.setItem('travel-blog',String(response.result));
-            this.toast.success("Signup Successful");
-            this.router.navigate(['/']);
+  ngOnInit(): void {}
+  signup() {
+    this.api.signup(this.formData).subscribe(
+      (response) => {
+        //console.log(response);
+        if (
+          'status' in response &&
+          response.status === 'success' &&
+          'data' in response
+        ) {
+          interface userData {
+            user: {
+              id: String;
+              firstName: String;
+              lastName: String;
+              email: String;
+              dob: Date;
+              gender: String;
+            };
+          }
+          const Data = response.data as userData;
+          let fullName = '';
+          if(typeof Data.user.firstName === 'string' && typeof Data.user.lastName === 'string'){
+            fullName = Data.user.firstName + " " + Data.user.lastName
+          }
+          //console.log(fullName)
+          localStorage.setItem(
+            'travel-blog',
+            String(fullName)
+          );
+          this.toast.success('Signup Successful');
+          this.router.navigate(['/']);
         }
-        if(response){
-        }
+        // if(response){
+        // }
       },
       (err) => {
-        console.log(err);
-        if(err.status === 401){
-          this.toast.error("User already registered");
-        }
-        else if(err.status === 422){
-          const data = JSON.parse(JSON.stringify(err.error.errors));
-          this.toast.warning(data[0].msg);
+        //console.log(err);
+        if (err.status === 422 && err.error.status === 'error') {
+          //const data = JSON.stringify(err.error.message);
+          this.toast.warning(err.error.message);
+        } else if (err.status === 400 && err.error.status === 'fail') {
+          //const data = err.error.message;
+          this.toast.warning(err.error.message);
+        } else if (err.status === 409 && err.error.status === 'fail') {
+          this.toast.warning(err.error.message);
         }
       }
-      );
+    );
   }
-  change(){
+  change() {
     this.router.navigate(['/login']);
   }
 }

@@ -75,6 +75,18 @@
           ></ion-input>
         </fieldset>
       </ion-item>
+      <ion-item lines="none" class="ion-item">
+        <fieldset class="input-item">
+          <legend>Confirm Password</legend>
+          <ion-input
+            type="password"
+            name="confirmPassword"
+            [(ngModel)]="formData.passwordConfirm"
+            required
+            placeholder="**********"
+          ></ion-input>
+        </fieldset>
+      </ion-item>
       <br>
       <p class="signin-text">
         I'm already a member&nbsp;<a (click)="change()">Sign In?</a>

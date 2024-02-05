@@ -1,31 +1,42 @@
-import jwt from "jsonwebtoken";
-import { COOKIE_NAME } from "./constants.js";
-export const createToken = (id, email, name, expiresIn) => {
-    const payload = {id,email,name};
-    const tokens = jwt.sign(payload,process.env.JWT_SECRET,{
-        expiresIn, //expires time
-    });
-    return tokens;
-}
-export const verifyToken = async (req, res, next) => {
-    //res.setHeader('Access-Control-Allow-Credentials',true);
-    const token = req.signedCookies[`${COOKIE_NAME}`];
-    if(!token || token.trim() == ""){
-        return res.status(401).json({message : "Token Not Received"});
-    }
-    return new Promise((resolve,reject) => {
-        return jwt.verify(token,process.env.JWT_SECRET,(err,status)=>{
-            if(err){
-                reject(err.message);
-                return res.status(401).json({message : "Token Expired"});
-            }else{
-                console.log("Token verification successful");
-                resolve();
-                res.locals.jwtData = "success";
-                return res.status(200).json({message : "Token verified"});
-                //return next(); //return to next middleware
-            }
-        });
+const jwt = require("jsonwebtoken");
+const { promisify } = require("util");
+const AppError = require("./appError");
+const { COOKIE_NAME } = require("./constants");
+const { jwtSecret } = require("../configuration");
+const catchAsync = require("./catchAsync");
 
-    })
-}
+exports.createToken = (id, email, name, expiresIn) => {
+  const payload = { id, email, name };
+  const tokens = jwt.sign(payload, process.env.JWT_SECRET, {
+    expiresIn, //expires time
+  });
+  return tokens;
+};
+exports.verifyToken = catchAsync(async (req, res, next) => {
+  const token = req.signedCookies[`${COOKIE_NAME}`];
+  // if (!token || token.trim() == "") {
+  //   return next(new AppError("Token not received", 401));
+  // }
+  //2. Verification of token
+  const decoded = await promisify(jwt.verify)(token, jwtSecret); //non async function which takes call back can be promisified
+  req.tokenData = decoded;
+  next();
+  //res.locals.jwtData = "success";
+
+});
+
+//authorization with token
+exports.authorize = catchAsync(async (req, res, next) => {
+  const token = req.signedCookies[`${COOKIE_NAME}`];
+  // if (!token || token.trim() == "") {
+  //   return next(new AppError("Token not received", 401));
+  // }
+  //2. Verification of token
+  await promisify(jwt.verify)(token, jwtSecret); //non async function which takes call back can be promisified
+  //next();
+  //res.locals.jwtData = "success";
+  return res.status(200).json({
+    status: "success",
+    message : "Token verified",
+  });
+});

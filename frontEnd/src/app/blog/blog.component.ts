@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl, SafeHtml } from '@angular/platform-browser';
 import { IonicModule } from '@ionic/angular';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
@@ -9,7 +9,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { QuillModule } from 'ngx-quill';
 import { APIService } from 'src/apiservice.service';
 import { ToastrService } from 'ngx-toastr';
-
+import { LikeObj, CountLike, LikeData, Post, PostData } from 'src/DataTypes';
 @Component({
   selector: 'app-blog',
   templateUrl: './blog.component.html',
@@ -25,10 +25,10 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class BlogComponent implements OnInit, OnDestroy, AfterViewInit {
   isLoggedIn = true;
-  id!: number;
-  post: any;
+  id!: string;
+  post!: Post;
   time: String = '';
-  content: string = '';
+  content: string | SafeHtml = '';
   url: any = null;
   likes: number = 0;
   dislikes: number = 0;
@@ -43,7 +43,7 @@ export class BlogComponent implements OnInit, OnDestroy, AfterViewInit {
     this.api.authorise().subscribe(
       (response) => {
         const data = JSON.parse(JSON.stringify(response));
-        if (data.message === 'Token verified') {
+        if (data.status === 'success' && data.message === 'Token verified') {
           this.isLoggedIn = true;
         }
       },
@@ -58,18 +58,23 @@ export class BlogComponent implements OnInit, OnDestroy, AfterViewInit {
     //this.id = localStorage.getItem()
     this.api.getSpecificPost(this.id).subscribe(
       (response) => {
-        const data = JSON.parse(JSON.stringify(response));
-        this.post = data.result[0];
-        this.content = this.post.post_content;
-        this.time = new Date(this.post.post_time).toDateString().toString();
-        if (this.post.post_video_url) {
-          this.url = this.sanitizer.bypassSecurityTrustResourceUrl(
-            this.post.post_video_url
-          );
+        console.log()
+        if('status' in response && response.status === 'success' && 'data' in response){
+          this.post = (response.data as PostData).post as Post;
+          this.content = this.sanitizer.bypassSecurityTrustHtml(this.post.content); //sanitizing dom to prevent angular to stop external link -- angular does so to prevent xss attack but we will handle xss attack protection in backend
+          this.time = new Date(this.post.time).toDateString().toString();
+          this.likes = this.post.likeCount;
+          this.dislikes = this.post.dislikeCount;
+          //console.log(this.content);
         }
-        this.likes = this.post.like_count;
-        this.dislikes = this.post.dislike_count;
-        console.log(this.likes, this.dislikes);
+
+
+        // if (this.post.post_video_url) {
+        //   this.url = this.sanitizer.bypassSecurityTrustResourceUrl(
+        //     this.post.post_video_url
+        //   );
+        // }
+
       },
       (err) => {
         this.toast.error('Error loading post');
@@ -77,17 +82,23 @@ export class BlogComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     );
   }
-  sendLikeDislike(val: boolean) {
-    this.api.like_dislike({ post_id: this.id, val }).subscribe(
+  sendLikeDislike(val: string) {
+    let reactionValues : LikeObj = { id : this.id, value : val}
+    this.api.likedislike(reactionValues).subscribe(
       (response) => {
-        if ('message' in response && response.message === 'ok') {
-          this.toast.success('success');
-          this.ngAfterViewInit();
+        if('status' in response && response.status === 'success' && 'data' in response){
+          const likevals = (response.data as LikeData).countLike as CountLike
+          this.likes = likevals.likeCount;
+          this.dislikes = likevals.dislikeCount;
         }
+        // if ('message' in response && response.message === 'ok') {
+        //   this.toast.success('success');
+        //   this.ngAfterViewInit();
+        // }
       },
       (err) => {
         this.toast.error('Error');
-        // console.log(err);
+        console.log(err);
       }
     );
   }
@@ -96,7 +107,7 @@ export class BlogComponent implements OnInit, OnDestroy, AfterViewInit {
       this.toast.warning('Sign in to like');
       return;
     }
-    let val = true;
+    let val = 'like';
     this.sendLikeDislike(val);
   }
   dislike() {
@@ -104,7 +115,7 @@ export class BlogComponent implements OnInit, OnDestroy, AfterViewInit {
       this.toast.warning('Sign in to dislike');
       return;
     }
-    let val = false;
+    let val = 'dislike';
     this.sendLikeDislike(val);
   }
   ngOnDestroy(): void {}

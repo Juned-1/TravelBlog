@@ -24,9 +24,10 @@ import { BlogCardHomeComponent } from './blog-card-home/blog-card-home.component
 })
 export class HomeComponent implements OnInit {
   slideIndex: number = 0;
-  posts!: any;
+  posts!: blogs[];
   isLoggedIn = false;
   timeoutid: any = 0;
+  page : number = 1;
   // blogCount = 0;
   constructor(
     private route: ActivatedRoute,
@@ -39,7 +40,7 @@ export class HomeComponent implements OnInit {
     this.api.authorise().subscribe(
       (response) => {
         const data = JSON.parse(JSON.stringify(response));
-        if (data.message === 'Token verified') {
+        if (data.status === 'success' && data.message === 'Token verified') {
           this.isLoggedIn = true;
         }
       },
@@ -50,16 +51,14 @@ export class HomeComponent implements OnInit {
     );
   }
   ngAfterViewInit() {
-    this.api.getPost(0)?.subscribe(
+    this.api.getPost(this.page)?.subscribe(
       (response) => {
-        if ('result' in response) {
-          this.posts = response.result;
+        if ('status' in response && response.status === 'success' && 'data' in response) {
+          this.posts = (response.data as data).blogs as blogs[];
           for (let post of this.posts) {
-            // this.blogCount++;
-            post.post_time = new Date(post.post_time).toDateString().toString();
-
+            post.time = new Date(post.time).toDateString().toString();
             // Extract the first image URL from post.post_content
-            let imageURL = this.extractFirstImageURL(post.post_content);
+            let imageURL = this.extractFirstImageURL(post.content);
             if (imageURL === null) {
               imageURL = '../../assets/travelImage/no-image.jpg';
             }
@@ -90,8 +89,8 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  openBlog(post_id: any) {
-    this.router.navigate(['/blogdetails'], { queryParams: { id: post_id } });
+  openBlog(id: string) {
+    this.router.navigate(['/blogdetails'], { queryParams: { id } });
   }
 
   showSlides(): void {
@@ -114,16 +113,17 @@ export class HomeComponent implements OnInit {
   }
 
   onIonInfinite(ev: any) {
-    // this.getPosts();
-    this.api.getPost(this.posts.length)?.subscribe(
+    this.page++;
+    //console.log(this.page)
+    this.api.getPost(this.page)?.subscribe(
       (response) => {
-        if ('result' in response) {
-          let morePost: any = response.result;
+        if ('status' in response && response.status === 'success' && 'data' in response) {
+          let morePost = (response.data as data).blogs as blogs[];
           for (let post of morePost) {
-            post.post_time = new Date(post.post_time).toDateString().toString();
+            post.time = new Date(post.time).toDateString().toString();
 
             // Extract the first image URL from post.post_content
-            let imageURL = this.extractFirstImageURL(post.post_content);
+            let imageURL = this.extractFirstImageURL(post.content);
             if (imageURL === null) {
               imageURL = '../../assets/travelImage/no-image.jpg';
             }
@@ -147,4 +147,17 @@ export class HomeComponent implements OnInit {
   ngOnDestroy() {
     clearTimeout(this.timeoutid);
   }
+}
+interface blogs{
+  content: string,
+  id: string;
+  title: string;
+  subtitle: string;
+  time: string;
+  firstName : string;
+  lastName : string;
+  imageURL : string | null;
+}
+interface data{
+  blogs;
 }

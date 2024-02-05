@@ -13,8 +13,9 @@ export class Authguard implements CanActivate{
         } else {
           const isLoggedSubject = new Observable<boolean>((subscriber) => {
             this.api.authorise().subscribe((response : any) => {
+              //console.log(response);
               const res = JSON.parse(JSON.stringify(response));
-              if (res.message === "Token verified") {
+              if (res.status === 'success' && res.message === "Token verified") {
                 subscriber.next(true);
               } else {
                 subscriber.next(false);

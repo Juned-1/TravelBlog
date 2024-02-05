@@ -18,6 +18,7 @@ import { ToolbarComponent } from 'src/app/toolbar/toolbar.component';
 })
 export class MyblogsBlogCardComponent  implements OnInit {
   @Input() post: any;
+  @Output() deleteEvent = new EventEmitter<string>();
   constructor(private route : ActivatedRoute, private router : Router, private api : APIService, private sanitizer : DomSanitizer, private toast: ToastrService) { }
 
   ngOnInit() {}
@@ -27,10 +28,8 @@ export class MyblogsBlogCardComponent  implements OnInit {
     const id = e.srcElement.id;
     this.api.deletePost(id).subscribe(
       (response) => {
-        const data = JSON.parse(JSON.stringify(response));
         this.toast.success('Successfully Deleted');
-        // this.router.navigate(['/userblog']);
-        // this.ngAfterViewInit();
+        this.deleteEvent.emit(id);
       },
       (err) => {
         this.toast.error('Error deleting post');
@@ -41,6 +40,6 @@ export class MyblogsBlogCardComponent  implements OnInit {
   editBlog(e: any){
     e.stopPropagation();
     const id = e.srcElement.id;
-    this.router.navigate(['/texteditor'],{ queryParams: { id: id} });
+    this.router.navigate(['/texteditor'],{ queryParams: { id } });
   } 
 }

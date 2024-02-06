@@ -25,3 +25,15 @@ export interface Post{
 export interface PostData {
   post : Post
 };
+
+export interface sendPostBulk{
+  title : string,
+  subtitle : string,
+  content : string
+}
+
+export interface SearchParameter{
+  page : number,
+  title? : string,
+  subtitle? : string
+}

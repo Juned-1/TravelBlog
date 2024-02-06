@@ -10,14 +10,14 @@ const search = (query) => {
   let clause = {};
   if(Object.keys(query).includes('title') && Object.keys(query).includes('subtitle')){
     clause[Op.or] = [];
-    clause[Op.or].push({ title: { [Op.like]: query.title } });
-    clause[Op.or].push({ subtitle: { [Op.like]: query.subtitle } });
+    clause[Op.or].push({ title: { [Op.like]: `%${decodeURIComponent(query.title)}%` } });
+    clause[Op.or].push({ subtitle: { [Op.like]: `%${decodeURIComponent(query.subtitle)}%` } });
   }
   else if(Object.keys(query).includes('title')){
-    clause = {...clause, title : {[Op.like]: query.title}};
+    clause = {...clause, title : {[Op.like]: `%${decodeURIComponent(query.title)}%`}};
   }
   else if(Object.keys(query).includes('subtitle')){
-    clause = {...clause, subtitle : {[Op.like]: query.subtitle}};
+    clause = {...clause, subtitle : {[Op.like]: `%${decodeURIComponent(query.subtitle)}%`}};
   }
   return clause;
 }
@@ -88,10 +88,10 @@ exports.editPost = catchAsync(async (req, res, next) => {
   const updatedData = {
     title: req.body.title,
     subtitle: req.body.subtitle,
-    content: req.body.post,
+    content: req.body.content,
   };
 
-  const userId = req.body.userId; //decodedToken.id;
+  const userId = req.tokenData.id; //req.body.userId;
   const postId = req.params.id; //postId
 
   const result = await Post.update(updatedData, {
@@ -231,6 +231,7 @@ exports.getUserPost = catchAsync(async (req, res, next) => {
   const offsetVal = req.query.page ? (+req.query.page - 1) * limitQuery : 0;
   const uemail = req.tokenData.email;
   const whereClause = search(req.query);
+  //console.log(whereClause);
   //const sql = `SELECT posts.post_id, posts.post_title, posts.post_subtitle, posts.post_content, posts.post_video_url, users.firstName, users.lastName, posts.post_time FROM users,posts WHERE users.id = posts.user_id AND users.email = ?;`;
   const result = await Post.findAll({
     attributes: [

@@ -9,7 +9,7 @@ import { ToastrService } from 'ngx-toastr';
 import * as cheerio from 'cheerio';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
 import { FormsModule } from '@angular/forms';
-import { Post, PostData } from 'src/DataTypes';
+import { Post, PostData, sendPostBulk } from 'src/DataTypes';
 import ImageCompress from 'quill-image-compress';
 Quill.register('modules/imageCompress', ImageCompress);
 @Component({
@@ -170,7 +170,7 @@ export class TexteditorComponent implements OnInit {
     }
     //let url = this.getUrl();
 
-    let postDetails = {
+    let postDetails : sendPostBulk = {
       title,
       subtitle,
       content: this.content,
@@ -196,15 +196,11 @@ export class TexteditorComponent implements OnInit {
     );
   }
   editBlog(postDetails: any) {
-    postDetails = {
-      ...postDetails,
-      post_id: this.id,
-    };
-    this.api.editPost(postDetails).subscribe(
+    this.api.editPost(postDetails, this.id).subscribe(
       (response) => {
-        if ('message' in response && response.message === 'ok') {
-          this.toast.success('Posted edited successfully');
-          this.router.navigate(['/userblog']);
+        if ('status' in response && response.status === 'success') {
+            this.toast.success('Posted edited successfully');
+            this.router.navigate(['/userblog']);
         }
       },
       (err) => {

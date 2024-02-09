@@ -11,17 +11,18 @@ const User = sequelize.define(
       defaultValue: UUIDV4,
       primaryKey: true,
       allowNull: false,
+      len: 36,
     },
     firstName: {
-      type: DataTypes.STRING(500),
+      type: DataTypes.STRING(100), //500
       allowNull: false,
     },
     lastName: {
-      type: DataTypes.STRING(500),
+      type: DataTypes.STRING(100), //500
       allowNull: false,
     },
     email: {
-      type: DataTypes.STRING(1000),
+      type: DataTypes.STRING(200), //1000
       allowNull: false,
       unique: true,
     },
@@ -88,8 +89,8 @@ PostLike.belongsTo(Post, {
 });
 // Optional: Add any additional configurations or associations here
 //Initializing model
-User.sync({ alter: true })
+User.sync()
   .then(() => console.log("User schema is ready"))
-  .catch((err) => {});
+  .catch((err) => {console.log(err)});
 
 module.exports = User;

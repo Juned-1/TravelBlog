@@ -8,15 +8,19 @@ const PostLike = sequelize.define("PostLike", {
     type: DataTypes.UUID,
     defaultValue: UUIDV4,
     primaryKey: true,
-    allowNull: false
+    allowNull: false,
+    len: 36,
+    
   },
   userId: {
     type: DataTypes.UUID,
     allowNull: false,
+    len: 36,
   },
   postId: {
     type: DataTypes.UUID,
     allowNull: false,
+    len: 36
   },
   reactionType: {
     type: DataTypes.ENUM("like", "dislike"),

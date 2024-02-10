@@ -11,17 +11,19 @@ const Post = sequelize.define(
       defaultValue: UUIDV4,
       primaryKey: true,
       allowNull: false,
+      len: 36,
     },
     userId: {
       type: DataTypes.UUID,
       allowNull: false,
+      len: 36,
     },
     title: {
-      type: DataTypes.STRING(1000),
+      type: DataTypes.STRING(100),
       allowNull: false,
     },
     subtitle: {
-      type: DataTypes.STRING(1000),
+      type: DataTypes.STRING(100),
       allowNull: false,
     },
     content: {

@@ -6,6 +6,7 @@ const sequelize = require("./utils/dbConnection.js");
 const AppError = require("./utils/appError.js");
 const globalErrorHandler = require("./controllers/errorController.js");
 const { cookieSecret } = require("./configuration");
+const User = require("./models/userModel.js");
 const app = express();
 app.use(express.json({ limit: "50mb" }));
 app.use(cors({ credentials: true, origin: "http://localhost:8100" }));

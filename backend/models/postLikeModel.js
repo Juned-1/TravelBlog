@@ -25,7 +25,7 @@ const PostLike = sequelize.define("PostLike", {
 },{
   timestamps: false
 });
-PostLike.sync({ alter: true })
+PostLike.sync()
   .then(() => console.log("PostLike schema is ready"))
   .catch((err) => {});
 module.exports = PostLike;

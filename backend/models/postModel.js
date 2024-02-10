@@ -43,7 +43,7 @@ const Post = sequelize.define(
   }
 );
 
-Post.sync({ alter: true })
+Post.sync()
   .then(() => console.log("Post schema is ready"))
   .catch((err) => {});
 module.exports = Post;

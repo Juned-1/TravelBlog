@@ -88,7 +88,7 @@ PostLike.belongsTo(Post, {
 });
 // Optional: Add any additional configurations or associations here
 //Initializing model
-User.sync({ alter: true })
+User.sync()
   .then(() => console.log("User schema is ready"))
   .catch((err) => {});
 

@@ -25,6 +25,7 @@ exports.setUserDetails = catchAsync(async (req, res, next) => {
   const updatedData = {
     firstName: req.body.firstName,
     lastName: req.body.lastName,
+    email: req.body.email,
     dob: req.body.dob,
     gender: req.body.gender,
   };

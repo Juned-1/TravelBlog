@@ -4,7 +4,7 @@ const AppError = require("../utils/appError");
 exports.getUserDetails = catchAsync(async (req, res, next) => {
   const uid = req.tokenData.id; //req.body.id;
   const userDetails = await User.findOne({
-    attributes: ["firstName", "lastName", "dob", "gender"],
+    attributes: ["email","firstName", "lastName", "dob", "gender"],
     where: {
       id: uid,
     },

@@ -31,7 +31,7 @@ exports.setUserDetails = catchAsync(async (req, res, next) => {
   };
   const result = await User.update(updatedData, {
     where: {
-      id: postId,
+      id: uid,
     },
     individualHooks: true,
   });

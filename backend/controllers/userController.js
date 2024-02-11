@@ -21,8 +21,8 @@ exports.getUserDetails = catchAsync(async (req, res, next) => {
 });
 
 exports.setUserDetails = catchAsync(async (req, res, next) => {
-  //const uid = req.tokenData.id; //req.body.id;
-  const uid = req.body.id;
+  const uid = req.tokenData.id; //req.body.id;
+  //const uid = req.body.id;
   const updatedData = {
     firstName: req.body.firstName,
     lastName: req.body.lastName,

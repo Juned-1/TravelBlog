@@ -9,6 +9,6 @@ router.post("/signup", validate(validators.signUpValidator), userSignup);
 router.post("/login", validate(validators.loginValidator), userLogin);
 router.get("/logout", userLogout);
 router.get("/getuserdetails",verifyToken,getUserDetails);
-router.patch("/setuserdetails",verifyToken,setUserDetails);
+router.patch("/setuserdetails",verifyToken, setUserDetails);
 router.get("/authstatus",authorize);
 module.exports = router;

@@ -9,7 +9,7 @@ import { APIService } from 'src/apiservice.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
-import moment from "moment";
+//import moment from "moment";
 import { MatDatepickerModule } from '@angular/material/datepicker';
 
 @Component({
@@ -48,13 +48,14 @@ export class ProfileComponent implements OnInit {
   ngOnInit() {
     this.api.getUserDetails().subscribe(
       (response) => {
+        console.log(response);
         if (
           'status' in response &&
           response.status === 'success' &&
           'data' in response
         ) {
           this.formData = (response.data as data).userDetails as userDetails;
-          this.formData.dob = moment(this.formData.dob).utc().format('YYYY-MM-DD')
+          //this.formData.dob = moment(this.formData.dob).utc().format('YYYY-MM-DD')
         }
       },
       (err) => {
@@ -67,7 +68,7 @@ export class ProfileComponent implements OnInit {
     console.log("hello");
     this.api.setUserDetails(this.formData).subscribe(
       (response) => {
-        //console.log(response);
+        console.log(response);
         if ('status' in response && response.status === 'success') {
           this.toast.success('Profile Edited successfully');
           this.router.navigate(['/profile']);

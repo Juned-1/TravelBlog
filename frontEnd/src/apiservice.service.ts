@@ -105,7 +105,7 @@ export class APIService {
   }
   setUserDetails(data: any) {
     return this.http.patch(
-      'http://localhost:8081/api/v1/users/setuserdetails',
+      'http://localhost:8081/api/v1/users/setuserdetails',data,
       { withCredentials: true }
     );
   }

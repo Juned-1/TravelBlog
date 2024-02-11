@@ -9,8 +9,8 @@ import { APIService } from 'src/apiservice.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
+import moment from "moment";
 import { MatDatepickerModule } from '@angular/material/datepicker';
-
 
 @Component({
   selector: 'app-profile',
@@ -28,13 +28,13 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 })
 export class ProfileComponent implements OnInit {
   isLoggedIn = true;
-  formData = {
-    firstName: 'Bikram',
-    lastName: 'Upadhyaya',
-    email: 'abc@gmail.com',
-    password: 'qwerty@123',
-    dob: '2022-01-16',
-    gender: 'male',
+  formData: userDetails = {
+    firstName: '',
+    lastName: '',
+    gender: '',
+    dob: '',
+    email: '',
+    // password: '',
   };
 
   constructor(
@@ -46,10 +46,49 @@ export class ProfileComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-
+    this.api.getUserDetails().subscribe(
+      (response) => {
+        if (
+          'status' in response &&
+          response.status === 'success' &&
+          'data' in response
+        ) {
+          this.formData = (response.data as data).userDetails as userDetails;
+          this.formData.dob = moment(this.formData.dob).utc().format('YYYY-MM-DD')
+        }
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
   }
 
-  makeChanges(){
-
+  makeChanges() {
+    console.log("hello");
+    this.api.setUserDetails(this.formData).subscribe(
+      (response) => {
+        //console.log(response);
+        if ('status' in response && response.status === 'success') {
+          this.toast.success('Profile Edited successfully');
+          this.router.navigate(['/profile']);
+        }
+      },
+      (err) => {
+        this.toast.error('Profile Edit unsuccessful');
+        console.log(err);
+      }
+    );
   }
+}
+
+interface userDetails {
+  firstName: string;
+  lastName: string;
+  dob: string;
+  gender: string;
+  email: string;
+  // password: string;
+}
+interface data {
+  userDetails;
 }

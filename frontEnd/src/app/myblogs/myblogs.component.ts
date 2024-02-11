@@ -20,7 +20,6 @@ export class MyblogsComponent implements OnInit, AfterViewInit {
   isLoggedIn = true;
   posts!: blogs[];
   isSetToolbar: any;
-  blogCount: number = -1;
   page : number = 1;
   constructor(
     private route: ActivatedRoute,
@@ -50,7 +49,6 @@ export class MyblogsComponent implements OnInit, AfterViewInit {
         if ('status' in response && response.status === 'success' && 'data' in response) {
           this.posts = (response.data as data).blogs as blogs[]
           for (let post of this.posts) {
-            this.blogCount++;
             post.time = new Date(post.time).toDateString().toString();
 
             let imageURL = this.extractFirstImageURL(post.content);

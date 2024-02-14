@@ -68,7 +68,6 @@ const routeConfig: Routes = [
     data : {
       userType : 'logged-in'
     }
-  }
+  },
 ];
-
 export default routeConfig;

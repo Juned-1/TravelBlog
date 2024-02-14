@@ -1,33 +1,45 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
-import { SearchbarComponent } from '../searchbar/searchbar.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { APIService } from 'src/apiservice.service';
+import { BlogCardHomeComponent } from '../home/blog-card-home/blog-card-home.component';
+import { SearchParameter, blogs, data } from 'src/DataTypes';
+import { DomSanitizer } from '@angular/platform-browser';
+import { SearchService } from '../search.service';
 
 @Component({
   selector: 'app-toolbar',
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.scss'],
   standalone: true,
-  imports: [IonicModule, SearchbarComponent, MatToolbarModule, CommonModule],
+  imports: [IonicModule, MatToolbarModule, CommonModule, BlogCardHomeComponent],
 })
 export class ToolbarComponent implements OnInit {
-  @Input() isLoggedIn! : Boolean;
-  @Output() logoutButton : EventEmitter<string> = new EventEmitter<string>();
-  user  : string | null = '';
-  constructor(private route : ActivatedRoute, private router : Router, private api : APIService) { }
+  @Input() isLoggedIn!: Boolean;
+  @Output() logoutButton: EventEmitter<string> = new EventEmitter<string>();
+  user: string | null = '';
+  searchKeyword: string = '';
+  searchResults!: blogs[];
+  showSearchResults: boolean = false;
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private api: APIService,
+    private sanitizer: DomSanitizer,
+    private search: SearchService
+  ) {}
 
   ngOnInit() {
-    if(localStorage.getItem('travel-blog') !== null){
+    if (localStorage.getItem('travel-blog') !== null) {
       this.user = localStorage.getItem('travel-blog');
     }
   }
-  LogIn(){
+  LogIn() {
     this.router.navigate(['/login']);
   }
-  Logout(){
+  Logout() {
     this.api.logout().subscribe(
       (response) => {
         localStorage.removeItem('travel-blog');
@@ -37,7 +49,7 @@ export class ToolbarComponent implements OnInit {
         console.log(err.error.message);
       }
     );
-    this.router.navigate(["/"]);
+    this.router.navigate(['/']);
   }
   signup() {
     this.router.navigate(['/signup']);
@@ -45,18 +57,64 @@ export class ToolbarComponent implements OnInit {
   routeToHome() {
     this.router.navigate(['/']);
   }
-  routeToMyBlogs(){
+  routeToMyBlogs() {
     this.router.navigate(['/userblog']);
   }
-  handleChange(e: any ) {
+  handleChange(e: any) {
     console.log('ionChange fired with value: ' + e.detail.value);
-    if(e.detail.value == 'logout')  this.Logout();
-    if(e.detail.value == 'login')  this.LogIn();
-    if(e.detail.value == 'signup')  this.signup();
-    if(e.detail.value == 'myblogs')  this.routeToMyBlogs();
+    if (e.detail.value == 'logout') this.Logout();
+    if (e.detail.value == 'login') this.LogIn();
+    if (e.detail.value == 'signup') this.signup();
+    if (e.detail.value == 'myblogs') this.routeToMyBlogs();
   }
-  routeToProfile(){
+  routeToProfile() {
     this.router.navigate(['/profile']);
   }
+  openBlog(id: string) {
+    this.router.navigate(['/blogdetails'], { queryParams: { id } });
+  }
+  extractFirstImageURL(postContent: string): string | null {
+    const regex = /<img src="(.*?)"/g;
+    const match = regex.exec(postContent);
+    if (match) {
+      return match[1];
+    } else {
+      return null;
+    }
+  }
+  onSearch(searchTerm: any) {
+    // Do something with the search term
+    this.searchKeyword = searchTerm.target.value;
+    if(this.searchKeyword === ''){
+      this.showSearchResults = false;
+    }
+    else{
+      this.showSearchResults = true;
+    }
+    
+    let parameter : SearchParameter = {
+      page : 1,
+      title : this.searchKeyword,
+      //subtitle : 'W'
+    };
+    this.api.searchPost(parameter).subscribe((response) => {
+      if ('status' in response && response.status === 'success' && 'data' in response) {
+        this.searchResults = (response.data as data).blogs as blogs[];
+        console.log(this.searchResults);
+        for (let post of this.searchResults) {
+          post.time = new Date(post.time).toDateString().toString();
+          // Extract the first image URL from post.post_content
+          let imageURL = this.extractFirstImageURL(post.content);
+          if (imageURL === null) {
+            imageURL = '../../assets/travelImage/no-image.jpg';
+          }
+          imageURL = (
+            this.sanitizer.bypassSecurityTrustResourceUrl(imageURL) as any
+          ).changingThisBreaksApplicationSecurity;
+          post.imageURL = imageURL;
+        }
+      }
+    })
+    
+  }
 }
-

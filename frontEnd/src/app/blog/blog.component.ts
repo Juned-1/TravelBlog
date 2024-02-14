@@ -3,7 +3,6 @@ import { DomSanitizer, SafeResourceUrl, SafeHtml } from '@angular/platform-brows
 import { IonicModule } from '@ionic/angular';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
-import { SearchbarComponent } from '../searchbar/searchbar.component';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
 import { Router, ActivatedRoute } from '@angular/router';
 import { QuillModule } from 'ngx-quill';

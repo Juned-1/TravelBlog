@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { SignupComponent } from './signup/signup.component';
 import { HomeComponent } from './home/home.component';
 import { RouterModule,ActivatedRoute,Router } from '@angular/router';
-import { SearchbarComponent } from './searchbar/searchbar.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 
@@ -19,12 +18,19 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
     SignupComponent,
     HomeComponent,
     RouterModule,
-    SearchbarComponent,
     MatToolbarModule,
     ToolbarComponent
   ],
 })
 export class AppComponent implements OnInit{
+
+  public appPages = [
+    { title: 'Home', url: '/', icon: 'home' },
+    { title: 'My Blogs', url:'/userblog', icon: 'paper-plane' },
+    { title: 'Profile', url: '/profile', icon: 'person' },
+    { title: 'Trash', url: '/trash', icon: 'trash' },
+  ];
+
   public environmentInjector = inject(EnvironmentInjector);
 
   constructor(private route : ActivatedRoute, private router : Router) {}

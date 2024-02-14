@@ -2,7 +2,6 @@ import { AfterViewInit, Component, OnInit, Input } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
-import { SearchbarComponent } from '../searchbar/searchbar.component';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
 import { Router, ActivatedRoute } from '@angular/router';
 import { APIService } from 'src/apiservice.service';

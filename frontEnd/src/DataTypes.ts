@@ -37,3 +37,17 @@ export interface SearchParameter{
   title? : string,
   subtitle? : string
 }
+
+export interface blogs{
+  content: string,
+  id: string;
+  title: string;
+  subtitle: string;
+  time: string;
+  firstName : string;
+  lastName : string;
+  imageURL : string | null;
+}
+export interface data{
+  blogs: any;
+}

@@ -23,3 +23,16 @@ ion-content {
   color: #ffff;
   border-radius: 20px;
 }
+.myblogs-search-container{
+  text-align: right;
+}
+ion-searchbar{
+  display: inline-block;
+  width: 250px;
+  margin-top: 2px;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  // float: right;
+  // position: relative;
+  // left:80%;
+}

@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { InfiniteScrollCustomEvent, IonicModule } from '@ionic/angular';
-import { SearchbarComponent } from '../searchbar/searchbar.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -8,6 +7,9 @@ import { APIService } from 'src/apiservice.service';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BlogCardHomeComponent } from './blog-card-home/blog-card-home.component';
+import {SearchParameter, blogs, data} from '../../DataTypes'
+import { SearchService } from '../search.service';
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -15,7 +17,6 @@ import { BlogCardHomeComponent } from './blog-card-home/blog-card-home.component
   standalone: true,
   imports: [
     IonicModule,
-    SearchbarComponent,
     MatToolbarModule,
     CommonModule,
     ToolbarComponent,
@@ -23,6 +24,7 @@ import { BlogCardHomeComponent } from './blog-card-home/blog-card-home.component
   ],
 })
 export class HomeComponent implements OnInit {
+  searchInput: string='';
   slideIndex: number = 0;
   posts!: blogs[];
   isLoggedIn = false;
@@ -33,7 +35,8 @@ export class HomeComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private api: APIService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private searchKeyword: SearchService
   ) {}
   ngOnInit(): void {
     this.showSlides();
@@ -147,17 +150,7 @@ export class HomeComponent implements OnInit {
   ngOnDestroy() {
     clearTimeout(this.timeoutid);
   }
-}
-interface blogs{
-  content: string,
-  id: string;
-  title: string;
-  subtitle: string;
-  time: string;
-  firstName : string;
-  lastName : string;
-  imageURL : string | null;
-}
-interface data{
-  blogs;
+  search(){
+    
+  }
 }

@@ -84,3 +84,12 @@ ion-select::part(icon) {
 #user-name:hover {
   cursor: pointer;
 }
+.search-result{
+  z-index: 1;
+  // background-color: 
+  --background: rgba(33, 46, 61, 0.57) 12.9%;
+  height: 500%;
+}
+.search-result:hover {
+  cursor: pointer;
+}

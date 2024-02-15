@@ -23,7 +23,7 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
   ],
 })
 export class AppComponent implements OnInit{
-
+  user: any = localStorage.getItem('travel-blog');
   public appPages = [
     { title: 'Home', url: '/', icon: 'home' },
     { title: 'My Blogs', url:'/userblog', icon: 'paper-plane' },

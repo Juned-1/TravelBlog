@@ -11,7 +11,9 @@ import { ToolbarComponent } from '../toolbar/toolbar.component';
 import { FormsModule } from '@angular/forms';
 import { Post, PostData, sendPostBulk } from 'src/DataTypes';
 import ImageCompress from 'quill-image-compress';
+
 Quill.register('modules/imageCompress', ImageCompress);
+
 @Component({
   selector: 'app-texteditor',
   templateUrl: './texteditor.component.html',
@@ -54,9 +56,8 @@ export class TexteditorComponent implements OnInit {
         [{ color: [] }, { background: [] }],
         [{ font: [] }],
         [{ align: [] }],
-        ['clean'],
-        ['link', 'image', 'video', 'imageLink'],
-        //['imageLink'],
+        // ['clean'],
+        ['link','image','video'],
       ],
     },
     placeholder:
@@ -94,6 +95,9 @@ export class TexteditorComponent implements OnInit {
   initQuill() {
     let container = document.getElementById('editor');
     this.editor = new Quill(container!, this.options);
+
+    const toolbar = this.editor.getModule('toolbar');
+    toolbar.addHandler('link', this.imageHandler.bind(this));
     //this.imageLinkButton();
     let id = this.route.snapshot.queryParams['id'];
     if (id != undefined) {
@@ -126,6 +130,18 @@ export class TexteditorComponent implements OnInit {
       );
     }
   }
+  imageHandler() {
+    console.log('Hello');
+    console.log(this.editor);
+    const range = this.editor.getSelection();
+
+
+    console.log(range);
+    const value = prompt('please copy paste the image url here.');
+    if (value) {
+      this.editor.insertEmbed(range!.index, 'image', value, Quill.sources.USER);
+    }
+  }
   prepareFrame(src: string) {
     const ifrm = document.createElement('iframe');
     ifrm.setAttribute('src', src);
@@ -133,6 +149,7 @@ export class TexteditorComponent implements OnInit {
     ifrm.style.height = '480px';
     return ifrm.outerHTML;
   }
+
   ngAfterViewInit() {
     this.editor.getModule('toolbar').addHandler('font', (value: any) => {
       this.editor.format('font', value);
@@ -170,7 +187,7 @@ export class TexteditorComponent implements OnInit {
     }
     //let url = this.getUrl();
 
-    let postDetails : sendPostBulk = {
+    let postDetails: sendPostBulk = {
       title,
       subtitle,
       content: this.content,
@@ -199,8 +216,8 @@ export class TexteditorComponent implements OnInit {
     this.api.editPost(postDetails, this.id).subscribe(
       (response) => {
         if ('status' in response && response.status === 'success') {
-            this.toast.success('Posted edited successfully');
-            this.router.navigate(['/userblog']);
+          this.toast.success('Posted edited successfully');
+          this.router.navigate(['/userblog']);
         }
       },
       (err) => {
@@ -304,94 +321,4 @@ export class TexteditorComponent implements OnInit {
       return null;
     }
   }
-  /*imageLinkButton() {
-    const customButton = this.editor
-      .getModule('toolbar')
-      .container.querySelector('.ql-imageLink');
-    customButton.innerHTML = `<ion-icon name="image-sharp"></ion-icon>`;
-    let container: HTMLElement | null = null; // Container for input field and save button
-
-    // Function to create and position the container
-    const createContainer = () => {
-      container = document.createElement('div');
-      container.classList.add('image-link-container');
-      container.classList.add('ql-tooltip');
-      container.classList.add('ql-editing');
-
-      container.innerHTML = `
-        <input type="text" class="image-link-input" placeholder="Insert image link..." />
-        <button class="save-button">Save</button>
-      `;
-      const inputField = container.querySelector(
-        '.image-link-input'
-      ) as HTMLInputElement;
-      const saveButton = container.querySelector(
-        '.save-button'
-      ) as HTMLButtonElement;
-
-      // Function to handle the save button click
-      saveButton.addEventListener('click', () => {
-        const imageLink = inputField.value.trim();
-        // Insert the image link into the editor at the cursor position or implement your logic here
-        if (imageLink !== '') {
-          this.editor.clipboard.dangerouslyPasteHTML(
-            '<img src="' + imageLink + '" />',
-            'user'
-          );
-        }
-        hideContainer();
-      });
-      // Get the current selection and its position
-      const selection = window.getSelection();
-      const editor = document.getElementById('editor')?.appendChild(container);
-      if (selection && selection.anchorNode) {
-        const range = selection.getRangeAt(0);
-        const rect = range.getBoundingClientRect();
-
-        // Position the container below the caret
-        container.style.position = 'absolute';
-        container.style.top = rect.bottom + window.pageYOffset + 'px';
-        container.style.left = rect.left + window.pageXOffset + 'px';
-      } else {
-        // If no caret, position the container at the end of the editor content
-        const editor = document.getElementById('editor');
-        if (editor) {
-          const editorRect = editor.getBoundingClientRect();
-          container.style.position = 'absolute';
-          container.style.top = editorRect.bottom + window.pageYOffset + 'px';
-          container.style.left = editorRect.left + window.pageXOffset + 'px';
-        }
-      }
-      editor?.appendChild(container);
-      inputField.focus();
-      document.addEventListener('click', handleOutsideClick);
-    };
-    // Function to hide and remove the container
-    const hideContainer = () => {
-      if (container && container.parentNode) {
-        container.parentNode.removeChild(container);
-        container = null;
-        document.removeEventListener('click', handleOutsideClick);
-      }
-    };
-    // Function to handle clicks outside the container
-    const handleOutsideClick = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      if (
-        container &&
-        !container.contains(target) &&
-        !customButton.contains(target)
-      ) {
-        hideContainer();
-      }
-    };
-    customButton.addEventListener('click', (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      //console.log('Hello from custom component');
-      if (!container) {
-        createContainer();
-      }
-    });
-  }*/
 }

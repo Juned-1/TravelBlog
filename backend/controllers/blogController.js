@@ -71,7 +71,8 @@ exports.getSpecificPost = catchAsync(async (req, res, next) => {
     ],
     where: { id: req.params.id },
   });
-  //console.log(result);
+  // console.log(result);
+  // console.log(req.params.id);
   if (!result) {
     return next(new AppError("Post does not exist with given ID", 404));
   }

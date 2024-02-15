@@ -9,6 +9,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { BlogCardHomeComponent } from './blog-card-home/blog-card-home.component';
 import {SearchParameter, blogs, data} from '../../DataTypes'
 import { SearchService } from '../search.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-home',
@@ -36,13 +37,16 @@ export class HomeComponent implements OnInit {
     private router: Router,
     private api: APIService,
     private sanitizer: DomSanitizer,
-    private searchKeyword: SearchService
+    private searchKeyword: SearchService,
+    private toast: ToastrService
   ) {}
   ngOnInit(): void {
     this.showSlides();
+    console.log('On Init');
     this.api.authorise().subscribe(
       (response) => {
         const data = JSON.parse(JSON.stringify(response));
+        console.log(data);
         if (data.status === 'success' && data.message === 'Token verified') {
           this.isLoggedIn = true;
         }
@@ -53,6 +57,7 @@ export class HomeComponent implements OnInit {
       }
     );
   }
+
   ngAfterViewInit() {
     this.api.getPost(this.page)?.subscribe(
       (response) => {
@@ -78,14 +83,15 @@ export class HomeComponent implements OnInit {
     );
   }
 
-  goToEditor() {
-    this.router.navigate(['/texteditor']);
-  }
+  // goToEditor() {
+  //   this.router.navigate(['/texteditor']);
+  // }
 
   extractFirstImageURL(postContent: string): string | null {
     const regex = /<img src="(.*?)"/g;
     const match = regex.exec(postContent);
     if (match) {
+      console.log(match[1]);
       return match[1];
     } else {
       return null;

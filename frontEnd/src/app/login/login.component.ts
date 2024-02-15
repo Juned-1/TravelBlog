@@ -52,9 +52,10 @@ export class LoginComponent  implements OnInit {
           'travel-blog',
           String(fullName)
         );
-      }
-      this.toast.success("Login successful");
-      this.router.navigate(["/"]);  
+      }      
+      this.router.navigate(["/"]).then(() => {
+        window.location.reload();
+      });  
     },
     (err) => {
       //console.log(err);

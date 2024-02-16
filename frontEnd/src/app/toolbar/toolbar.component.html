@@ -56,7 +56,7 @@
     </ion-buttons>
     <div id="dropdown" slot="end">
       <ion-select
-        placeholder="MENU"
+        placeholder="More"
         interface="popover"
         (ionChange)="handleChange($event)"
       >
@@ -66,9 +66,9 @@
         <ion-select-option *ngIf="!isLoggedIn" value="signup"
           >Signup</ion-select-option
         >
-        <ion-select-option *ngIf="isLoggedIn" value="myblogs"
+        <!-- <ion-select-option *ngIf="isLoggedIn" value="myblogs"
           >My Bogs</ion-select-option
-        >
+        > -->
         <ion-select-option *ngIf="isLoggedIn" value="logout"
           >Logout
           <strong>{{

@@ -8,8 +8,6 @@ import { APIService } from 'src/apiservice.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
-//import moment from "moment";
-import { MatDatepickerModule } from '@angular/material/datepicker';
 
 @Component({
   selector: 'app-profile',
@@ -54,7 +52,7 @@ export class ProfileComponent implements OnInit {
           'data' in response
         ) {
           this.formData = (response.data as data).userDetails as userDetails;
-          //this.formData.dob = moment(this.formData.dob).utc().format('YYYY-MM-DD')
+          this.formData.dob = new Date(this.formData.dob).toISOString().split('T')[0];
         }
       },
       (err) => {

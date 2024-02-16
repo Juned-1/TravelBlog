@@ -55,12 +55,13 @@ export class BlogComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   ngAfterViewInit() {
     //this.id = localStorage.getItem()
+    console.log(this.id);
     this.api.getSpecificPost(this.id).subscribe(
       (response) => {
         console.log()
         if('status' in response && response.status === 'success' && 'data' in response){
           this.post = (response.data as PostData).post as Post;
-          this.content = this.sanitizer.bypassSecurityTrustHtml(this.post.content); //sanitizing dom to prevent angular to stop external link -- angular does so to prevent xss attack but we will handle xss attack protection in backend
+          this.content = this.sanitizer.bypassSecurityTrustHtml(this.post.content); //sanitizing dom to prevent angular to stop external link -- angular does so to prevent xss attack
           this.time = new Date(this.post.time).toDateString().toString();
           this.likes = this.post.likeCount;
           this.dislikes = this.post.dislikeCount;
@@ -76,8 +77,9 @@ export class BlogComponent implements OnInit, OnDestroy, AfterViewInit {
 
       },
       (err) => {
+        console.log('zingalala');
         this.toast.error('Error loading post');
-        // console.log(err);
+        console.log(err);
       }
     );
   }

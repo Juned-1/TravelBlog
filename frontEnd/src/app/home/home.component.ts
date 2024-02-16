@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { InfiniteScrollCustomEvent, IonicModule } from '@ionic/angular';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { APIService } from 'src/apiservice.service';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
@@ -39,19 +39,23 @@ export class HomeComponent implements OnInit {
     private searchKeyword: SearchService
   ) {}
   ngOnInit(): void {
-    this.showSlides();
-    this.api.authorise().subscribe(
-      (response) => {
-        const data = JSON.parse(JSON.stringify(response));
-        if (data.status === 'success' && data.message === 'Token verified') {
-          this.isLoggedIn = true;
-        }
-      },
-      (err) => {
-        localStorage.removeItem('travel-blog');
-        this.isLoggedIn = false;
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.api.authorise().subscribe(
+          (response) => {
+            const data = JSON.parse(JSON.stringify(response));
+            if (data.status === 'success' && data.message === 'Token verified') {
+              this.isLoggedIn = true;
+            }
+          },
+          (err) => {
+            localStorage.removeItem('travel-blog');
+            this.isLoggedIn = false;
+          }
+        );
       }
-    );
+    });
+    this.showSlides();
   }
   ngAfterViewInit() {
     this.api.getPost(this.page)?.subscribe(

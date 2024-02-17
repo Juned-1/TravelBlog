@@ -1,13 +1,14 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { APIService } from 'src/apiservice.service';
 import { BlogCardHomeComponent } from '../home/blog-card-home/blog-card-home.component';
 import { SearchParameter, blogs, data } from 'src/DataTypes';
 import { DomSanitizer } from '@angular/platform-browser';
 import { SearchService } from '../search.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-toolbar',
@@ -16,9 +17,10 @@ import { SearchService } from '../search.service';
   standalone: true,
   imports: [IonicModule, MatToolbarModule, CommonModule, BlogCardHomeComponent],
 })
-export class ToolbarComponent implements OnInit {
+export class ToolbarComponent implements OnInit, OnDestroy {
   @Input() isLoggedIn!: Boolean;
   @Output() logoutButton: EventEmitter<string> = new EventEmitter<string>();
+  routerService! : Subscription;
   user: string | null = '';
   searchKeyword: string = '';
   searchResults!: blogs[];
@@ -32,9 +34,11 @@ export class ToolbarComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    if (localStorage.getItem('travel-blog') !== null) {
-      this.user = localStorage.getItem('travel-blog');
-    }
+    this.routerService = this.router.events.subscribe((event) => {
+      if (localStorage.getItem('travel-blog') !== null) {
+        this.user = localStorage.getItem('travel-blog');
+      }
+    });
   }
   LogIn() {
     this.router.navigate(['/login']);
@@ -116,5 +120,8 @@ export class ToolbarComponent implements OnInit {
       }
     })
     
+  }
+  ngOnDestroy() {
+    this.routerService.unsubscribe();
   }
 }

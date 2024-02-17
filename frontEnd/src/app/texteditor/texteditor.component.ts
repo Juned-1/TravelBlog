@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import Quill, { RangeStatic } from 'quill';
 import { ModalController } from '@ionic/angular';
 import { PreviewComponent } from './preview/preview.component';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { APIService } from 'src/apiservice.service';
 import { ToastrService } from 'ngx-toastr';
 import * as cheerio from 'cheerio';
@@ -11,6 +11,7 @@ import { ToolbarComponent } from '../toolbar/toolbar.component';
 import { FormsModule } from '@angular/forms';
 import { Post, PostData, sendPostBulk } from 'src/DataTypes';
 import ImageCompress from 'quill-image-compress';
+import { Subscription } from 'rxjs';
 
 Quill.register('modules/imageCompress', ImageCompress);
 
@@ -21,7 +22,7 @@ Quill.register('modules/imageCompress', ImageCompress);
   standalone: true,
   imports: [IonicModule, PreviewComponent, ToolbarComponent, FormsModule],
 })
-export class TexteditorComponent implements OnInit {
+export class TexteditorComponent implements OnInit, OnDestroy {
   linkCount: number = 0;
   maxLinks: number = 5;
   imageCount: number = 0;
@@ -57,7 +58,7 @@ export class TexteditorComponent implements OnInit {
         [{ font: [] }],
         [{ align: [] }],
         // ['clean'],
-        ['link','image','video'],
+        ['link', 'image', 'video'],
       ],
     },
     placeholder:
@@ -70,6 +71,7 @@ export class TexteditorComponent implements OnInit {
   subtitle: string = '';
   id!: string;
   edit: boolean = false;
+  routerService! : Subscription;
   constructor(
     private modalCtrl: ModalController,
     private router: Router,
@@ -78,18 +80,30 @@ export class TexteditorComponent implements OnInit {
     private toast: ToastrService
   ) {}
   ngOnInit() {
-    this.api.authorise().subscribe(
-      (response) => {
-        const data = JSON.parse(JSON.stringify(response));
-        if (data.status === 'success' && data.message === 'Token verified') {
+    // this.routerService = this.router.events.subscribe((event) => {
+    //   if (event instanceof NavigationEnd) {
+    //     this.api.authorise().subscribe(
+    //       (response) => {
+    //         const data = JSON.parse(JSON.stringify(response));
+    //         if (data.status === 'success' && data.message === 'Token verified') {
+    //           this.isLoggedIn = true;
+    //         }
+    //       },
+    //       (err) => {
+    //         localStorage.removeItem('travel-blog');
+    //         this.isLoggedIn = false;
+    //         this.router.navigate(['/']);
+    //       }
+    //     );
+    //   }
+    // });
+    this.routerService = this.router.events.subscribe((event) => {
+      if(event instanceof NavigationEnd){
+        if(localStorage.getItem('travel-blog') !== null){
           this.isLoggedIn = true;
         }
-      },
-      (err) => {
-        localStorage.removeItem('travel-blog');
-        this.isLoggedIn = false;
       }
-    );
+    });
     this.initQuill();
   }
   initQuill() {
@@ -134,7 +148,6 @@ export class TexteditorComponent implements OnInit {
     console.log('Hello');
     console.log(this.editor);
     const range = this.editor.getSelection();
-
 
     console.log(range);
     const value = prompt('please copy paste the image url here.');
@@ -185,13 +198,11 @@ export class TexteditorComponent implements OnInit {
       this.toast.warning('Sub Title missing!');
       return;
     }
-    //let url = this.getUrl();
 
     let postDetails: sendPostBulk = {
       title,
       subtitle,
       content: this.content,
-      //url,
     };
     if (this.edit == true) {
       this.editBlog(postDetails);
@@ -320,5 +331,8 @@ export class TexteditorComponent implements OnInit {
       // Return null if no iframe element is found
       return null;
     }
+  }
+  ngOnDestroy(): void {
+    this.routerService.unsubscribe();
   }
 }

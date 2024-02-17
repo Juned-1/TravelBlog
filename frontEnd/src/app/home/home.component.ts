@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { InfiniteScrollCustomEvent, IonicModule } from '@ionic/angular';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
@@ -7,9 +7,10 @@ import { APIService } from 'src/apiservice.service';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BlogCardHomeComponent } from './blog-card-home/blog-card-home.component';
-import {SearchParameter, blogs, data} from '../../DataTypes'
+import { SearchParameter, blogs, data } from '../../DataTypes';
 import { SearchService } from '../search.service';
 import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -24,13 +25,14 @@ import { ToastrService } from 'ngx-toastr';
     BlogCardHomeComponent,
   ],
 })
-export class HomeComponent implements OnInit {
-  searchInput: string='';
+export class HomeComponent implements OnInit, OnDestroy {
+  routerService! : Subscription;
+  searchInput: string = '';
   slideIndex: number = 0;
   posts!: blogs[];
   isLoggedIn = false;
   timeoutid: any = 0;
-  page : number = 1;
+  page: number = 1;
   // blogCount = 0;
   constructor(
     private route: ActivatedRoute,
@@ -38,30 +40,36 @@ export class HomeComponent implements OnInit {
     private api: APIService,
     private sanitizer: DomSanitizer,
     private searchKeyword: SearchService,
-    private toast: ToastrService
+    private toast: ToastrService,
   ) {}
   ngOnInit(): void {
     this.showSlides();
-    console.log('On Init');
-    this.api.authorise().subscribe(
-      (response) => {
-        const data = JSON.parse(JSON.stringify(response));
-        console.log(data);
-        if (data.status === 'success' && data.message === 'Token verified') {
-          this.isLoggedIn = true;
-        }
-      },
-      (err) => {
-        localStorage.removeItem('travel-blog');
-        this.isLoggedIn = false;
+    this.routerService = this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.api.authorise().subscribe(
+          (response) => {
+            const data = JSON.parse(JSON.stringify(response));
+            if (data.status === 'success' && data.message === 'Token verified') {
+              this.isLoggedIn = true;
+            }
+          },
+          (err) => {
+            localStorage.removeItem('travel-blog');
+            this.isLoggedIn = false;
+          }
+        );
       }
-    );
+    });
   }
 
   ngAfterViewInit() {
     this.api.getPost(this.page)?.subscribe(
       (response) => {
-        if ('status' in response && response.status === 'success' && 'data' in response) {
+        if (
+          'status' in response &&
+          response.status === 'success' &&
+          'data' in response
+        ) {
           this.posts = (response.data as data).blogs as blogs[];
           for (let post of this.posts) {
             post.time = new Date(post.time).toDateString().toString();
@@ -91,7 +99,6 @@ export class HomeComponent implements OnInit {
     const regex = /<img src="(.*?)"/g;
     const match = regex.exec(postContent);
     if (match) {
-      console.log(match[1]);
       return match[1];
     } else {
       return null;
@@ -126,7 +133,11 @@ export class HomeComponent implements OnInit {
     //console.log(this.page)
     this.api.getPost(this.page)?.subscribe(
       (response) => {
-        if ('status' in response && response.status === 'success' && 'data' in response) {
+        if (
+          'status' in response &&
+          response.status === 'success' &&
+          'data' in response
+        ) {
           let morePost = (response.data as data).blogs as blogs[];
           for (let post of morePost) {
             post.time = new Date(post.time).toDateString().toString();
@@ -155,8 +166,7 @@ export class HomeComponent implements OnInit {
   }
   ngOnDestroy() {
     clearTimeout(this.timeoutid);
+    this.routerService.unsubscribe();
   }
-  search(){
-    
-  }
+  search() {}
 }

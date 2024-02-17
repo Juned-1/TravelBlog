@@ -1,56 +1,70 @@
-import { AfterViewInit, Component, OnInit, Input } from '@angular/core';
+import { AfterViewInit, Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { InfiniteScrollCustomEvent, IonicModule } from '@ionic/angular';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { APIService } from 'src/apiservice.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
-import { MyblogsBlogCardComponent } from "./myblogs-blog-card/myblogs-blog-card.component";
+import { MyblogsBlogCardComponent } from './myblogs-blog-card/myblogs-blog-card.component';
 import { SearchParameter } from 'src/DataTypes';
+import { Subscription } from 'rxjs';
 @Component({
-    selector: 'app-myblogs',
-    templateUrl: 'myblogs.component.html',
-    styleUrls: ['myblogs.component.scss'],
-    standalone: true,
-    imports: [IonicModule, MatToolbarModule, CommonModule, ToolbarComponent, MyblogsBlogCardComponent]
+  selector: 'app-myblogs',
+  templateUrl: 'myblogs.component.html',
+  styleUrls: ['myblogs.component.scss'],
+  standalone: true,
+  imports: [
+    IonicModule,
+    MatToolbarModule,
+    CommonModule,
+    ToolbarComponent,
+    MyblogsBlogCardComponent,
+  ],
 })
-export class MyblogsComponent implements OnInit, AfterViewInit {
-  isLoggedIn = true;
+export class MyblogsComponent implements OnInit, AfterViewInit, OnDestroy {
+  isLoggedIn = false;
   posts!: blogs[];
   isSetToolbar: any;
-  page : number = 1;
-  searchKeyword:string = '';
-  searchResults:blogs[]=[];
-  showSearchResult:boolean=false;
+  page: number = 1;
+  searchKeyword: string = '';
+  searchResults: blogs[] = [];
+  showSearchResult: boolean = false;
+  routerService!: Subscription;
+  initialStream! : Subscription;
+  laterStream! : Subscription;
+  searchStream! : Subscription;
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private api: APIService,
     private sanitizer: DomSanitizer,
-    private toast: ToastrService
+    private toast: ToastrService,
   ) {}
   ngOnInit(): void {
-    this.api.authorise().subscribe(
-      (response) => {
-        const data = JSON.parse(JSON.stringify(response));
-        if (data.status === 'success' && data.message === 'Token verified') {
+    
+    this.routerService = this.router.events.subscribe((event) => {
+      if(event instanceof NavigationEnd){
+        if(localStorage.getItem('travel-blog') !== null){
           this.isLoggedIn = true;
         }
-      },
-      (err) => {
-        localStorage.removeItem('travel-blog');
-        this.isLoggedIn = false;
-        this.router.navigate(['/']);
+        this.loadPost();
       }
-    );
+    });
   }
   ngAfterViewInit() {
-    this.api.userPost(this.page).subscribe(
+
+  }
+  loadPost(){
+    this.initialStream = this.api.userPost(this.page).subscribe(
       (response) => {
-        if ('status' in response && response.status === 'success' && 'data' in response) {
-          this.posts = (response.data as data).blogs as blogs[]
+        if (
+          'status' in response &&
+          response.status === 'success' &&
+          'data' in response
+        ) {
+          this.posts = (response.data as data).blogs as blogs[];
           for (let post of this.posts) {
             post.time = new Date(post.time).toDateString().toString();
 
@@ -83,9 +97,13 @@ export class MyblogsComponent implements OnInit, AfterViewInit {
   onIonInfinite(ev: any) {
     this.page++;
     //console.log(this.page)
-    this.api.getPost(this.page)?.subscribe(
+    this.laterStream = this.api.getPost(this.page)?.subscribe(
       (response) => {
-        if ('status' in response && response.status === 'success' && 'data' in response) {
+        if (
+          'status' in response &&
+          response.status === 'success' &&
+          'data' in response
+        ) {
           let morePost = (response.data as data).blogs as blogs[];
           for (let post of morePost) {
             post.time = new Date(post.time).toDateString().toString();
@@ -122,28 +140,30 @@ export class MyblogsComponent implements OnInit, AfterViewInit {
   trackByPostId(index: number, post: blogs): string {
     return post.id; // Assuming 'id' is the unique identifier for posts
   }
-  onDeletePost(deletePostId : string){
+  onDeletePost(deletePostId: string) {
     //find and delete post that from post array
-    this.posts = this.posts.filter(post => post.id !== deletePostId);
+    this.posts = this.posts.filter((post) => post.id !== deletePostId);
   }
-  onSearch(searchTerm:any){
+  onSearch(searchTerm: any) {
     this.searchKeyword = searchTerm.target.value;
-    if(this.searchKeyword === ''){
+    if (this.searchKeyword === '') {
       this.showSearchResult = false;
       return;
-    }
-    else{
+    } else {
       this.showSearchResult = true;
     }
 
-
-    let parameter : SearchParameter = {
-      page : 1,
-      title : this.searchKeyword,
+    let parameter: SearchParameter = {
+      page: 1,
+      title: this.searchKeyword,
       //subtitle : 'W'
     };
-    this.api.searchUserPost(parameter).subscribe((response) => {
-      if ('status' in response && response.status === 'success' && 'data' in response) {
+    this.searchStream = this.api.searchUserPost(parameter).subscribe((response) => {
+      if (
+        'status' in response &&
+        response.status === 'success' &&
+        'data' in response
+      ) {
         this.searchResults = (response.data as data).blogs as blogs[];
         console.log(this.searchResults);
         for (let post of this.searchResults) {
@@ -159,19 +179,25 @@ export class MyblogsComponent implements OnInit, AfterViewInit {
           post.imageURL = imageURL;
         }
       }
-    })
+    });
+  }
+  ngOnDestroy(): void {
+    this.routerService.unsubscribe();
+    this.initialStream.unsubscribe();
+    this.laterStream.unsubscribe();
+    this.searchStream.unsubscribe();
   }
 }
-interface blogs{
-  content: string,
+interface blogs {
+  content: string;
   id: string;
   title: string;
   subtitle: string;
   time: string;
-  firstName : string;
-  lastName : string;
-  imageURL : string | null;
+  firstName: string;
+  lastName: string;
+  imageURL: string | null;
 }
-interface data{
+interface data {
   blogs;
 }

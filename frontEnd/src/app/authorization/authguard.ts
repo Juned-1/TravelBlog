@@ -17,6 +17,7 @@ export class Authguard implements CanActivate{
               const res = JSON.parse(JSON.stringify(response));
               if (res.status === 'success' && res.message === "Token verified") {
                 subscriber.next(true);
+
               } else {
                 subscriber.next(false);
               }

@@ -53,9 +53,7 @@ export class LoginComponent  implements OnInit {
           String(fullName)
         );
       }      
-      this.router.navigate(["/"]).then(() => {
-        window.location.reload();
-      });  
+      this.router.navigate(["/"]);
     },
     (err) => {
       //console.log(err);

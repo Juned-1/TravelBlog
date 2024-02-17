@@ -49,14 +49,14 @@ export class MyblogsComponent implements OnInit, AfterViewInit, OnDestroy {
         if(localStorage.getItem('travel-blog') !== null){
           this.isLoggedIn = true;
         }
-        this.loadPost();
+        this.loadInitPost();
       }
     });
   }
   ngAfterViewInit() {
 
   }
-  loadPost(){
+  loadInitPost(){
     this.initialStream = this.api.userPost(this.page).subscribe(
       (response) => {
         if (

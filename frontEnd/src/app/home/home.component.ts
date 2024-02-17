@@ -33,6 +33,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   isLoggedIn = false;
   timeoutid: any = 0;
   page: number = 1;
+  initialStream! : Subscription;
+  laterStream! : Subscription;
   // blogCount = 0;
   constructor(
     private route: ActivatedRoute,
@@ -58,12 +60,16 @@ export class HomeComponent implements OnInit, OnDestroy {
             this.isLoggedIn = false;
           }
         );
+        this.loadInitPost();
       }
     });
   }
 
   ngAfterViewInit() {
-    this.api.getPost(this.page)?.subscribe(
+
+  }
+  loadInitPost(){
+    this.initialStream = this.api.getPost(this.page)?.subscribe(
       (response) => {
         if (
           'status' in response &&
@@ -90,7 +96,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
     );
   }
-
   // goToEditor() {
   //   this.router.navigate(['/texteditor']);
   // }
@@ -131,7 +136,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   onIonInfinite(ev: any) {
     this.page++;
     //console.log(this.page)
-    this.api.getPost(this.page)?.subscribe(
+    this.laterStream = this.api.getPost(this.page)?.subscribe(
       (response) => {
         if (
           'status' in response &&
@@ -167,6 +172,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     clearTimeout(this.timeoutid);
     this.routerService.unsubscribe();
+    this.initialStream.unsubscribe();
+    this.laterStream.unsubscribe();
   }
   search() {}
 }

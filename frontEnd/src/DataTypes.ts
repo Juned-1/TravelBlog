@@ -51,3 +51,32 @@ export interface blogs{
 export interface data{
   blogs: any;
 }
+export interface UserData {
+  user: {
+    id: String;
+    email: String;
+    firstName: String;
+    lastName: String;
+  };
+}
+export interface userDetails {
+  firstName: string;
+  lastName: string;
+  dob: string;
+  gender: string;
+  email: string;
+  // password: string;
+}
+export interface data1 {
+  userDetails;
+}
+export interface userData1 {
+  user: {
+    id: String;
+    firstName: String;
+    lastName: String;
+    email: String;
+    dob: Date;
+    gender: String;
+  };
+}

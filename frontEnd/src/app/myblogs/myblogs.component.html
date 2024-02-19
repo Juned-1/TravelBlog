@@ -1,30 +1,40 @@
-<app-toolbar [isLoggedIn]="isLoggedIn"></app-toolbar>
 <ion-content>
-<div class="myblogs-search-container">
-
-  <ion-searchbar
-  search-icon="search-circle"
-  placeholder="Search my blogs"
-  (ionInput)="onSearch($event)"
-  class="custom-searchbar"
-  color="light"
-  ></ion-searchbar>
-</div>
-
-  <div id="empty-msg-container" *ngIf="this.posts?.length === 0 || (this.showSearchResult && this.searchResults?.length===0)">
-    <div id="empty-msg">
-      <ion-card-title color="light" *ngIf="!this.showSearchResult">Travel Blogs is empty!</ion-card-title>
-      <ion-card-title color="light" *ngIf="this.showSearchResult">No matching Blogs!</ion-card-title>
-    </div>
+  <div class="myblogs-search-container">
+    <ion-searchbar
+      search-icon="search-circle"
+      placeholder="Search my blogs"
+      (ionInput)="onSearch($event)"
+      class="custom-searchbar"
+      color="light"
+    ></ion-searchbar>
   </div>
 
+  <div
+    id="empty-msg-container"
+    *ngIf="
+      this.posts?.length === 0 ||
+      (this.showSearchResult && this.searchResults?.length === 0)
+    "
+  >
+    <div id="empty-msg">
+      <ion-card-title color="light" *ngIf="!this.showSearchResult"
+        >Travel Blogs is empty!</ion-card-title
+      >
+      <ion-card-title color="light" *ngIf="this.showSearchResult"
+        >No matching Blogs!</ion-card-title
+      >
+    </div>
+  </div>
 
   <ion-grid>
     <ion-row>
       <ion-col
         size="12"
         sizeMd="6"
-        *ngFor="let post of showSearchResult? searchResults: posts; trackBy: trackByPostId"
+        *ngFor="
+          let post of showSearchResult ? searchResults : posts;
+          trackBy: trackByPostId
+        "
         class="home-cards"
         (click)="openBlog(post.id)"
       >
@@ -38,7 +48,6 @@
       </ion-infinite-scroll>
     </ion-row>
   </ion-grid>
-
 
   <div class="fixed-fab-container">
     <ion-fab-button (click)="openEditor()">

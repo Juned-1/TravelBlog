@@ -1,76 +1,38 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { InfiniteScrollCustomEvent, IonicModule } from '@ionic/angular';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { APIService } from 'src/apiservice.service';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BlogCardHomeComponent } from './blog-card-home/blog-card-home.component';
-import { SearchParameter, blogs, data } from '../../DataTypes';
-import { SearchService } from '../search.service';
-import { ToastrService } from 'ngx-toastr';
-import { Subscription } from 'rxjs';
+import { blogs, data } from '../../DataTypes';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
   standalone: true,
-  imports: [
-    IonicModule,
-    MatToolbarModule,
-    CommonModule,
-    ToolbarComponent,
-    BlogCardHomeComponent,
-  ],
+  imports: [IonicModule, CommonModule, ToolbarComponent, BlogCardHomeComponent],
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  routerService! : Subscription;
-  searchInput: string = '';
   slideIndex: number = 0;
   posts!: blogs[];
-  isLoggedIn = false;
   timeoutid: any = 0;
   page: number = 1;
-  initialStream! : Subscription;
-  laterStream! : Subscription;
-  // blogCount = 0;
   constructor(
-    private route: ActivatedRoute,
     private router: Router,
     private api: APIService,
-    private sanitizer: DomSanitizer,
-    private searchKeyword: SearchService,
-    private toast: ToastrService,
+    private sanitizer: DomSanitizer
   ) {}
   ngOnInit(): void {
     this.showSlides();
-    this.routerService = this.router.events.subscribe((event) => {
-      if (event instanceof NavigationEnd) {
-        this.api.authorise().subscribe(
-          (response) => {
-            const data = JSON.parse(JSON.stringify(response));
-            if (data.status === 'success' && data.message === 'Token verified') {
-              this.isLoggedIn = true;
-            }
-          },
-          (err) => {
-            localStorage.removeItem('travel-blog');
-            this.isLoggedIn = false;
-          }
-        );
-        this.loadInitPost();
-      }
-    });
+    this.loadInitPost();
   }
 
-  ngAfterViewInit() {
-
-  }
-  loadInitPost(){
-    this.initialStream = this.api.getPost(this.page)?.subscribe(
-      (response) => {
+  loadInitPost() {
+    this.api.getPost(this.page)?.subscribe({
+      next: (response) => {
         if (
           'status' in response &&
           response.status === 'success' &&
@@ -91,14 +53,11 @@ export class HomeComponent implements OnInit, OnDestroy {
           }
         }
       },
-      (err) => {
+      error: (err) => {
         console.log(err);
-      }
-    );
+      },
+    });
   }
-  // goToEditor() {
-  //   this.router.navigate(['/texteditor']);
-  // }
 
   extractFirstImageURL(postContent: string): string | null {
     const regex = /<img src="(.*?)"/g;
@@ -135,8 +94,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   onIonInfinite(ev: any) {
     this.page++;
-    //console.log(this.page)
-    this.laterStream = this.api.getPost(this.page)?.subscribe(
+    this.api.getPost(this.page)?.subscribe(
       (response) => {
         if (
           'status' in response &&
@@ -171,9 +129,5 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy() {
     clearTimeout(this.timeoutid);
-    this.routerService.unsubscribe();
-    this.initialStream.unsubscribe();
-    this.laterStream.unsubscribe();
   }
-  search() {}
 }

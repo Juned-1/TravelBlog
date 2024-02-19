@@ -1,14 +1,13 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { APIService } from 'src/apiservice.service';
 import { BlogCardHomeComponent } from '../home/blog-card-home/blog-card-home.component';
 import { SearchParameter, blogs, data } from 'src/DataTypes';
 import { DomSanitizer } from '@angular/platform-browser';
-import { SearchService } from '../search.service';
-import { Subscription } from 'rxjs';
+import { AuthService } from '../Services/Authentication/auth.service';
 
 @Component({
   selector: 'app-toolbar',
@@ -17,28 +16,23 @@ import { Subscription } from 'rxjs';
   standalone: true,
   imports: [IonicModule, MatToolbarModule, CommonModule, BlogCardHomeComponent],
 })
-export class ToolbarComponent implements OnInit, OnDestroy {
-  @Input() isLoggedIn!: Boolean;
-  @Output() logoutButton: EventEmitter<string> = new EventEmitter<string>();
-  routerService! : Subscription;
-  user: string | null = '';
+export class ToolbarComponent implements OnInit {
+
+  // @Input() isLoggedIn: boolean = false;
+  authService:AuthService = inject(AuthService);
+
+  user: string|null = this.authService.getUser();
   searchKeyword: string = '';
   searchResults!: blogs[];
   showSearchResults: boolean = false;
   constructor(
-    private route: ActivatedRoute,
     private router: Router,
     private api: APIService,
     private sanitizer: DomSanitizer,
-    private search: SearchService
   ) {}
 
   ngOnInit() {
-    this.routerService = this.router.events.subscribe((event) => {
-      if (localStorage.getItem('travel-blog') !== null) {
-        this.user = localStorage.getItem('travel-blog');
-      }
-    });
+    this.authService.checkLoggedIn();
   }
   LogIn() {
     this.router.navigate(['/login']);
@@ -47,12 +41,12 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     this.api.logout().subscribe(
       (response) => {
         localStorage.removeItem('travel-blog');
-        this.isLoggedIn = false;
       },
       (err) => {
         console.log(err.error.message);
       }
     );
+    this.authService.loggedIn = false;
     this.router.navigate(['/']);
   }
   signup() {
@@ -89,20 +83,23 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   onSearch(searchTerm: any) {
     // Do something with the search term
     this.searchKeyword = searchTerm.target.value;
-    if(this.searchKeyword === ''){
+    if (this.searchKeyword === '') {
       this.showSearchResults = false;
-    }
-    else{
+    } else {
       this.showSearchResults = true;
     }
-    
-    let parameter : SearchParameter = {
-      page : 1,
-      title : this.searchKeyword,
+
+    let parameter: SearchParameter = {
+      page: 1,
+      title: this.searchKeyword,
       //subtitle : 'W'
     };
     this.api.searchPost(parameter).subscribe((response) => {
-      if ('status' in response && response.status === 'success' && 'data' in response) {
+      if (
+        'status' in response &&
+        response.status === 'success' &&
+        'data' in response
+      ) {
         this.searchResults = (response.data as data).blogs as blogs[];
         console.log(this.searchResults);
         for (let post of this.searchResults) {
@@ -118,10 +115,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
           post.imageURL = imageURL;
         }
       }
-    })
-    
-  }
-  ngOnDestroy() {
-    this.routerService.unsubscribe();
+    });
   }
 }
+

@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
-import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { APIService } from 'src/apiservice.service';
+import { userData1 } from 'src/DataTypes';
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
@@ -21,7 +22,6 @@ import { APIService } from 'src/apiservice.service';
   ],
 })
 export class SignupComponent implements OnInit {
-  isLoggedIn = false;
   formData = {
     firstName: '',
     lastName: '',
@@ -32,7 +32,6 @@ export class SignupComponent implements OnInit {
     gender: '',
   };
   constructor(
-    private route: ActivatedRoute,
     private router: Router,
     private api: APIService,
     private toast: ToastrService
@@ -48,39 +47,24 @@ export class SignupComponent implements OnInit {
           response.status === 'success' &&
           'data' in response
         ) {
-          interface userData {
-            user: {
-              id: String;
-              firstName: String;
-              lastName: String;
-              email: String;
-              dob: Date;
-              gender: String;
-            };
-          }
-          const Data = response.data as userData;
+          const Data = response.data as userData1;
           let fullName = '';
-          if(typeof Data.user.firstName === 'string' && typeof Data.user.lastName === 'string'){
-            fullName = Data.user.firstName + " " + Data.user.lastName
+          if (
+            typeof Data.user.firstName === 'string' &&
+            typeof Data.user.lastName === 'string'
+          ) {
+            fullName = Data.user.firstName + ' ' + Data.user.lastName;
           }
-          //console.log(fullName)
-          localStorage.setItem(
-            'travel-blog',
-            String(fullName)
-          );
+          localStorage.setItem('travel-blog', String(fullName));
           this.toast.success('Signup Successful');
           this.router.navigate(['/']);
         }
-        // if(response){
-        // }
+
       },
       (err) => {
-        //console.log(err);
         if (err.status === 422 && err.error.status === 'error') {
-          //const data = JSON.stringify(err.error.message);
           this.toast.warning(err.error.message);
         } else if (err.status === 400 && err.error.status === 'fail') {
-          //const data = err.error.message;
           this.toast.warning(err.error.message);
         } else if (err.status === 409 && err.error.status === 'fail') {
           this.toast.warning(err.error.message);

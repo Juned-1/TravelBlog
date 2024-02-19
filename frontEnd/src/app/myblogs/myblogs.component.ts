@@ -1,15 +1,19 @@
-import { AfterViewInit, Component, OnInit, Input, OnDestroy } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  OnInit,
+} from '@angular/core';
 import { InfiniteScrollCustomEvent, IonicModule } from '@ionic/angular';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
-import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { APIService } from 'src/apiservice.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
 import { MyblogsBlogCardComponent } from './myblogs-blog-card/myblogs-blog-card.component';
 import { SearchParameter } from 'src/DataTypes';
-import { Subscription } from 'rxjs';
+import { blogs, data } from 'src/DataTypes';
 @Component({
   selector: 'app-myblogs',
   templateUrl: 'myblogs.component.html',
@@ -23,41 +27,27 @@ import { Subscription } from 'rxjs';
     MyblogsBlogCardComponent,
   ],
 })
-export class MyblogsComponent implements OnInit, AfterViewInit, OnDestroy {
-  isLoggedIn = false;
+export class MyblogsComponent implements OnInit, AfterViewInit {
   posts!: blogs[];
   isSetToolbar: any;
   page: number = 1;
   searchKeyword: string = '';
   searchResults: blogs[] = [];
   showSearchResult: boolean = false;
-  routerService!: Subscription;
-  initialStream! : Subscription;
-  laterStream! : Subscription;
-  searchStream! : Subscription;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private api: APIService,
     private sanitizer: DomSanitizer,
-    private toast: ToastrService,
+    private toast: ToastrService
   ) {}
   ngOnInit(): void {
-    
-    this.routerService = this.router.events.subscribe((event) => {
-      if(event instanceof NavigationEnd){
-        if(localStorage.getItem('travel-blog') !== null){
-          this.isLoggedIn = true;
-        }
-        this.loadInitPost();
-      }
-    });
+      this.loadInitPost();
   }
-  ngAfterViewInit() {
-
-  }
-  loadInitPost(){
-    this.initialStream = this.api.userPost(this.page).subscribe(
+  ngAfterViewInit() {}
+  loadInitPost() {
+    this.api.userPost(this.page).subscribe(
       (response) => {
         if (
           'status' in response &&
@@ -97,7 +87,7 @@ export class MyblogsComponent implements OnInit, AfterViewInit, OnDestroy {
   onIonInfinite(ev: any) {
     this.page++;
     //console.log(this.page)
-    this.laterStream = this.api.getPost(this.page)?.subscribe(
+    this.api.getPost(this.page)?.subscribe(
       (response) => {
         if (
           'status' in response &&
@@ -158,46 +148,30 @@ export class MyblogsComponent implements OnInit, AfterViewInit, OnDestroy {
       title: this.searchKeyword,
       //subtitle : 'W'
     };
-    this.searchStream = this.api.searchUserPost(parameter).subscribe((response) => {
-      if (
-        'status' in response &&
-        response.status === 'success' &&
-        'data' in response
-      ) {
-        this.searchResults = (response.data as data).blogs as blogs[];
-        console.log(this.searchResults);
-        for (let post of this.searchResults) {
-          post.time = new Date(post.time).toDateString().toString();
-          // Extract the first image URL from post.post_content
-          let imageURL = this.extractFirstImageURL(post.content);
-          if (imageURL === null) {
-            imageURL = '../../assets/travelImage/no-image.jpg';
+    this.api
+      .searchUserPost(parameter)
+      .subscribe((response) => {
+        if (
+          'status' in response &&
+          response.status === 'success' &&
+          'data' in response
+        ) {
+          this.searchResults = (response.data as data).blogs as blogs[];
+          console.log(this.searchResults);
+          for (let post of this.searchResults) {
+            post.time = new Date(post.time).toDateString().toString();
+            // Extract the first image URL from post.post_content
+            let imageURL = this.extractFirstImageURL(post.content);
+            if (imageURL === null) {
+              imageURL = '../../assets/travelImage/no-image.jpg';
+            }
+            imageURL = (
+              this.sanitizer.bypassSecurityTrustResourceUrl(imageURL) as any
+            ).changingThisBreaksApplicationSecurity;
+            post.imageURL = imageURL;
           }
-          imageURL = (
-            this.sanitizer.bypassSecurityTrustResourceUrl(imageURL) as any
-          ).changingThisBreaksApplicationSecurity;
-          post.imageURL = imageURL;
         }
-      }
-    });
-  }
-  ngOnDestroy(): void {
-    this.routerService.unsubscribe();
-    this.initialStream.unsubscribe();
-    this.laterStream.unsubscribe();
-    this.searchStream.unsubscribe();
+      });
   }
 }
-interface blogs {
-  content: string;
-  id: string;
-  title: string;
-  subtitle: string;
-  time: string;
-  firstName: string;
-  lastName: string;
-  imageURL: string | null;
-}
-interface data {
-  blogs;
-}
+

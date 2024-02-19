@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
@@ -8,6 +8,7 @@ import { APIService } from 'src/apiservice.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
+import { userDetails,data1 } from 'src/DataTypes';
 
 @Component({
   selector: 'app-profile',
@@ -51,7 +52,7 @@ export class ProfileComponent implements OnInit {
           response.status === 'success' &&
           'data' in response
         ) {
-          this.formData = (response.data as data).userDetails as userDetails;
+          this.formData = (response.data as data1).userDetails as userDetails;
           this.formData.dob = new Date(this.formData.dob).toISOString().split('T')[0];
         }
       },
@@ -79,14 +80,4 @@ export class ProfileComponent implements OnInit {
   }
 }
 
-interface userDetails {
-  firstName: string;
-  lastName: string;
-  dob: string;
-  gender: string;
-  email: string;
-  // password: string;
-}
-interface data {
-  userDetails;
-}
+

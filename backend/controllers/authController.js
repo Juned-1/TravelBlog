@@ -1,7 +1,7 @@
 const { COOKIE_NAME } = require("../utils/constants.js");
 const { createToken } = require("../utils/token-manager.js");
 const { cookieDomain, jwtSecret } = require("../configuration.js");
-const { promisify } = require('util');
+const { promisify } = require("util");
 const User = require("../models/userModel.js");
 const catchAsync = require("../utils/catchAsync.js");
 const AppError = require("../utils/appError.js");
@@ -55,7 +55,9 @@ exports.userSignup = catchAsync(async (req, res, next) => {
     createAndSendToken(result, 201, res);
   } else {
     //user already exist
-    return next(new AppError("User with given email is already registered!", 409));
+    return next(
+      new AppError("User with given email is already registered!", 409)
+    );
   }
 });
 
@@ -99,7 +101,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   // }
   if (!token) {
     return next(
-      new AppError('You are not logged in! Please log in first.', 401),
+      new AppError("You are not logged in! Please log in first.", 401)
     ); //401 - unauthorised, data sent is correct but user is not authorised
   }
   //2. Verification of token
@@ -108,10 +110,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   const currentUser = await User.findByPk(decoded.id + 0);
   if (!currentUser) {
     return next(
-      new AppError(
-        'The user belonging to this token does no longer exist',
-        401,
-      ),
+      new AppError("The user belonging to this token does no longer exist", 401)
     );
   }
   //4. If User changed password after JWT is issued

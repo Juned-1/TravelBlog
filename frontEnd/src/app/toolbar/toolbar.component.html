@@ -1,8 +1,7 @@
 <ion-header>
   <ion-toolbar id="new-background-color">
-    <!-- Add your logo on the left -->
     <ion-buttons slot="start">
-      <ion-menu-button *ngIf="isLoggedIn"></ion-menu-button>
+      <ion-menu-button *ngIf="authService.loggedIn"></ion-menu-button>
       <ion-img
         (click)="routeToHome()"
         src="../../assets/icon/travel_blog_icon.png"
@@ -21,15 +20,15 @@
         class="custom-searchbar"
         color="light"
       ></ion-searchbar>
-      <ion-label *ngIf="isLoggedIn" class="toolbar-end-items"
+      <ion-label *ngIf="authService.loggedIn" class="toolbar-end-items"
         ><h3 id="welcome-msg">
           Logged as,
-          <strong id="user-name" (click)="routeToProfile()">{{ user }}</strong>
+          <strong id="user-name" (click)="routeToProfile()">{{ authService.user }}</strong>
         </h3></ion-label
       >
       <ion-button
         class="toolbar-end-items"
-        *ngIf="isLoggedIn"
+        *ngIf="authService.loggedIn"
         (click)="Logout()"
         fill="outline"
         shape="round"
@@ -38,7 +37,7 @@
       >
       <ion-button
         class="toolbar-end-items"
-        *ngIf="!isLoggedIn"
+        *ngIf="!authService.loggedIn"
         shape="round"
         fill="outline"
         (click)="LogIn()"
@@ -46,7 +45,7 @@
       >
       <ion-button
         class="toolbar-end-items"
-        *ngIf="!isLoggedIn"
+        *ngIf="!authService.loggedIn"
         shape="round"
         fill="solid"
         (click)="signup()"
@@ -60,16 +59,13 @@
         interface="popover"
         (ionChange)="handleChange($event)"
       >
-        <ion-select-option *ngIf="!isLoggedIn" value="login"
+        <ion-select-option *ngIf="!authService.loggedIn" value="login"
           >Login</ion-select-option
         >
-        <ion-select-option *ngIf="!isLoggedIn" value="signup"
+        <ion-select-option *ngIf="!authService.loggedIn" value="signup"
           >Signup</ion-select-option
         >
-        <!-- <ion-select-option *ngIf="isLoggedIn" value="myblogs"
-          >My Bogs</ion-select-option
-        > -->
-        <ion-select-option *ngIf="isLoggedIn" value="logout"
+        <ion-select-option *ngIf="authService.loggedIn" value="logout"
           >Logout
           <strong>{{
             user?.substring(0, user?.indexOf(" "))
@@ -95,6 +91,4 @@
       </ion-col>
     </ion-row>
   </ion-grid>
-
-
 </ion-content>

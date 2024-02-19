@@ -1,71 +1,62 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
-import { FormsModule } from '@angular/forms';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { Router, ActivatedRoute } from '@angular/router';
-import { ToolbarComponent } from '../toolbar/toolbar.component';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { ToolbarComponent } from '../toolbar/toolbar.component';
 import { APIService } from 'src/apiservice.service';
 import { ToastrService } from 'ngx-toastr';
+import { AuthService } from '../Services/Authentication/auth.service';
+import { UserData } from 'src/DataTypes';
+
 @Component({
   selector: 'app-signup',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   standalone: true,
-  imports: [
-    IonicModule,
-    CommonModule,
-    FormsModule,
-    MatDatepickerModule,
-    ToolbarComponent,
-  ],
+  imports: [IonicModule, CommonModule, FormsModule, ToolbarComponent],
 })
-export class LoginComponent  implements OnInit {
-  isLoggedIn = false;
+export class LoginComponent implements OnInit {
   formData = {
     email: '',
-    password: ''
+    password: '',
   };
-  constructor(private route : ActivatedRoute, private router : Router, private api : APIService, private toast : ToastrService) {}
-  ngOnInit(): void {
-
-  }
-  login(){
-    this.api.login(this.formData).subscribe((response)=>{
-      //console.log(response);
-      if('status' in response && response.status === 'success' && 'data' in response){
-        interface userData {
-          user: {
-            id: String;
-            email: String;
-            firstName: String;
-            lastName: String;
-          };
+  authService: AuthService = inject(AuthService);
+  constructor(
+    private router: Router,
+    private api: APIService,
+    private toast: ToastrService
+  ) {}
+  ngOnInit(): void {}
+  login() {
+    this.api.login(this.formData).subscribe({
+      next: (response) => {
+        if (
+          'status' in response &&
+          response.status === 'success' &&
+          'data' in response
+        ) {
+          const Data = response.data as UserData;
+          let fullName = '';
+          fullName = Data.user.firstName + ' ' + Data.user.lastName;
+          localStorage.setItem('travel-blog', String(fullName));
+          this.authService.loggedIn = true;
+          console.log(this.authService.getUser());
+          this.router.navigate(['/']);
+        } else {
+          console.log(response);
         }
-        const Data = response.data as userData;
-        let fullName = '';
-        if(typeof Data.user.firstName === 'string' && typeof Data.user.lastName === 'string'){
-          fullName = Data.user.firstName + " " + Data.user.lastName
+      },
+      error: (err) => {
+        if (err.status === 401 && err.error.status === 'fail') {
+          this.toast.warning(err.error.message);
+        } else if ((err.status = 422 && err.error.status === 'error')) {
+          this.toast.error(err.error.message);
         }
-        //console.log(fullName)
-        localStorage.setItem(
-          'travel-blog',
-          String(fullName)
-        );
-      }      
-      this.router.navigate(["/"]);
-    },
-    (err) => {
-      //console.log(err);
-      if(err.status === 401 && err.error.status === 'fail'){
-        this.toast.warning(err.error.message);
-      }else if(err.status = 422 && err.error.status === "error"){
-        this.toast.error(err.error.message);
-      }
-    }
-    );
+      },
+    });
   }
-  change(){
+  change() {
     this.router.navigate(['/signup']);
   }
 }

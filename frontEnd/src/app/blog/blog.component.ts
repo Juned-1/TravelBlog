@@ -1,34 +1,22 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
-import {
-  DomSanitizer,
-  SafeResourceUrl,
-  SafeHtml,
-} from '@angular/platform-browser';
+import { AfterViewInit, Component, OnInit, inject } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { IonicModule } from '@ionic/angular';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
-import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
-import { QuillModule } from 'ngx-quill';
+import { ActivatedRoute } from '@angular/router';
 import { APIService } from 'src/apiservice.service';
 import { ToastrService } from 'ngx-toastr';
 import { LikeObj, CountLike, LikeData, Post, PostData } from 'src/DataTypes';
-import { Subscription } from 'rxjs';
+import { AuthService } from '../Services/Authentication/auth.service';
 @Component({
   selector: 'app-blog',
   templateUrl: './blog.component.html',
   styleUrls: ['./blog.component.scss'],
   standalone: true,
-  imports: [
-    IonicModule,
-    MatToolbarModule,
-    CommonModule,
-    ToolbarComponent,
-    QuillModule,
-  ],
+  imports: [IonicModule, MatToolbarModule, CommonModule, ToolbarComponent],
 })
-export class BlogComponent implements OnInit, OnDestroy, AfterViewInit, OnDestroy {
-  isLoggedIn = false;
+export class BlogComponent implements OnInit, AfterViewInit {
   id!: string;
   post!: Post;
   time: String = '';
@@ -36,38 +24,21 @@ export class BlogComponent implements OnInit, OnDestroy, AfterViewInit, OnDestro
   url: any = null;
   likes: number = 0;
   dislikes: number = 0;
-  routerService!: Subscription;
+
+  authenticate: AuthService = inject(AuthService);
+
   constructor(
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
-    private router: Router,
     private api: APIService,
     private toast: ToastrService
   ) {}
   ngOnInit() {
-    this.routerService = this.router.events.subscribe((event) => {
-      if (event instanceof NavigationEnd) {
-        this.api.authorise().subscribe(
-          (response) => {
-            const data = JSON.parse(JSON.stringify(response));
-            if (data.status === 'success' && data.message === 'Token verified') {
-              this.isLoggedIn = true;
-            }
-          },
-          (err) => {
-            localStorage.removeItem('travel-blog');
-            this.isLoggedIn = false;
-          }
-        );
-      }
-    });
     this.id = this.route.snapshot.queryParams['id'];
   }
   ngAfterViewInit() {
-    //this.id = localStorage.getItem()
-    console.log(this.id);
-    this.api.getSpecificPost(this.id).subscribe(
-      (response) => {
+    this.api.getSpecificPost(this.id).subscribe({
+      next: (response) => {
         console.log();
         if (
           'status' in response &&
@@ -81,25 +52,18 @@ export class BlogComponent implements OnInit, OnDestroy, AfterViewInit, OnDestro
           this.time = new Date(this.post.time).toDateString().toString();
           this.likes = this.post.likeCount;
           this.dislikes = this.post.dislikeCount;
-          //console.log(this.content);
         }
-
-        // if (this.post.post_video_url) {
-        //   this.url = this.sanitizer.bypassSecurityTrustResourceUrl(
-        //     this.post.post_video_url
-        //   );
-        // }
       },
-      (err) => {
+      error: (err) => {
         this.toast.error('Error loading post');
         console.log(err);
-      }
-    );
+      },
+    });
   }
   sendLikeDislike(val: string) {
     let reactionValues: LikeObj = { id: this.id, value: val };
-    this.api.likedislike(reactionValues).subscribe(
-      (response) => {
+    this.api.likedislike(reactionValues).subscribe({
+      next: (response) => {
         if (
           'status' in response &&
           response.status === 'success' &&
@@ -109,19 +73,15 @@ export class BlogComponent implements OnInit, OnDestroy, AfterViewInit, OnDestro
           this.likes = likevals.likeCount;
           this.dislikes = likevals.dislikeCount;
         }
-        // if ('message' in response && response.message === 'ok') {
-        //   this.toast.success('success');
-        //   this.ngAfterViewInit();
-        // }
       },
-      (err) => {
+      error: (err) => {
         this.toast.error('Error');
         console.log(err);
-      }
-    );
+      },
+    });
   }
   like() {
-    if (!this.isLoggedIn) {
+    if (!this.authenticate.loggedIn) {
       this.toast.warning('Sign in to like');
       return;
     }
@@ -129,14 +89,11 @@ export class BlogComponent implements OnInit, OnDestroy, AfterViewInit, OnDestro
     this.sendLikeDislike(val);
   }
   dislike() {
-    if (!this.isLoggedIn) {
+    if (!this.authenticate.loggedIn) {
       this.toast.warning('Sign in to dislike');
       return;
     }
     let val = 'dislike';
     this.sendLikeDislike(val);
-  }
-  ngOnDestroy(): void {
-    this.routerService.unsubscribe();
   }
 }

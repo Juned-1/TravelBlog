@@ -1,4 +1,11 @@
-import { AfterViewInit, Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
@@ -16,30 +23,36 @@ import { ToolbarComponent } from 'src/app/toolbar/toolbar.component';
   standalone: true,
   imports: [IonicModule, MatToolbarModule, CommonModule, ToolbarComponent],
 })
-export class MyblogsBlogCardComponent  implements OnInit {
+export class MyblogsBlogCardComponent implements OnInit {
   @Input() post: any;
   @Output() deleteEvent = new EventEmitter<string>();
-  constructor(private route : ActivatedRoute, private router : Router, private api : APIService, private sanitizer : DomSanitizer, private toast: ToastrService) { }
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private api: APIService,
+    private sanitizer: DomSanitizer,
+    private toast: ToastrService
+  ) {}
 
   ngOnInit() {}
 
   deleteBlog(e: any) {
     e.stopPropagation();
     const id = e.srcElement.id;
-    this.api.deletePost(id).subscribe(
-      (response) => {
+    this.api.deletePost(id).subscribe({
+      next: (response) => {
         this.toast.success('Successfully Deleted');
         this.deleteEvent.emit(id);
       },
-      (err) => {
+      error: (err) => {
         this.toast.error('Error deleting post');
         console.log(err);
-      }
-    );
+      },
+    });
   }
-  editBlog(e: any){
+  editBlog(e: any) {
     e.stopPropagation();
     const id = e.srcElement.id;
-    this.router.navigate(['/texteditor'],{ queryParams: { id } });
-  } 
+    this.router.navigate(['/texteditor'], { queryParams: { id } });
+  }
 }

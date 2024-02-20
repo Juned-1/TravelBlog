@@ -70,7 +70,14 @@ ion-select::part(icon) {
   opacity: 1;
 }
 #new-background-color{
-  --background: linear-gradient(90deg, rgb(177, 202, 218) 12.9%, rgb(247, 224, 229) 91.2%);
+  --background: linear-gradient(90deg, rgb(145, 193, 253) 12.9%, rgb(247, 224, 229) 91.2%);
+  // --background: linear-gradient(90deg, rgba(62, 147, 252, 0.57) 12.9%,
+  // rgba(239, 183, 192, 0.44) 91.2%);
+  // --background: radial-gradient(
+  //   circle 911px at 0% 0%,
+  //   rgba(62, 147, 252, 0.57) 12.9%,
+  //   rgba(239, 183, 192, 0.44) 91.2%
+  // );
 
 }
 @media screen and (max-width: 768px) {

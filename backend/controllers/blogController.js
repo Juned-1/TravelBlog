@@ -8,19 +8,30 @@ const catchAsync = require("../utils/catchAsync");
 
 const search = (query) => {
   let clause = {};
-  if(Object.keys(query).includes('title') && Object.keys(query).includes('subtitle')){
+  if (
+    Object.keys(query).includes("title") &&
+    Object.keys(query).includes("subtitle")
+  ) {
     clause[Op.or] = [];
-    clause[Op.or].push({ title: { [Op.like]: `%${decodeURIComponent(query.title)}%` } });
-    clause[Op.or].push({ subtitle: { [Op.like]: `%${decodeURIComponent(query.subtitle)}%` } });
-  }
-  else if(Object.keys(query).includes('title')){
-    clause = {...clause, title : {[Op.like]: `%${decodeURIComponent(query.title)}%`}};
-  }
-  else if(Object.keys(query).includes('subtitle')){
-    clause = {...clause, subtitle : {[Op.like]: `%${decodeURIComponent(query.subtitle)}%`}};
+    clause[Op.or].push({
+      title: { [Op.like]: `%${decodeURIComponent(query.title)}%` },
+    });
+    clause[Op.or].push({
+      subtitle: { [Op.like]: `%${decodeURIComponent(query.subtitle)}%` },
+    });
+  } else if (Object.keys(query).includes("title")) {
+    clause = {
+      ...clause,
+      title: { [Op.like]: `%${decodeURIComponent(query.title)}%` },
+    };
+  } else if (Object.keys(query).includes("subtitle")) {
+    clause = {
+      ...clause,
+      subtitle: { [Op.like]: `%${decodeURIComponent(query.subtitle)}%` },
+    };
   }
   return clause;
-}
+};
 //writing post
 exports.writePost = catchAsync(async (req, res, next) => {
   const post = await Post.create({
@@ -67,7 +78,7 @@ exports.getSpecificPost = catchAsync(async (req, res, next) => {
         model: User,
         attributes: [],
         where: { id: Sequelize.col("Post.userId") },
-      }
+      },
     ],
     where: { id: req.params.id },
   });
@@ -78,9 +89,9 @@ exports.getSpecificPost = catchAsync(async (req, res, next) => {
   }
   return res.status(200).json({
     status: "success",
-    data : {
-      post : result
-    }
+    data: {
+      post: result,
+    },
   });
 });
 
@@ -130,7 +141,7 @@ exports.deletePost = catchAsync(async (req, res, next) => {
 //Like -- Dislike
 exports.likedislike = catchAsync(async (req, res, next) => {
   const postid = req.params.id;
-  const userid = req.tokenData.id;//req.body.userId;
+  const userid = req.tokenData.id; //req.body.userId;
   //console.log(req.body);
   const likes = await PostLike.findOne({
     attributes: ["likeId", "userId", "postId", "reactionType"],
@@ -177,9 +188,9 @@ exports.likedislike = catchAsync(async (req, res, next) => {
     where: { postId: postid },
     replacements: { postId: postid },
   });
-  
+
   if (!countLike) {
-    countLike = { likeCount : 0, dislikeCount : 0}
+    countLike = { likeCount: 0, dislikeCount: 0 };
   }
   return res.status(200).json({
     status: "success",
@@ -236,20 +247,20 @@ exports.getUserPost = catchAsync(async (req, res, next) => {
   //const sql = `SELECT posts.post_id, posts.post_title, posts.post_subtitle, posts.post_content, posts.post_video_url, users.firstName, users.lastName, posts.post_time FROM users,posts WHERE users.id = posts.user_id AND users.email = ?;`;
   const result = await Post.findAll({
     attributes: [
-      'id',
-      'title',
-      'subtitle',
-      'content',
-      [Sequelize.literal('User.firstName'), 'firstName'],
-      [Sequelize.literal('User.lastName'), 'lastName'],
-      'time'
+      "id",
+      "title",
+      "subtitle",
+      "content",
+      [Sequelize.literal("User.firstName"), "firstName"],
+      [Sequelize.literal("User.lastName"), "lastName"],
+      "time",
     ],
     include: [
       {
         model: User, // Assuming your User model is named User
         attributes: [], // Ensure no attributes from User model are selected separately
-        where: {email: uemail}
-      }
+        where: { email: uemail },
+      },
     ],
     where: whereClause,
     order: [["time", "DESC"]],

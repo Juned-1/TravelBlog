@@ -7,6 +7,7 @@ import { MyblogsComponent } from './myblogs/myblogs.component';
 import { BlogComponent } from './blog/blog.component';
 import { ProfileComponent } from './profile/profile.component';
 import { CanActivate } from './Services/Authorization/auth.guard';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
 const routeConfig: Routes = [
   {
@@ -45,5 +46,6 @@ const routeConfig: Routes = [
     component: ProfileComponent,
     canActivate: [CanActivate],
   },
+  {path: '**', component: PageNotFoundComponent}
 ];
 export default routeConfig;

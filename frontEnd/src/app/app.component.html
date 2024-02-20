@@ -1,20 +1,18 @@
 <ion-app>
-  <app-toolbar> </app-toolbar>
-  <ion-menu contentId="main-content">
+   <ion-menu contentId="main-content">
     <ion-content>
       <ion-list id="inbox-list">
         <ion-list-header>Menu</ion-list-header>
         <ion-note>&#64;{{ user }}</ion-note>
         <ion-menu-toggle
           auto-hide="false"
-          *ngFor="let p of appPages; let i = index"
+          *ngFor="let p of appPages;"
         >
           <ion-item
             routerDirection="root"
             [routerLink]="[p.url]"
             lines="none"
             detail="false"
-            routerLinkActive="selected"
           >
             <ion-icon
               aria-hidden="true"
@@ -30,52 +28,9 @@
   </ion-menu>
 
   <div class="ion-page" id="main-content">
-    <ion-header>
-      <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-menu-button></ion-menu-button>
-        </ion-buttons>
-        <ion-title>Menu</ion-title>
-      </ion-toolbar>
-    </ion-header>
+    <app-toolbar> </app-toolbar>
     <ion-content class="ion-padding">
-      <ion-router-outlet id="main-content"></ion-router-outlet>
+      <ion-router-outlet></ion-router-outlet>
     </ion-content>
-    <!-- <ion-content class="ion-padding"> Tap the button in the toolbar to open the menu. </ion-content> -->
   </div>
 </ion-app>
-
-<!-- <ion-app>
-  <app-toolbar [isLoggedIn]="true"> </app-toolbar>
-
-      <ion-menu contentId="main-content" type="push">
-        <ion-content>
-      <ion-list id="inbox-list">
-        <ion-list-header>Menu</ion-list-header>
-        <ion-note>&#64;{{ user }}</ion-note>
-        <ion-menu-toggle
-          auto-hide="false"
-          *ngFor="let p of appPages; let i = index"
-        >
-          <ion-item
-            routerDirection="root"
-            [routerLink]="[p.url]"
-            lines="none"
-            detail="false"
-            routerLinkActive="selected"
-          >
-            <ion-icon
-              aria-hidden="true"
-              slot="start"
-              [ios]="p.icon + '-outline'"
-              [md]="p.icon + '-sharp'"
-            ></ion-icon>
-            <ion-label>{{ p.title }}</ion-label>
-          </ion-item>
-        </ion-menu-toggle>
-      </ion-list>
-    </ion-content>
-  </ion-menu>
-  <ion-router-outlet id="main-content"></ion-router-outlet>
-
-</ion-app> -->

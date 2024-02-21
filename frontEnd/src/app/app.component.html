@@ -1,31 +1,5 @@
 <ion-app>
-   <ion-menu contentId="main-content">
-    <ion-content>
-      <ion-list id="inbox-list">
-        <ion-list-header>Menu</ion-list-header>
-        <ion-note>&#64;{{ user }}</ion-note>
-        <ion-menu-toggle
-          auto-hide="false"
-          *ngFor="let p of appPages;"
-        >
-          <ion-item
-            routerDirection="root"
-            [routerLink]="[p.url]"
-            lines="none"
-            detail="false"
-          >
-            <ion-icon
-              aria-hidden="true"
-              slot="start"
-              [ios]="p.icon + '-outline'"
-              [md]="p.icon + '-sharp'"
-            ></ion-icon>
-            <ion-label>{{ p.title }}</ion-label>
-          </ion-item>
-        </ion-menu-toggle>
-      </ion-list>
-    </ion-content>
-  </ion-menu>
+  <app-menu></app-menu>
 
   <div class="ion-page" id="main-content">
     <app-toolbar> </app-toolbar>

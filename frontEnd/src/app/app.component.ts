@@ -1,11 +1,8 @@
-import { Component, EnvironmentInjector, OnInit, inject } from '@angular/core';
+import { Component, EnvironmentInjector, inject } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
-import { SignupComponent } from './signup/signup.component';
-import { HomeComponent } from './home/home.component';
-import { RouterModule,ActivatedRoute,Router } from '@angular/router';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { ToolbarComponent } from './toolbar/toolbar.component';
+import { MenuComponent } from './menu/menu.component';
 
 @Component({
   selector: 'app-root',
@@ -15,27 +12,12 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
   imports: [
     IonicModule,
     CommonModule,
-    SignupComponent,
-    HomeComponent,
-    RouterModule,
-    MatToolbarModule,
-    ToolbarComponent
+    ToolbarComponent,
+    MenuComponent,
   ],
 })
-export class AppComponent implements OnInit{
-  user: any = localStorage.getItem('travel-blog');
-
-  public appPages = [
-    { title: 'Home', url: '/', icon: 'home' },
-    { title: 'My Blogs', url:'/userblog', icon: 'paper-plane' },
-    { title: 'Profile', url: '/profile', icon: 'person' },
-    { title: 'Trash', url: '/trash', icon: 'trash' },
-  ];
-
+export class AppComponent {
   public environmentInjector = inject(EnvironmentInjector);
 
-  constructor(private route : ActivatedRoute, private router : Router) {}
-  ngOnInit(): void {
-    //console.log(this.router.url);
-  }
+  constructor() {}
 }

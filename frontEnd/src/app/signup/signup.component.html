@@ -55,7 +55,14 @@
         <!--Gender input-->
         <fieldset class="input-item">
           <!-- <legend>Gender</legend> -->
-          <ion-select justify="space-between" label="Gender" [(ngModel)]="formData.gender" name="gender" required interface="popover">
+          <ion-select
+            justify="space-between"
+            label="Gender"
+            [(ngModel)]="formData.gender"
+            name="gender"
+            required
+            interface="popover"
+          >
             <ion-select-option value="male">Male</ion-select-option>
             <ion-select-option value="female">Female</ion-select-option>
             <ion-select-option value="other">Other</ion-select-option>
@@ -86,7 +93,7 @@
           ></ion-input>
         </fieldset>
       </ion-item>
-      <br>
+      <br />
       <p class="signin-text">
         I'm already a member&nbsp;<a (click)="change()">Sign In?</a>
       </p>
@@ -94,5 +101,11 @@
         >Sign Up</ion-button
       >
     </form>
+    <div class="google-container">
+      <ion-button (click)="loginWithGoogle()">
+        <span>SignUp with Google</span>
+        <ion-icon slot="start" name="logo-google"></ion-icon>
+      </ion-button>
+    </div>
   </div>
 </ion-content>

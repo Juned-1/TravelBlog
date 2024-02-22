@@ -59,4 +59,7 @@ export class LoginComponent implements OnInit {
   change() {
     this.router.navigate(['/signup']);
   }
+  loginWithGoogle(){
+    
+  }
 }

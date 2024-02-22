@@ -1,5 +1,4 @@
 import { Injectable, OnInit } from '@angular/core';
-import { catchError } from 'rxjs';
 import { APIService } from 'src/apiservice.service';
 
 @Injectable({

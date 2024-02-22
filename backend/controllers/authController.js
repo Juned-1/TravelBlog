@@ -1,6 +1,6 @@
 const { COOKIE_NAME } = require("../utils/constants.js");
 const { createToken } = require("../utils/token-manager.js");
-const { cookieDomain, jwtSecret } = require("../configuration.js");
+const { cookieDomain, jwtSecret, environment } = require("../configuration.js");
 const { promisify } = require("util");
 const User = require("../models/userModel.js");
 const catchAsync = require("../utils/catchAsync.js");
@@ -8,9 +8,9 @@ const AppError = require("../utils/appError.js");
 const createAndSendToken = (user, statusCode, res) => {
   res.clearCookie(COOKIE_NAME, {
     httpOnly: true,
-    domain: cookieDomain,
-    signed: true,
-    path: "/",
+    //domain: cookieDomain,
+    //signed: true, -- only for deployment works for browser not postman
+    //path: "/",
   });
   //create token and cookies as response
   const token = createToken(
@@ -23,11 +23,11 @@ const createAndSendToken = (user, statusCode, res) => {
   expires.setDate(expires.getDate() + 7);
   //sending cookie HHTP only cookie from backend to front end, first parameter name of cookie, into root directories of cookies we want to show the cookies
   res.cookie(COOKIE_NAME, token, {
-    path: "/",
-    domain: cookieDomain,
+    //path: "/",  -- for deployment
+    //domain: cookieDomain,
     expires,
     httpOnly: true,
-    signed: true,
+    //signed: true,
   });
   return res.status(statusCode).json({
     status: "success",
@@ -63,7 +63,6 @@ exports.userSignup = catchAsync(async (req, res, next) => {
 
 exports.userLogin = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
-  //console.log(email,password)
   const user = await User.findOne({
     where: { email },
     attributes: ["id", "email", "password", "firstName", "lastName"],
@@ -80,9 +79,9 @@ exports.userLogout = catchAsync(async (req, res, next) => {
   //clear cookies if user login again
   res.clearCookie(COOKIE_NAME, {
     httpOnly: true,
-    domain: cookieDomain,
-    signed: true,
-    path: "/",
+    //domain: cookieDomain,
+    //signed: true,
+    //path: "/",
   });
   return res
     .status(200)

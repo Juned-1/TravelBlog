@@ -10,5 +10,12 @@ module.exports = {
     databasePort: process.env.DATABASE_PORT,
     databaseHost: process.env.DATABASE_HOST,
     applicationPort: process.env.APP_PORT,
-    cookieDomain: process.env.COOKIE_DOMAIN
+    cookieDomain: process.env.COOKIE_DOMAIN,
+    devMailUserName: process.env.DEV_MAIL_USERNAME,
+    devMailPassword: process.env.DEV_MAIL_PASSWORD,
+    devMailHost: process.env.DEV_MAIL_HOST,
+    devMailPort: process.env.DEV_MAIL_PORT,
+    devMailSource: process.env.DEV_MAIL_SOURCE,
+    prodMailSource: process.env.PROD_MAIL_SOURCE,
+    prodMailPassword: process.env.PROD_MAIL_PASSWORD
 };

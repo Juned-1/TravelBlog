@@ -44,7 +44,11 @@ const Post = sequelize.define(
     timestamps: false,
   }
 );
-
+Post.hasMany(PostLike, { foreignKey:"postId",onDelete: "CASCADE" });
+PostLike.belongsTo(Post, {
+  foreignKey: "postId",
+  onDelete: "CASCADE",
+});
 Post.sync()
   .then(() => console.log("Post schema is ready"))
   .catch((err) => {});

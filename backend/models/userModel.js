@@ -3,6 +3,7 @@ const { hash, compare } = require("bcrypt");
 const sequelize = require("../utils/dbConnection");
 const Post = require("./postModel");
 const PostLike = require("./postLikeModel");
+const Token = require("./tokenModel");
 const User = sequelize.define(
   "User",
   {
@@ -47,6 +48,10 @@ const User = sequelize.define(
         },
       },
     },
+    isVerified: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    }
   },
   {
     //tableName: 'users',
@@ -71,25 +76,24 @@ const User = sequelize.define(
 User.prototype.verifyPassword = async function (password) {
   return await compare(password, this.password);
 };
+
 //association
-User.hasMany(Post, { onDelete: "NO ACTION" });
+User.hasOne(Token,{foreignKey: "userId",onDelete: "CASCADE"});
+Token.belongsTo(User,{foreignKey: "userId"});
+User.hasMany(Post, { foreignKey: "userId",onDelete: "NO ACTION" });
 Post.belongsTo(User, {
   foreignKey: "userId",
   onDelete: "NO ACTION",
 });
-User.hasMany(PostLike, { onDelete: "CASCADE" });
+User.hasMany(PostLike, { foreignKey: "userId",onDelete: "CASCADE" });
 PostLike.belongsTo(User, {
   foreignKey: "userId",
   onDelete: "CASCADE",
 });
-Post.hasMany(PostLike, { onDelete: "CASCADE" });
-PostLike.belongsTo(Post, {
-  foreignKey: "postId",
-  onDelete: "CASCADE",
-});
+
 // Optional: Add any additional configurations or associations here
 //Initializing model
-User.sync()
+User.sync({})
   .then(() => console.log("User schema is ready"))
   .catch((err) => {console.log(err)});
 

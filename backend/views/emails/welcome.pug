@@ -1,0 +1,16 @@
+extends baseEmail 
+block content
+    p Hi #{firstName},
+    p Welcome to Travel Bolg, we're glad to have you 🎉🙏
+    p This is a place where you can write your stories and blog seamlessly and can manage blogs. Contact With other Bloggers.
+    table.btn.btn-primary(role='presentation', border='0', cellpadding='0', cellspacing='0')
+        tbody
+            tr
+                td(align='left')
+                    table(role='presentation', border='0', cellpadding='0', cellspacing='0')
+                        tbody
+                            tr
+                                td
+                                    a(href=`${url}`, target='_blank') Click Here
+    //- p If you need any!
+    p From Nabajoyti Medhi, CEO of Travel Blog.

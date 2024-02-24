@@ -76,10 +76,10 @@ module.exports = class Email {
   async sendEmailVerificationCode(){
     await this.send("emailVerification", "Travel Blog Sign Up Verification Code")
   }
-  //   async sendPasswordReset() {
-  //     await this.send(
-  //       'passwordReset',
-  //       'Your password Reset token (valid for 10 minutes)',
-  //     );
-  //   }
+  async sendPasswordReset() {
+    await this.send(
+      'forgotPassword',
+      'Your password Reset token',
+    );
+  }
 };

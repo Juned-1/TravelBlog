@@ -42,7 +42,7 @@ const sendProdError = (err, res) => {
   } else {
     //programming or other unknown error: don't leak error details
     //1. Log the error
-    console.log('ERROR :alien:', err);
+    console.log('ERROR ', err);
     //2. Send a generic message
     res.status(500).json({
       status: 'fail',

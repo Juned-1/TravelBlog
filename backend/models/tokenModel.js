@@ -19,6 +19,11 @@ const Token = sequelize.define(
     token: {
       type: DataTypes.STRING,
     },
+    time: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+      onUpdate: DataTypes.NOW
+    },
   },
   {
     timestamps: false,

@@ -31,6 +31,7 @@ export class LoginComponent implements OnInit {
   login() {
     this.api.login(this.formData).subscribe({
       next: (response) => {
+        console.log(response);
         if (
           'status' in response &&
           response.status === 'success' &&
@@ -40,8 +41,9 @@ export class LoginComponent implements OnInit {
           let fullName = '';
           fullName = Data.user.firstName + ' ' + Data.user.lastName;
           localStorage.setItem('travel-blog', String(fullName));
+          this.authService.user = fullName;
           this.authService.loggedIn = true;
-          console.log(this.authService.getUser());
+          this.toast.success("LoggedIn Succesfully");
           this.router.navigate(['/']);
         } else {
           console.log(response);

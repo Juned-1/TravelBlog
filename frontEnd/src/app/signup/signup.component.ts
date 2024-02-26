@@ -22,6 +22,8 @@ import { userData1 } from 'src/DataTypes';
   ],
 })
 export class SignupComponent implements OnInit {
+  emailVerification: boolean = false;
+  signingIn: boolean = false;
   formData = {
     firstName: '',
     lastName: '',
@@ -31,6 +33,8 @@ export class SignupComponent implements OnInit {
     dob: '',
     gender: '',
   };
+  otp: string = '';
+  userId: string = '';
   constructor(
     private router: Router,
     private api: APIService,
@@ -39,27 +43,21 @@ export class SignupComponent implements OnInit {
 
   ngOnInit(): void {}
   signup() {
+    this.signingIn = true;
     this.api.signup(this.formData).subscribe(
       (response) => {
-        //console.log(response);
+        console.log(response);
         if (
           'status' in response &&
           response.status === 'success' &&
           'data' in response
         ) {
-          const Data = response.data as userData1;
-          let fullName = '';
-          if (
-            typeof Data.user.firstName === 'string' &&
-            typeof Data.user.lastName === 'string'
-          ) {
-            fullName = Data.user.firstName + ' ' + Data.user.lastName;
-          }
-          localStorage.setItem('travel-blog', String(fullName));
-          this.toast.success('Signup Successful');
-          this.router.navigate(['/']);
+          this.userId = (response.data as { id: string }).id as string;
+          this.signingIn = false;
+          this.emailVerification = true;
+          this.toast.success('OTP successfully sent to your email');
+          // localStorage.setItem('travel-blog', String(fullName));
         }
-
       },
       (err) => {
         if (err.status === 422 && err.error.status === 'error') {
@@ -69,13 +67,53 @@ export class SignupComponent implements OnInit {
         } else if (err.status === 409 && err.error.status === 'fail') {
           this.toast.warning(err.error.message);
         }
+        this.signingIn = false;
       }
     );
   }
   change() {
     this.router.navigate(['/login']);
   }
-  loginWithGoogle(){
-
+  summitOTP() {
+    this.api.sendOTP(this.userId, this.otp).subscribe(
+      (response) => {
+        if ('status' in response && response.status === 'success') {
+          console.log(response);
+          this.emailVerification = false;
+          this.toast.success('Signup Successful');
+          this.router.navigate(['/login']);
+        }
+      },
+      (err) => {
+        if (err.status === 422 && err.error.status === 'error') {
+          this.toast.warning(err.error.message);
+        } else if (err.status === 400 && err.error.status === 'fail') {
+          this.toast.warning(err.error.message);
+        } else if (err.status === 409 && err.error.status === 'fail') {
+          this.toast.warning(err.error.message);
+        }
+        this.signingIn = false;
+      }
+    );
   }
+  resendOTP() {
+    this.api.resendOTP(this.userId).subscribe(
+      (response) => {
+        if ('status' in response && response.status === 'success') {
+          this.toast.success((response as any).message);
+        }
+      },
+      (err) => {
+        if (err.status === 422 && err.error.status === 'error') {
+          this.toast.warning(err.error.message);
+        } else if (err.status === 400 && err.error.status === 'fail') {
+          this.toast.warning(err.error.message);
+        } else if (err.status === 409 && err.error.status === 'fail') {
+          this.toast.warning(err.error.message);
+        }
+        this.signingIn = false;
+      }
+    );
+  }
+  loginWithGoogle() {}
 }

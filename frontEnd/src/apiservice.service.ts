@@ -109,4 +109,12 @@ export class APIService {
       { withCredentials: true }
     );
   }
+  sendOTP(userid:string, token:string){
+    const baseurl = `http://localhost:8081/api/v1/users/authenticateEmail/${userid}`
+    return this.http.patch(baseurl, {token}, { withCredentials: true });
+  }
+  resendOTP(userid:string){
+    const baseurl = `http://localhost:8081/api/v1/users/rsendsignuptoken/${userid}`
+    return this.http.get(baseurl, { withCredentials: true });
+  }
 }

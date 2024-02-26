@@ -8,6 +8,7 @@ import { BlogComponent } from './blog/blog.component';
 import { ProfileComponent } from './profile/profile.component';
 import { CanActivate } from './Services/Authorization/auth.guard';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { CommentsComponent } from './comments/components/comments/comments.component';
 
 const routeConfig: Routes = [
   {
@@ -35,7 +36,6 @@ const routeConfig: Routes = [
     title: 'Editor',
     canActivate: [CanActivate],
   },
-
   {
     path: 'userblog',
     component: MyblogsComponent,
@@ -46,6 +46,10 @@ const routeConfig: Routes = [
     component: ProfileComponent,
     canActivate: [CanActivate],
   },
-  {path: '**', component: PageNotFoundComponent}
+  {
+    path: 'trash',
+    component: CommentsComponent,
+  },
+  { path: '**', component: PageNotFoundComponent },
 ];
 export default routeConfig;

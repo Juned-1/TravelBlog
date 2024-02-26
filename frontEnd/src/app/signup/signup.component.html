@@ -97,12 +97,37 @@
       <p class="signin-text">
         I'm already a member&nbsp;<a (click)="change()">Sign In?</a>
       </p>
-      <ion-button class="signup-button" (click)="signup()" expand="block"
-        >Sign Up</ion-button
-      >
+      <ion-button
+        class="signup-button"
+        (click)="signup()"
+        expand="block"
+        *ngIf="!emailVerification"
+        >Sign Up <ion-spinner name="lines" *ngIf="signingIn"></ion-spinner
+      ></ion-button>
+    </form>
+    <form class="email-verification-form" *ngIf="emailVerification">
+      <ion-item lines="none" class="ion-item">
+        <fieldset class="input-item">
+          <legend>Enter OTP sent to your email</legend>
+          <ion-input
+            type="text"
+            name="OTP"
+            [(ngModel)]="otp"
+            required
+            placeholder="OTP"
+          ></ion-input>
+        </fieldset>
+      </ion-item>
+      <p class="signin-text">
+        <a (click)="resendOTP()">Resend</a>
+        OTP
+      </p>
     </form>
     <div class="google-container">
-      <ion-button (click)="loginWithGoogle()">
+      <ion-button (click)="summitOTP()" *ngIf="emailVerification">
+        <span>Summit OTP</span>
+      </ion-button>
+      <ion-button (click)="loginWithGoogle()" *ngIf="!emailVerification">
         <span>SignUp with Google</span>
         <ion-icon slot="start" name="logo-google"></ion-icon>
       </ion-button>

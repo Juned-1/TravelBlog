@@ -88,7 +88,7 @@ exports.signupAuthorization = catchAsync(async (req, res, next) => {
     delete result.isVerified;
     await new Email(result, token).sendEmailVerificationCode();
     return res.status(200).json({
-      status: "succeess",
+      status: "success",
       data: {
         id: result.id,
       },
@@ -330,7 +330,7 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
       passwordConfirm: req.body.passwordConfirm,
     },
     {
-      where: {id: userid}
+      where: { id: userid },
     }
   );
   if (!update) {

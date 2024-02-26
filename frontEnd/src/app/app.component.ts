@@ -3,6 +3,7 @@ import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { MenuComponent } from './menu/menu.component';
+import { CommentsModule } from './comments/comments.module';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +15,7 @@ import { MenuComponent } from './menu/menu.component';
     CommonModule,
     ToolbarComponent,
     MenuComponent,
+    CommentsModule
   ],
 })
 export class AppComponent {

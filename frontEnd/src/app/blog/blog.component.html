@@ -21,13 +21,13 @@
         <span>
           <ion-buttons slot="end">
             <ion-button (click)="like()">
-              <ion-icon id="like" slot="icon-only" name="thumbs-up" ></ion-icon>
+              <ion-icon id="like" slot="icon-only" name="thumbs-up"></ion-icon>
             </ion-button>
-            {{likes}}
+            {{ likes }}
             <ion-button id="dislike" (click)="dislike()">
               <ion-icon slot="icon-only" name="thumbs-down"></ion-icon>
             </ion-button>
-            {{dislikes}}
+            {{ dislikes }}
           </ion-buttons>
         </span>
       </div>
@@ -39,7 +39,7 @@
       [innerHTML]="content"
     ></div>
     <!-- <iframe class="e2e-iframe-trusted-src" *ngIf="post !== undefined" [src]="url" frameborder="0"></iframe> -->
-    <iframe
+    <!-- <iframe
       id="embedded_video"
       *ngIf="post !== undefined && url != null && url != undefined"
       class="e2e-iframe-trusted-src"
@@ -48,7 +48,11 @@
       height="390"
       [src]="url"
       title="trusted video url"
-    ></iframe>
+    ></iframe> -->
   </div>
-  <br />
+
+  <!-- <ion-item-group> -->
+  <ion-item-divider></ion-item-divider>
+
+  <comments currentUserId="1"></comments>
 </ion-content>

@@ -9,12 +9,13 @@ import { APIService } from 'src/apiservice.service';
 import { ToastrService } from 'ngx-toastr';
 import { LikeObj, CountLike, LikeData, Post, PostData } from 'src/DataTypes';
 import { AuthService } from '../Services/Authentication/auth.service';
+import { CommentsModule } from "../comments/comments.module";
 @Component({
-  selector: 'app-blog',
-  templateUrl: './blog.component.html',
-  styleUrls: ['./blog.component.scss'],
-  standalone: true,
-  imports: [IonicModule, MatToolbarModule, CommonModule, ToolbarComponent],
+    selector: 'app-blog',
+    templateUrl: './blog.component.html',
+    styleUrls: ['./blog.component.scss'],
+    standalone: true,
+    imports: [IonicModule, MatToolbarModule, CommonModule, ToolbarComponent, CommentsModule]
 })
 export class BlogComponent implements OnInit, AfterViewInit {
   id!: string;

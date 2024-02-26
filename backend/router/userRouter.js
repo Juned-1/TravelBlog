@@ -11,6 +11,8 @@ const {
   resetPassword,
   updatePasswordVerification,
   updatePassword,
+  updateEmailVerification,
+  emailUpdate
 } = require("../controllers/authController");
 const {
   getUserDetails,
@@ -45,6 +47,18 @@ router.patch(
   validate(validators.passwordValidator),
   verifyToken,
   updatePassword
+);
+
+router.post(
+  "/updateemailverification",
+  validate(validators.emailUpdateValitor),
+  verifyToken,
+  updateEmailVerification
+);
+router.patch(
+  "/updateemail",
+  verifyToken,
+  emailUpdate
 );
 
 router.post("/login", validate(validators.loginValidator), userLogin);

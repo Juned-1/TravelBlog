@@ -47,5 +47,8 @@ const signUpValidator = [
     body("email").trim().isEmail().withMessage("Email is required. Enter valid email!"),
     ...passwordValidator
 ];
-
-exports.validators = {loginValidator, signUpValidator, passwordValidator};
+const emailUpdateValitor = [
+    body("oldEmail").trim().isEmail().withMessage("Email is required. Enter valid email!"),
+    body("newEmail").trim().isEmail().withMessage("Email is required. Enter valid email!")
+];
+exports.validators = {loginValidator, signUpValidator, passwordValidator, emailUpdateValitor};

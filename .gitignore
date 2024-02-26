@@ -13,7 +13,7 @@ $RECYCLE.BIN/
 log.txt
 
 .env
-/.env
+./backend/.env
 
 /.sourcemaps
 /.versions

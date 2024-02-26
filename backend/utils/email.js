@@ -82,4 +82,10 @@ module.exports = class Email {
       'Your password Reset token',
     );
   }
+  async sendEmailUpdate(){
+    await this.send(
+      'changeEmail',
+      'Your Email Updation token'
+    );
+  }
 };

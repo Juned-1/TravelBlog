@@ -58,8 +58,12 @@ exports.signupAuthorization = catchAsync(async (req, res, next) => {
     if (!findToken) {
       return next(new AppError("User is not signed Up!", 400));
     }
+    const curDate = new Date();
     const updateToken = await Token.update(
-      { token },
+      {
+        token,
+        time: new Date(curDate.setMinutes(curDate.getMinutes() + 10)),
+      },
       {
         where: { userId: result.id },
       }
@@ -113,9 +117,11 @@ exports.userSignup = catchAsync(async (req, res, next) => {
   const result = newUser.toJSON();
   if (newUser) {
     const token = createVerificationToken();
+    const curDate = new Date();
     const sendToken = await Token.create({
       userId: result.id,
       token,
+      time: new Date(curDate.setMinutes(curDate.getMinutes() + 10)),
     });
     if (!sendToken) {
       return next(new AppError("Verification failed! Please Try again!", 409));
@@ -161,8 +167,10 @@ exports.verifyEmail = catchAsync(async (req, res, next) => {
       )
     );
   }
-  if (token !== usertoken.toJSON().token) {
-    return next(new AppError("Invalid Token! Click Resend to get Token", 400));
+  if (token !== usertoken.toJSON().token || new Date() > usertoken.time) {
+    return next(
+      new AppError("Invalid Token or Expired! Click Resend to get Token", 400)
+    );
   }
   const updatedUser = await User.update(
     {
@@ -184,8 +192,9 @@ exports.verifyEmail = catchAsync(async (req, res, next) => {
 });
 exports.resendSignUpToken = catchAsync(async (req, res, next) => {
   const token = createVerificationToken();
+  const curDate = new Date();
   const updateToken = await Token.update(
-    { token },
+    { token, time: new Date(curDate.setMinutes(curDate.getMinutes() + 10)) },
     {
       where: { userId: req.params.userid },
     }
@@ -331,6 +340,7 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
     },
     {
       where: { id: userid },
+      individualHooks: true,
     }
   );
   if (!update) {
@@ -339,5 +349,76 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   return res.status(200).json({
     status: "success",
     message: "Password is updated successfully",
+  });
+});
+
+exports.updateEmailVerification = catchAsync(async (req, res, next) => {
+  const oldEmail = req.body.oldEmail;
+  const newEmail = req.body.newEmail;
+  const user = await User.findOne({
+    where: { email: oldEmail },
+  });
+  if (!user) {
+    return next(new AppError("Invalid User Email", 404));
+  }
+  let token = "TB-" + crypto.randomBytes(4).toString("hex");
+  const curDate = new Date();
+  const updateToken = await Token.update(
+    { token, time: new Date(curDate.setMinutes(curDate.getMinutes() + 10)) },
+    {
+      where: { userId: req.tokenData.id },
+    }
+  );
+  if (!updateToken) {
+    return next(new AppError("Verification failed! Please Try again!", 400));
+  }
+  await new Email(
+    {
+      email: newEmail,
+      firstName: user.toJSON().firstName,
+    },
+    token
+  ).sendEmailUpdate();
+  res.status(200).json({
+    status: "success",
+    message: `Verification code is sent to ${newEmail}`,
+    data: {
+      id: req.tokenData.id,
+      newEmail,
+    },
+  });
+});
+
+exports.emailUpdate = catchAsync(async (req, res, next) => {
+  const email = req.body.email;
+  const token = req.body.token;
+  let userToken = await Token.findOne({
+    where: { userId: req.tokenData.id },
+  });
+  if (!userToken) {
+    return next(new AppError("Invalid Token!", 400));
+  }
+  userToken = userToken.toJSON();
+  if (new Date() > userToken.time || userToken.token !== token) {
+    return next(
+      new AppError(
+        "Token Expired or Invalid! Please click resend to get new token.",
+        400
+      )
+    );
+  }
+  const updated = await User.update(
+    { email },
+    {
+      where: { id: req.tokenData.id },
+      individualHooks: true,
+    }
+  );
+  if (!updated) {
+    return next(new AppError("Email Updation Failed! Try again.", 400));
+  }
+  return res.status(200).json({
+    status: "success",
+    message: "Email is Updated",
   });
 });

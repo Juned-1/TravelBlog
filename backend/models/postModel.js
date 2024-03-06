@@ -1,5 +1,6 @@
 const { DataTypes, UUIDV4 } = require("sequelize");
 const sequelize = require("../utils/dbConnection");
+const Comment = require("./commentModel");
 const User = require("./userModel");
 const PostLike = require("./postLikeModel");
 
@@ -44,7 +45,9 @@ const Post = sequelize.define(
     timestamps: false,
   }
 );
-Post.hasMany(PostLike, { foreignKey:"postId",onDelete: "CASCADE" });
+Post.hasMany(Comment, { foreignKey: "postId", onDelete: "CASCADE" });
+Comment.belongsTo(Post, { foreignKey: "postId", onDelete: "CASCADE" });
+Post.hasMany(PostLike, { foreignKey: "postId", onDelete: "CASCADE" });
 PostLike.belongsTo(Post, {
   foreignKey: "postId",
   onDelete: "CASCADE",

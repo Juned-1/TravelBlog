@@ -9,6 +9,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { CanActivate } from './Services/Authorization/auth.guard';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { CommentsComponent } from './comments/components/comments/comments.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 
 const routeConfig: Routes = [
   {
@@ -45,6 +46,10 @@ const routeConfig: Routes = [
     path: 'profile',
     component: ProfileComponent,
     canActivate: [CanActivate],
+  },
+  {
+    path: 'forgotpassword',
+    component: ForgotPasswordComponent,
   },
   {
     path: 'trash',

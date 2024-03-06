@@ -3,7 +3,6 @@ import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ToolbarComponent } from '../toolbar/toolbar.component';
 import { APIService } from 'src/apiservice.service';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../Services/Authentication/auth.service';
@@ -14,7 +13,7 @@ import { UserData } from 'src/DataTypes';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, ToolbarComponent],
+  imports: [IonicModule, CommonModule, FormsModule],
 })
 export class LoginComponent implements OnInit {
   formData = {
@@ -60,6 +59,9 @@ export class LoginComponent implements OnInit {
   }
   change() {
     this.router.navigate(['/signup']);
+  }
+  forgotPassword(){
+    this.router.navigate(['/forgotpassword']);
   }
   loginWithGoogle(){
     

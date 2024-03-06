@@ -7,7 +7,6 @@ import { Router } from '@angular/router';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
 import { ToastrService } from 'ngx-toastr';
 import { APIService } from 'src/apiservice.service';
-import { userData1 } from 'src/DataTypes';
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',

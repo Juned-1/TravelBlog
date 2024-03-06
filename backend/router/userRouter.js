@@ -12,7 +12,7 @@ const {
   updatePasswordVerification,
   updatePassword,
   updateEmailVerification,
-  emailUpdate
+  emailUpdate,
 } = require("../controllers/authController");
 const {
   getUserDetails,
@@ -55,11 +55,7 @@ router.post(
   verifyToken,
   updateEmailVerification
 );
-router.patch(
-  "/updateemail",
-  verifyToken,
-  emailUpdate
-);
+router.patch("/updateemail", verifyToken, emailUpdate);
 
 router.post("/login", validate(validators.loginValidator), userLogin);
 router.get("/logout", userLogout);

@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { LikeObj, sendPostBulk, SearchParameter } from './DataTypes';
+import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
@@ -105,16 +106,53 @@ export class APIService {
   }
   setUserDetails(data: any) {
     return this.http.patch(
-      'http://localhost:8081/api/v1/users/setuserdetails',data,
+      'http://localhost:8081/api/v1/users/setuserdetails',
+      data,
       { withCredentials: true }
     );
   }
-  sendOTP(userid:string, token:string){
-    const baseurl = `http://localhost:8081/api/v1/users/authenticateEmail/${userid}`
-    return this.http.patch(baseurl, {token}, { withCredentials: true });
+  sendOTP(userid: string, token: string) {
+    const baseurl = `http://localhost:8081/api/v1/users/authenticateEmail/${userid}`;
+    return this.http.patch(baseurl, { token }, { withCredentials: true });
   }
-  resendOTP(userid:string){
-    const baseurl = `http://localhost:8081/api/v1/users/rsendsignuptoken/${userid}`
+  resendOTP(userid: string) {
+    const baseurl = `http://localhost:8081/api/v1/users/rsendsignuptoken/${userid}`;
     return this.http.get(baseurl, { withCredentials: true });
   }
+  validateEmail(email: string) {
+    const baseurl = `http://localhost:8081/api/v1/users/forgotpassword`;
+    return this.http.post(baseurl, { email }, { withCredentials: true });
+  }
+  resetPassword(
+    userid: string,
+    body: { password: string; passwordConfirm: string; token: string }
+  ) {
+    const baseurl = `http://localhost:8081/api/v1/users/resetpassword/${userid}`;
+    return this.http.patch(baseurl, body, { withCredentials: true });
+  }
+  updatePasswordVerification(email: string) {
+    const baseurl = `http://localhost:8081/api/v1/users/updatepasswordverification`;
+    return this.http.post(baseurl, { email }, { withCredentials: true });
+  }
+  updatePassword(body: { password: string; passwordConfirm: string }) {
+    const baseurl = `http://localhost:8081/api/v1/users/updatepassword`;
+    return this.http.patch(baseurl, body, { withCredentials: true });
+  }
+  updateEmailVerification(oldEmail: string, newEmail: string) {
+    const body = { oldEmail, newEmail };
+    const baseurl = `http://localhost:8081/api/v1/users/updateemailverification`;
+    return this.http.post(baseurl, body, { withCredentials: true });
+  }
+  updateEmail(token: string, email: string) {
+    const body = { token, email };
+    const baseurl = `http://localhost:8081/api/v1/users/updateemail`;
+    return this.http.patch(baseurl, body, { withCredentials: true });
+  }
 }
+
+/*
+Email update APIs are added. You will need two api:
+{{URL}}/users/updateemailverification: Expect two body data, oldEmail and newEmail in body, and return newEmail, and message. Also send verification code.
+{{URL}}/users/updateemail:  Expect two body data, token and email. email must newEmail from the response of {{URL}}/users/updateemailverification. It will update email.
+It only works for logged in user.
+*/

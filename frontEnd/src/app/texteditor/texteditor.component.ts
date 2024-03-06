@@ -223,6 +223,7 @@ export class TexteditorComponent implements OnInit, OnDestroy {
       }
     );
   }
+  
   editBlog(postDetails: any) {
     this.api.editPost(postDetails, this.id).subscribe(
       (response) => {

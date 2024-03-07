@@ -44,3 +44,16 @@ exports.setUserDetails = catchAsync(async (req, res, next) => {
     }
   });
 });
+
+//user photo APIs
+exports.uploadPhoto = catchAsync(async (req,res,next) => {
+  console.log(req);
+  //const files = req.images;
+  const userid = req.params.userid;
+  const phototype = req.body.photoType;
+  console.log(req.body);
+  res.status(200).json({
+    status: 'success',
+    message: 'successful upload'
+  });
+})

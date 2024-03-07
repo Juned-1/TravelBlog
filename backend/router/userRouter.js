@@ -14,10 +14,7 @@ const {
   updateEmailVerification,
   emailUpdate
 } = require("../controllers/authController");
-const {
-  getUserDetails,
-  setUserDetails,
-} = require("../controllers/userController");
+const userController = require("../controllers/userController");
 const { verifyToken, authorize } = require("../utils/token-manager.js");
 const router = Router();
 
@@ -63,8 +60,8 @@ router.patch(
 
 router.post("/login", validate(validators.loginValidator), userLogin);
 router.get("/logout", userLogout);
-router.get("/getuserdetails", verifyToken, getUserDetails);
-router.patch("/setuserdetails", verifyToken, setUserDetails);
+router.get("/getuserdetails", verifyToken, userController.getUserDetails);
+router.patch("/setuserdetails", verifyToken, userController.setUserDetails);
 router.get("/authstatus", authorize);
-
+router.post("/uploadphoto/:userid", userController.uploadPhoto);
 module.exports = router;

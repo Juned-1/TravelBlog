@@ -5,6 +5,7 @@ const Post = require("./postModel");
 const PostLike = require("./postLikeModel");
 const Token = require("./tokenModel");
 const Comment = require("./commentModel");
+const Photo = require("./photoModel");
 const User = sequelize.define(
   "User",
   {
@@ -93,6 +94,9 @@ PostLike.belongsTo(User, {
 });
 User.hasMany(Comment, { foreignKey: "userId", onDelete: "CASCADE" });
 Comment.belongsTo(User, { foreignKey: "userId", onDelete: "CASCADE" });
+
+User.hasMany(Photo, {foreignKey: "userId", onDelete: "CASCADE" });
+Photo.belongsTo(User, {foreignKey: "userId", onDelete: "CASCADE" });
 // Optional: Add any additional configurations or associations here
 //Initializing model
 User.sync({})

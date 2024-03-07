@@ -38,15 +38,17 @@ const Comment = sequelize.define(
     },
     createdAt: {
       type: DataTypes.DATE,
-      defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+      onUpdate: DataTypes.NOW,
     },
   },
   {
     timestamps: false,
   }
 );
-Comment.hasMany(Comment, { as: "replies", foreignKey: "parentId" }); //as provides an alias
-Comment.belongsTo(Comment, { as: "parent", foreignKey: "parentId" });
+Comment.hasMany(Comment, { as: "replies", foreignKey: "parentId", onDelete: "CASCADE"}); //as provides an alias
+Comment.belongsTo(Comment, { as: "parent", foreignKey: "parentId", onDelete: "CASCADE" });
 
 Comment.sync({})
   .then(() => console.log("Comment Schema is ready"))

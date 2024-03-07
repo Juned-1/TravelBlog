@@ -28,7 +28,7 @@ exports.writeComment = catchAsync(async (req, res, next) => {
     firstName: user.firstName,
     lastName: user.lastName,
   };
-  newComment.modification = true;
+  newComment.modification = user.id === req.tokenData.id;
   res.status(200).json({
     status: "success",
     data: {

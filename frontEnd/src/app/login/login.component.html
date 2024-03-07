@@ -2,37 +2,40 @@
   <ion-content [fullscreen]="true">
     <div class="container">
       <h2 class="heading">👋 Welcome<br /><br /></h2>
-      <br>
-      <br>
+      <br />
+      <br />
       <p class="para">Sign in to continue!</p>
       <form (ngSubmit)="login()" #signupForm="ngForm">
         <ion-item lines="none" class="ion-item">
           <fieldset class="input-item">
             <legend>Email Id</legend>
             <ion-input
-            id="username"
-            type="email"
-            name="email"
-            [(ngModel)]="formData.email"
-            required
-            placeholder="name@domain.com"
-          ></ion-input>
+              id="username"
+              type="email"
+              name="email"
+              [(ngModel)]="formData.email"
+              required
+              placeholder="name@domain.com"
+            ></ion-input>
           </fieldset>
         </ion-item>
         <ion-item lines="none" class="ion-item">
           <fieldset class="input-item">
             <legend>Password</legend>
             <ion-input
-            id="password"
-            type="password"
-            name="password"
-            [(ngModel)]="formData.password"
-            required
-            placeholder="**********"
-          ></ion-input>
+              id="password"
+              type="password"
+              name="password"
+              [(ngModel)]="formData.password"
+              required
+              placeholder="**********"
+            ></ion-input>
           </fieldset>
         </ion-item>
-        <br>
+        <br />
+        <p class="signup-text">
+          &nbsp;<a (click)="forgotPassword()">Forgot Password?</a>
+        </p>
         <p class="signup-text">
           I'm a new user&nbsp;<a (click)="change()">Sign Up?</a>
         </p>
@@ -47,4 +50,5 @@
         </ion-button>
       </div>
     </div>
+  </ion-content>
 </ion-content>

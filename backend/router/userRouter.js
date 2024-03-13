@@ -59,5 +59,12 @@ router.get("/logout", userLogout);
 router.get("/getuserdetails", verifyToken, userController.getUserDetails);
 router.patch("/setuserdetails", verifyToken, userController.setUserDetails);
 router.get("/authstatus", authorize);
-router.post("/uploadphoto/:userid", userController.uploadPhoto);
+router.post(
+  "/uploadphoto",
+  verifyToken,
+  userController.uploadImages,
+  userController.resizePhoto,
+  userController.uploadPhoto
+);
+router.get("/getphotos/:photoType", verifyToken, userController.getPhotos);
 module.exports = router;

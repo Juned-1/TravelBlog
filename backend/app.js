@@ -9,7 +9,8 @@ const globalErrorHandler = require("./controllers/errorController.js");
 const { cookieSecret, environment } = require("./configuration");
 const User = require("./models/userModel.js");
 const app = express();
-
+//cross site request
+app.use(cors({ credentials: true, origin: "http://localhost:8100" }));
 //setting engine
 app.set('view engine','pug');
 app.set('views',path.join(__dirname,'views'));
@@ -18,9 +19,8 @@ app.use(express.static(path.join(__dirname,'public')));
 //bdoy parsing
 app.use(express.json({ limit: "50mb" }));
 //form parsing
-app.use(express.urlencoded({extended: true, limit: '10kb'}));
-//cross site request
-app.use(cors({ credentials: true, origin: "http://localhost:8100" }));
+app.use(express.urlencoded({extended: false, limit: '50mb'}));
+
 //cookie Parser
 app.use(cookieParser(cookieSecret));
 app.use("/api/v1", appRouter);

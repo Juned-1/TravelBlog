@@ -29,6 +29,12 @@ exports.writeComment = catchAsync(async (req, res, next) => {
     lastName: user.lastName,
   };
   newComment.modification = user.id === req.tokenData.id;
+  const replies = await Comment.findAndCountAll({
+    where: { parentId: newComment.commentId },
+  });
+  //console.log(replies.rows.length);
+  newComment.haveReplies = replies.rows.length === 0 ? false : true;
+  newComment.repliesCount = replies.count;
   res.status(200).json({
     status: "success",
     data: {
@@ -55,9 +61,9 @@ exports.getComments = catchAsync(async (req, res, next) => {
   const limitQuery = 20;
   const offsetVal = req.query.page ? (+req.query.page - 1) * limitQuery : 0;
   let parentid = null;
-  if (req.body.parentid) {
+  if (req.params.parentid) {
     //using only for nested comments
-    parentid = req.body.parentid;
+    parentid = req.params.parentid;
   }
   let comments = await Comment.findAll({
     where: { postId: postid, parentId: parentid },
@@ -74,14 +80,21 @@ exports.getComments = catchAsync(async (req, res, next) => {
   if (!comments) {
     return next(new AppError("No comments on this post", 404));
   }
-  comments = comments.map((comment) => {
-    comment = comment.toJSON();
-    if (!modst) comment.modification = false;
-    else {
-      comment.modification = comment.userId === decoded.id;
-    }
-    return comment;
-  });
+  comments = await Promise.all(
+    comments.map(async (comment) => {
+      comment = comment.toJSON();
+      if (!modst) comment.modification = false;
+      else {
+        comment.modification = comment.userId === decoded.id;
+      }
+      replies = await Comment.findAndCountAll({
+        where: {parentId: comment.commentId}
+      });
+      comment.haveReplies = replies.count === 0 ? false : true;
+      comment.repliesCount = replies.count;
+      return comment;
+    })
+  );
   res.status(200).json({
     status: "success",
     resultLength: comments.length,
@@ -106,6 +119,11 @@ exports.getSpecificComment = catchAsync(async (req, res, next) => {
   }
   comment = comment.toJSON();
   comment.modification = comment.userId === req.tokenData.id;
+  const replies = await Comment.findAndCountAll({
+    where: { parentId: commentid}
+  });
+  comment.haveReplies = replies.count === 0 ? false : true;
+  comment.repliesCount = replies.count;
   res.status(200).json({
     status: "success",
     data: {
@@ -147,6 +165,11 @@ exports.editComment = catchAsync(async (req, res, next) => {
   }
   updatedData = updatedData.toJSON();
   updatedData.modification = updatedData.userId === req.tokenData.id;
+  const replies = await Comment.findAndCountAll({
+    where: { parentId: commentid}
+  });
+  updatedData.haveReplies = replies.count === 0 ? false : true;
+  updatedData.repliesCount = replies.count;
   res.status(200).json({
     status: "success",
     data: {

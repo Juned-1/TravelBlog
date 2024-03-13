@@ -9,7 +9,7 @@ router.post(
   commentController.writeComment
 );
 
-router.get("/getcomments/:postid", commentController.getComments);
+router.get("/getcomments/:postid/:parentid?", commentController.getComments);
 router.get(
   "/getspecificcomment/:commentid",
   verifyToken,

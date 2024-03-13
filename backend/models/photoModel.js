@@ -14,18 +14,18 @@ const Photo = sequelize.define(
       type: DataTypes.ENUM("profile", "cover", "other"),
       allowNull: false,
     },
+    photoName : {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
     userId: {
       type: DataTypes.UUID,
       allowNull: false,
       len: 36,
     },
-    photo: {
-      type: DataTypes.BLOB("medium"),
+    mimeType: {
+      type: DataTypes.STRING,
       allowNull: false,
-      get() {
-        const contentBuffer = this.getDataValue("photo");
-        return contentBuffer ? contentBuffer.toString("utf-8") : null;
-      },
     },
     isActive: {
       type: DataTypes.BOOLEAN,

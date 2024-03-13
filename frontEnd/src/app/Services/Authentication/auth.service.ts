@@ -7,6 +7,7 @@ import { APIService } from 'src/apiservice.service';
 export class AuthService implements OnInit {
   loggedIn: boolean = false;
   user: string | null = '';
+  currentUserId: string = '';
 
   constructor(private api: APIService) {}
 
@@ -19,24 +20,27 @@ export class AuthService implements OnInit {
       next: (response) => {
         const res = JSON.parse(JSON.stringify(response));
         if (res.status === 'success' && res.message === 'Token verified') {
-          console.log('User is loggedIn');
           this.loggedIn = true;
           this.getUser();
+          this.getUserId();
         } else {
           console.log('Bad response');
         }
       },
-      error: (err) => {
-      },
+      error: (err) => {},
     });
   }
 
   getUser() {
-    if (localStorage.getItem('travel-blog') !== null) {
-      this.user = localStorage.getItem('travel-blog');
-    } else {
-      this.user = 'XYZ';
-    }
+    const user = localStorage.getItem('travel-blog');
+    this.user = user === null ? 'XYZ' : user;
     return this.user;
+  }
+
+  getUserId() {
+    const id = localStorage.getItem('currentUserId');
+    this.currentUserId = id === null ? '' : id;
+    console.log(this.currentUserId);
+    return this.currentUserId;
   }
 }

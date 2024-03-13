@@ -11,13 +11,18 @@
       *ngFor="let rootComment of getRootComments()"
       [comment]="rootComment"
       [replies]="getReplies(rootComment.id)"
+      [haveReplies]="rootComment.haveReplies"
       [activeComment]="activeComment"
       (setActiveComment)="setActiveComment($event)"
       (addComment)="addComment($event)"
       (deleteComment)="deleteComment($event)"
       (updateComment)="updateComment($event)"
+      (fetchReply)="fetchReply($event)"
       [currentUserId]="currentUserId"
     >
     </comment>
   </div>
+  <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)">
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
 </div>

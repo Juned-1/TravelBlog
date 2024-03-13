@@ -5,4 +5,5 @@ export interface CommentInterface {
   userId: string; 
   parentId: null | string;// Nested Comment 
   createdAt: string;// date and time
+  haveReplies: boolean;
 }

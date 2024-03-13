@@ -14,6 +14,7 @@ export class CommentComponent implements OnInit {
   @Input() replies!: CommentInterface[];
   @Input() currentUserId!: string;
   @Input() parentId!: string | null;
+  @Input() haveReplies!: boolean;//Added
 
   @Output()
   setActiveComment = new EventEmitter<ActiveCommentInterface | null>();
@@ -23,6 +24,8 @@ export class CommentComponent implements OnInit {
   addComment = new EventEmitter<{ text: string; parentId: string | null }>();
   @Output()
   updateComment = new EventEmitter<{ text: string; commentId: string }>();
+  @Output()
+  fetchReply = new EventEmitter<{ replyPage: number; commentId: string }>();
 
   createdAt: string = '';
   canReply: boolean = false;
@@ -30,6 +33,9 @@ export class CommentComponent implements OnInit {
   canDelete: boolean = false;
   activeCommentType = ActiveCommentTypeEnum;
   replyId: string | null = null;
+
+  //Added
+  replyPage: number = 1;
 
   ngOnInit(): void {
     const fiveMinutes = 300000;
@@ -66,9 +72,10 @@ export class CommentComponent implements OnInit {
       this.activeComment.type === 'editing'
     );
   }
-  console(e:any){
-    console.log(
-      e
-    );
+  console(e: any) {
+    console.log(e);
+  }
+  hideReplyButton(){
+    this.haveReplies = false;
   }
 }

@@ -2,6 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CommentsService } from '../../services/comments.service';
 import { ActiveCommentInterface } from '../../types/activeComment.interface';
 import { CommentInterface } from '../../types/comment.interface';
+import { APIService } from 'src/apiservice.service';
+import { InfiniteScrollCustomEvent } from '@ionic/angular';
 
 @Component({
   selector: 'comments',
@@ -10,15 +12,32 @@ import { CommentInterface } from '../../types/comment.interface';
 })
 export class CommentsComponent implements OnInit {
   @Input() currentUserId!: string;
+  @Input() currentPostId!: string;
 
   comments: CommentInterface[] = [];
   activeComment: ActiveCommentInterface | null = null;
+  page: number = 1;
 
-  constructor(private commentsService: CommentsService) {}
+  constructor(
+    private api: APIService
+  ) {}
 
   ngOnInit(): void {
-    this.commentsService.getComments().subscribe((comments) => {
-      this.comments = comments;
+    const postid: string = '456b18c1-7638-4ba2-a9c6-70e9ee6bc2cd';
+    this.api.getComments(postid, this.page, '').subscribe({
+      next: (response) => {
+        console.log(response);
+        const comentArr = (
+          response as { status: string; resultLength: number; data: any }
+        ).data.comments;
+        comentArr.forEach((item) => {
+          const comment: CommentInterface = this.mapResponseToInterface(item);
+          this.comments.push(comment);
+        });
+      },
+      error: (error) => {
+        console.log(error);
+      },
     });
   }
 
@@ -33,24 +52,44 @@ export class CommentsComponent implements OnInit {
     text: string;
     commentId: string;
   }): void {
-    this.commentsService
-      .updateComment(commentId, text)
-      .subscribe((updatedComment) => {
+
+    this.api.editComment(commentId, text).subscribe({
+      next: (response) => {
+        const updatedComment = (
+          response as { status: string; resultLength: number; data: any }
+        ).data.comment;
+
+        const newComment: CommentInterface =
+          this.mapResponseToInterface(updatedComment);
+
         this.comments = this.comments.map((comment) => {
           if (comment.id === commentId) {
-            return updatedComment;
+            return newComment;
           }
           return comment;
         });
+
         this.activeComment = null;
-      });
+      },
+      error: (error) => {
+        console.log(error);
+
+        this.activeComment = null;
+      },
+    });
   }
 
   deleteComment(commentId: string): void {
-    this.commentsService.deleteComment(commentId).subscribe(() => {
-      this.comments = this.comments.filter(
-        (comment) => comment.id !== commentId
-      );
+
+    this.api.deleteComment(commentId).subscribe({
+      next: (response) => {
+        this.comments = this.comments.filter(
+          (comment) => comment.id !== commentId
+        );
+      },
+      error: (error) => {
+        console.log(error);
+      },
     });
   }
 
@@ -65,12 +104,21 @@ export class CommentsComponent implements OnInit {
     text: string;
     parentId: string | null;
   }): void {
-    this.commentsService
-      .createComment(text, parentId)
-      .subscribe((createdComment) => {
-        this.comments = [...this.comments, createdComment];
+    const postid: string = '456b18c1-7638-4ba2-a9c6-70e9ee6bc2cd';
+    this.api.writeComment(postid, parentId, text).subscribe({
+      next: (response) => {
+        const item = (
+          response as { status: string; resultLength: number; data: any }
+        ).data.comment;
+        console.log(item);
+        const comment: CommentInterface = this.mapResponseToInterface(item);
+        this.comments = [comment, ...this.comments];
         this.activeComment = null;
-      });
+      },
+      error: (error) => {
+        console.log(error);
+      },
+    });
   }
 
   getReplies(commentId: string): CommentInterface[] {
@@ -80,5 +128,74 @@ export class CommentsComponent implements OnInit {
         (a, b) =>
           new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
       );
+  }
+
+  onIonInfinite(ev: any) {
+    const postid: string = '456b18c1-7638-4ba2-a9c6-70e9ee6bc2cd';
+
+    this.page++;
+    this.api.getComments(postid, this.page, '').subscribe({
+      next: (response) => {
+        const comentArr = (
+          response as { status: string; resultLength: number; data: any }
+        ).data.comments;
+        if (comentArr.length === 0) this.page = this.page - 1;
+        comentArr.forEach((item) => {
+          const comment: CommentInterface = this.mapResponseToInterface(item);
+          this.comments.push(comment);
+        });
+        this.comments = this.comments;
+      },
+      error: (error) => {
+        console.log(error);
+      },
+    });
+
+    setTimeout(() => {
+      (ev as InfiniteScrollCustomEvent).target.complete();
+    }, 300);
+  }
+  fetchReply({
+    replyPage,
+    commentId,
+  }: {
+    replyPage: number;
+    commentId: string;
+  }) {
+    console.log(commentId);
+    this.api.getComments(this.currentPostId, replyPage, commentId).subscribe({
+      next: (response) => {
+        console.log(response);
+        const comentArr = (
+          response as { status: string; resultLength: number; data: any }
+        ).data.comments;
+
+        comentArr.forEach((item) => {
+          const comment: CommentInterface = this.mapResponseToInterface(item);
+          this.comments.push(comment);
+        });
+        this.comments = this.comments;
+      },
+      error: (error) => {
+        console.log(error);
+      },
+    });
+  }
+  mapResponseToInterface(commentFromResponse): CommentInterface {
+    const comment: CommentInterface = {
+      id: commentFromResponse.commentId,
+      body: commentFromResponse.commentText,
+      username:
+        commentFromResponse.User.firstName +" "+ commentFromResponse.User.lastName,
+      userId: commentFromResponse.userId,
+      parentId:
+        commentFromResponse?.parentId === undefined
+          ? null
+          : commentFromResponse.parentId,
+      createdAt: commentFromResponse.createdAt,
+      haveReplies: commentFromResponse.haveReplies,
+    };
+
+    return comment;
   }
 }

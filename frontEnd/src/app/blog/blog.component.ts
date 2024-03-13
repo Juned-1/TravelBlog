@@ -18,6 +18,8 @@ import { CommentsModule } from "../comments/comments.module";
     imports: [IonicModule, MatToolbarModule, CommonModule, ToolbarComponent, CommentsModule]
 })
 export class BlogComponent implements OnInit, AfterViewInit {
+  authenticate: AuthService = inject(AuthService);
+
   id!: string;
   post!: Post;
   time: String = '';
@@ -25,8 +27,7 @@ export class BlogComponent implements OnInit, AfterViewInit {
   url: any = null;
   likes: number = 0;
   dislikes: number = 0;
-
-  authenticate: AuthService = inject(AuthService);
+  currentUserId : string = '';
 
   constructor(
     private route: ActivatedRoute,

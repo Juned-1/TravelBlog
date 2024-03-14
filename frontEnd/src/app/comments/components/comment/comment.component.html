@@ -78,6 +78,8 @@
           *ngIf="isReplying()"
           submitLabel="Reply"
           (handleSubmit)="addComment.emit({ text: $event, parentId: replyId })"
+          [hasCancelButton]="true"
+          (handleCancel)="setActiveComment.emit(null)"
         ></comment-form>
         <div class="replies" *ngIf="replies.length > 0">
           <comment

@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { CommentsService } from '../../services/comments.service';
 import { ActiveCommentInterface } from '../../types/activeComment.interface';
 import { CommentInterface } from '../../types/comment.interface';
 import { APIService } from 'src/apiservice.service';
@@ -18,13 +17,10 @@ export class CommentsComponent implements OnInit {
   activeComment: ActiveCommentInterface | null = null;
   page: number = 1;
 
-  constructor(
-    private api: APIService
-  ) {}
+  constructor(private api: APIService) {}
 
   ngOnInit(): void {
-    const postid: string = '456b18c1-7638-4ba2-a9c6-70e9ee6bc2cd';
-    this.api.getComments(postid, this.page, '').subscribe({
+    this.api.getComments(this.currentPostId, this.page, '').subscribe({
       next: (response) => {
         console.log(response);
         const comentArr = (
@@ -52,7 +48,6 @@ export class CommentsComponent implements OnInit {
     text: string;
     commentId: string;
   }): void {
-
     this.api.editComment(commentId, text).subscribe({
       next: (response) => {
         const updatedComment = (
@@ -80,7 +75,6 @@ export class CommentsComponent implements OnInit {
   }
 
   deleteComment(commentId: string): void {
-
     this.api.deleteComment(commentId).subscribe({
       next: (response) => {
         this.comments = this.comments.filter(
@@ -104,8 +98,8 @@ export class CommentsComponent implements OnInit {
     text: string;
     parentId: string | null;
   }): void {
-    const postid: string = '456b18c1-7638-4ba2-a9c6-70e9ee6bc2cd';
-    this.api.writeComment(postid, parentId, text).subscribe({
+    if (text === '') return;
+    this.api.writeComment(this.currentPostId, parentId, text).subscribe({
       next: (response) => {
         const item = (
           response as { status: string; resultLength: number; data: any }
@@ -131,10 +125,9 @@ export class CommentsComponent implements OnInit {
   }
 
   onIonInfinite(ev: any) {
-    const postid: string = '456b18c1-7638-4ba2-a9c6-70e9ee6bc2cd';
 
     this.page++;
-    this.api.getComments(postid, this.page, '').subscribe({
+    this.api.getComments(this.currentPostId, this.page, '').subscribe({
       next: (response) => {
         const comentArr = (
           response as { status: string; resultLength: number; data: any }
@@ -162,7 +155,6 @@ export class CommentsComponent implements OnInit {
     replyPage: number;
     commentId: string;
   }) {
-    console.log(commentId);
     this.api.getComments(this.currentPostId, replyPage, commentId).subscribe({
       next: (response) => {
         console.log(response);
@@ -186,7 +178,9 @@ export class CommentsComponent implements OnInit {
       id: commentFromResponse.commentId,
       body: commentFromResponse.commentText,
       username:
-        commentFromResponse.User.firstName +" "+ commentFromResponse.User.lastName,
+        commentFromResponse.User.firstName +
+        ' ' +
+        commentFromResponse.User.lastName,
       userId: commentFromResponse.userId,
       parentId:
         commentFromResponse?.parentId === undefined

@@ -1,14 +1,7 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <textarea class="comment-form-textarea" formControlName="title"></textarea>
-  <button class="comment-form-button" type="submit" [disabled]="form.invalid">
+  <ion-button type="submit" [disabled]="form.invalid">
     {{ submitLabel }}
-  </button>
-  <button
-    *ngIf="hasCancelButton"
-    type="button"
-    class="comment-form-button comment-form-cancel-button"
-    (click)="handleCancel.emit()"
-  >
-    Cancel
-  </button>
+  </ion-button>
+  <ion-button *ngIf="hasCancelButton" (click)="handleCancel.emit()" type="button">Cancel</ion-button>
 </form>

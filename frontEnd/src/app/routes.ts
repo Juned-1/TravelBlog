@@ -53,7 +53,7 @@ const routeConfig: Routes = [
   },
   {
     path: 'trash',
-    component: CommentsComponent,
+    component: PageNotFoundComponent,
   },
   { path: '**', component: PageNotFoundComponent },
 ];

@@ -148,11 +148,41 @@ export class APIService {
     const baseurl = `http://localhost:8081/api/v1/users/updateemail`;
     return this.http.patch(baseurl, body, { withCredentials: true });
   }
-}
 
-/*
-Email update APIs are added. You will need two api:
-{{URL}}/users/updateemailverification: Expect two body data, oldEmail and newEmail in body, and return newEmail, and message. Also send verification code.
-{{URL}}/users/updateemail:  Expect two body data, token and email. email must newEmail from the response of {{URL}}/users/updateemailverification. It will update email.
-It only works for logged in user.
-*/
+  //Comments
+  writeComment(postid: string, parentId: string | null, commentText: string) {
+    const baseurl = `http://localhost:8081/api/v1/comments/writecomment/${postid}`;
+    if (parentId === null) {
+      const body = {
+        commentText: commentText,
+      };
+      return this.http.post(baseurl, body, { withCredentials: true });
+    } else {
+      const body = {
+        commentText: commentText,
+        parentId: parentId,
+      };
+      return this.http.post(baseurl, body, { withCredentials: true });
+    }
+  }
+
+  getComments(postid: string, page: number, parentid: string) {
+    const baseurl = `http://localhost:8081/api/v1/comments/getcomments/${postid}/${parentid}`;
+    let params = new HttpParams();
+    params = params.set('page', page.toString());
+    return this.http.get(baseurl, { params, withCredentials: true });
+  }
+
+  editComment(commentid: string, commentText: string) {
+    const body = {
+      commentText,
+    };
+    const baseurl = `http://localhost:8081/api/v1/comments/editcomment/${commentid}`;
+    return this.http.patch(baseurl, body, { withCredentials: true });
+  }
+
+  deleteComment(commentid: string) {
+    const baseurl = `http://localhost:8081/api/v1/comments/deletecomment/${commentid}`;
+    return this.http.delete(baseurl, { withCredentials: true });
+  }
+}

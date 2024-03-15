@@ -1,23 +1,27 @@
-<div class="comments">
-  <h3 class="comments-title">Comments</h3>
-  <div class="comment-form-title">Write comment</div>
+<div>
+  <br />
+  <h1>Comments</h1>
+  <h2>Write comment</h2>
   <comment-form
     submitLabel="Write"
     (handleSubmit)="addComment({ text: $event, parentId: null })"
   >
   </comment-form>
-  <div class="comments-container">
-    <comment
-      *ngFor="let rootComment of getRootComments()"
-      [comment]="rootComment"
-      [replies]="getReplies(rootComment.id)"
-      [activeComment]="activeComment"
-      (setActiveComment)="setActiveComment($event)"
-      (addComment)="addComment($event)"
-      (deleteComment)="deleteComment($event)"
-      (updateComment)="updateComment($event)"
-      [currentUserId]="currentUserId"
-    >
-    </comment>
-  </div>
+  <comment
+    *ngFor="let rootComment of getRootComments()"
+    [comment]="rootComment"
+    [replies]="getReplies(rootComment.id)"
+    [haveReplies]="rootComment.haveReplies"
+    [activeComment]="activeComment"
+    (setActiveComment)="setActiveComment($event)"
+    (addComment)="addComment($event)"
+    (deleteComment)="deleteComment($event)"
+    (updateComment)="updateComment($event)"
+    (fetchReply)="fetchReply($event)"
+    [currentUserId]="currentUserId"
+  >
+  </comment>
+  <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)">
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
 </div>

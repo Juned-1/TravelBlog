@@ -39,7 +39,9 @@ export class LoginComponent implements OnInit {
           const Data = response.data as UserData;
           let fullName = '';
           fullName = Data.user.firstName + ' ' + Data.user.lastName;
+          const userId = Data.user.id;
           localStorage.setItem('travel-blog', String(fullName));
+          localStorage.setItem('currentUserId', String(userId));
           this.authService.user = fullName;
           this.authService.loggedIn = true;
           this.toast.success("LoggedIn Succesfully");

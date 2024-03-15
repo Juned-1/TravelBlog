@@ -37,6 +37,10 @@ const Photo = sequelize.define(
       defaultValue: DataTypes.NOW,
       onUpdate: DataTypes.NOW,
     },
+    lock: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
   },
   {
     timestamps: false,

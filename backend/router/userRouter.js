@@ -66,5 +66,32 @@ router.post(
   userController.resizePhoto,
   userController.uploadPhoto
 );
-router.get("/getphotos/:photoType", verifyToken, userController.getPhotos);
+router.get("/getalbum/:photoType/:userid", userController.getPhotos);
+router.get("/getmyalbum/:photoType", verifyToken, userController.getPhotos);
+router.get("/getphoto/:photoid", userController.getPhoto);
+router.get("/getmyphoto/:photoid", verifyToken, userController.getPhoto);
+router.delete("/deletephoto/:photoid", verifyToken, userController.deletePhoto);
+router.patch(
+  "/activatephoto/:photoid",
+  verifyToken,
+  userController.activatePhoto
+);
+router.get(
+  "/getactivatedphoto/:photoType/:userid",
+  userController.getActivatedPhoto
+);
+router.get(
+  "/getmyactivatedphoto/:photoType",
+  verifyToken,
+  userController.getActivatedPhoto
+);
+router.patch(
+  "/changephototype/:photoid",
+  verifyToken,
+  userController.changePhotoType
+);
+router.patch("/lockalbum", verifyToken, userController.lockAlbum);
+router.patch("/unlockalbum", verifyToken, userController.unlockAlbum);
+router.patch("/lockphoto/:photoid", verifyToken, userController.lockPhoto);
+router.patch("/unlockphoto/:photoid", verifyToken, userController.unlockPhoto);
 module.exports = router;

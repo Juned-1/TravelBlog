@@ -2,9 +2,11 @@ const catchAsync = require("../utils/catchAsync");
 const User = require("../models/userModel");
 const AppError = require("../utils/appError");
 const Photo = require("../models/photoModel");
+const Followship = require("../models/followshipModel");
 const multer = require("multer");
 const sharp = require("sharp");
 const fs = require("fs");
+const { Sequelize } = require("sequelize");
 exports.getUserDetails = catchAsync(async (req, res, next) => {
   const uid = req.tokenData.id; //req.body.id;
   const userDetails = await User.findOne({
@@ -378,5 +380,78 @@ exports.unlockPhoto = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     message: `${type} photo is unlocked`,
+  });
+});
+
+exports.follows = catchAsync(async (req, res, next) => {
+  const following = req.params.userid;
+  const exist = await Followship.findOne({
+    where: { followerId: req.tokenData.id, followingId: following}
+  });
+  if(exist){
+    await exist.destroy();
+    return res.status(200).json({
+      status: 'success',
+      message: 'Unfollowed successfully',
+      follow: false,
+    });
+  }
+  const follow = await Followship.create({
+    followerId: req.tokenData.id,
+    followingId: following
+  });
+  if(!follow){
+    return next(new AppError('Failed to follow!',400));
+  }
+  return res.status(200).json({
+    status: 'success',
+    message: 'Followed successfully',
+    follow: true
+  });
+});
+
+exports.followerList = catchAsync(async (req, res, next) => {
+  const userid = req.params.userid || req.tokenData.id;
+  const follower = await Followship.findAll({
+    attributes: [
+      "followerId",
+      [Sequelize.literal(`(SELECT firstName FROM Users WHERE Users.id = Followship.followerId)`), 'firstName'],
+      [Sequelize.literal(`(SELECT lastName FROM Users WHERE Users.id = Followship.followerId)`), 'lastName'],
+      [Sequelize.literal(`(SELECT photoName FROM Photos WHERE Photos.userId = Followship.followerId AND Photos.photoType = 'profile' AND Photos.isActive = 1)`), 'profilePhoto'],
+      [Sequelize.literal(`(SELECT photoId FROM Photos WHERE Photos.userId = Followship.followerId AND Photos.photoType = 'profile' AND Photos.isActive = 1)`), 'profilePhotoId'],
+    ],
+    where: { followingId : userid },
+  });
+  if(!follower){
+    return next(new AppError('No follower found!',400));
+  }
+  res.status(200).json({
+    status: 'success',
+    data: {
+      followers: follower
+    }
+  });
+});
+
+exports.followingList = catchAsync(async (req, res, next) => {
+  const userid = req.params.userid || req.tokenData.id;
+  const following = await Followship.findAll({
+    attributes: [
+      "followingId",
+      [Sequelize.literal(`(SELECT firstName FROM Users WHERE Users.id = Followship.followingId)`), 'firstName'],
+      [Sequelize.literal(`(SELECT lastName FROM Users WHERE Users.id = Followship.followingId)`), 'lastName'],
+      [Sequelize.literal(`(SELECT photoName FROM Photos WHERE Photos.userId = Followship.followingId AND Photos.photoType = 'profile' AND Photos.isActive = 1)`), 'profilePhoto'],
+      [Sequelize.literal(`(SELECT photoId FROM Photos WHERE Photos.userId = Followship.followingId AND Photos.photoType = 'profile' AND Photos.isActive = 1)`), 'profilePhotoId'],
+    ],
+    where: { followerId : userid },
+  });
+  if(!following){
+    return next(new AppError('No Following!',400));
+  }
+  res.status(200).json({
+    status: 'success',
+    data: {
+      followings: following
+    }
   });
 });

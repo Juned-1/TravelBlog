@@ -18,6 +18,7 @@ const userController = require("../controllers/userController");
 const { verifyToken, authorize } = require("../utils/token-manager.js");
 const router = Router();
 
+//authorization
 router.post(
   "/signup",
   validate(validators.signUpValidator),
@@ -59,6 +60,8 @@ router.get("/logout", userLogout);
 router.get("/getuserdetails", verifyToken, userController.getUserDetails);
 router.patch("/setuserdetails", verifyToken, userController.setUserDetails);
 router.get("/authstatus", authorize);
+
+//photo
 router.post(
   "/uploadphoto",
   verifyToken,
@@ -94,4 +97,11 @@ router.patch("/lockalbum", verifyToken, userController.lockAlbum);
 router.patch("/unlockalbum", verifyToken, userController.unlockAlbum);
 router.patch("/lockphoto/:photoid", verifyToken, userController.lockPhoto);
 router.patch("/unlockphoto/:photoid", verifyToken, userController.unlockPhoto);
+
+//following
+router.post("/follow/:userid", verifyToken, userController.follows);
+router.get("/followerlist/:userid",userController.followerList);
+router.get("/myfollowerlist", verifyToken, userController.followerList);
+router.get("/followinglist/:userid", userController.followingList);
+router.get("/myfollowinglist", verifyToken, userController.followingList);
 module.exports = router;

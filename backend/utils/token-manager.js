@@ -25,7 +25,6 @@ exports.verifyToken = catchAsync(async (req, res, next) => {
   const decoded = await promisify(jwt.verify)(token, jwtSecret); //non async function which takes call back can be promisified
   req.tokenData = decoded;
   next();
-
 });
 
 //authorization with token

@@ -6,6 +6,7 @@ const PostLike = require("./postLikeModel");
 const Token = require("./tokenModel");
 const Comment = require("./commentModel");
 const Photo = require("./photoModel");
+const Followship = require("./followshipModel");
 const User = sequelize.define(
   "User",
   {
@@ -45,15 +46,15 @@ const User = sequelize.define(
       validate: {
         isPasswordMatch(value) {
           if (value !== this.password) {
-             throw new Error("Password confirmation does not match password");
+            throw new Error("Password confirmation does not match password");
           }
         },
       },
     },
     isVerified: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false
-    }
+      defaultValue: false,
+    },
   },
   {
     //tableName: 'users',
@@ -80,14 +81,14 @@ User.prototype.verifyPassword = async function (password) {
 };
 
 //association
-User.hasOne(Token,{foreignKey: "userId",onDelete: "CASCADE"});
-Token.belongsTo(User,{foreignKey: "userId"});
-User.hasMany(Post, { foreignKey: "userId",onDelete: "NO ACTION" });
+User.hasOne(Token, { foreignKey: "userId", onDelete: "CASCADE" });
+Token.belongsTo(User, { foreignKey: "userId" });
+User.hasMany(Post, { foreignKey: "userId", onDelete: "NO ACTION" });
 Post.belongsTo(User, {
   foreignKey: "userId",
   onDelete: "NO ACTION",
 });
-User.hasMany(PostLike, { foreignKey: "userId",onDelete: "CASCADE" });
+User.hasMany(PostLike, { foreignKey: "userId", onDelete: "CASCADE" });
 PostLike.belongsTo(User, {
   foreignKey: "userId",
   onDelete: "CASCADE",
@@ -95,12 +96,26 @@ PostLike.belongsTo(User, {
 User.hasMany(Comment, { foreignKey: "userId", onDelete: "CASCADE" });
 Comment.belongsTo(User, { foreignKey: "userId", onDelete: "CASCADE" });
 
-User.hasMany(Photo, {foreignKey: "userId", onDelete: "CASCADE" });
-Photo.belongsTo(User, {foreignKey: "userId", onDelete: "CASCADE" });
+User.hasMany(Photo, { foreignKey: "userId", onDelete: "CASCADE" });
+Photo.belongsTo(User, { foreignKey: "userId", onDelete: "CASCADE" });
+User.belongsToMany(User, {
+  through: Followship,
+  foreignKey: "followerId",
+  onDelete: "CASCADE",
+  as: 'follower'
+});
+User.belongsToMany(User, {
+  through: Followship,
+  foreignKey: "followingId",
+  onDelete: "CASCADE",
+  as: 'following'
+});
 // Optional: Add any additional configurations or associations here
 //Initializing model
 User.sync({})
   .then(() => console.log("User schema is ready"))
-  .catch((err) => {console.log(err)});
+  .catch((err) => {
+    console.log(err);
+  });
 
 module.exports = User;

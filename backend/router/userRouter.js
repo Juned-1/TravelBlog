@@ -18,6 +18,7 @@ const userController = require("../controllers/userController");
 const { verifyToken, authorize } = require("../utils/token-manager.js");
 const router = Router();
 
+//authorization
 router.post(
   "/signup",
   validate(validators.signUpValidator),
@@ -59,6 +60,8 @@ router.get("/logout", userLogout);
 router.get("/getuserdetails", verifyToken, userController.getUserDetails);
 router.patch("/setuserdetails", verifyToken, userController.setUserDetails);
 router.get("/authstatus", authorize);
+
+//photo
 router.post(
   "/uploadphoto",
   verifyToken,
@@ -66,5 +69,39 @@ router.post(
   userController.resizePhoto,
   userController.uploadPhoto
 );
-router.get("/getphotos/:photoType", verifyToken, userController.getPhotos);
+router.get("/getalbum/:photoType/:userid", userController.getPhotos);
+router.get("/getmyalbum/:photoType", verifyToken, userController.getPhotos);
+router.get("/getphoto/:photoid", userController.getPhoto);
+router.get("/getmyphoto/:photoid", verifyToken, userController.getPhoto);
+router.delete("/deletephoto/:photoid", verifyToken, userController.deletePhoto);
+router.patch(
+  "/activatephoto/:photoid",
+  verifyToken,
+  userController.activatePhoto
+);
+router.get(
+  "/getactivatedphoto/:photoType/:userid",
+  userController.getActivatedPhoto
+);
+router.get(
+  "/getmyactivatedphoto/:photoType",
+  verifyToken,
+  userController.getActivatedPhoto
+);
+router.patch(
+  "/changephototype/:photoid",
+  verifyToken,
+  userController.changePhotoType
+);
+router.patch("/lockalbum", verifyToken, userController.lockAlbum);
+router.patch("/unlockalbum", verifyToken, userController.unlockAlbum);
+router.patch("/lockphoto/:photoid", verifyToken, userController.lockPhoto);
+router.patch("/unlockphoto/:photoid", verifyToken, userController.unlockPhoto);
+
+//following
+router.post("/follow/:userid", verifyToken, userController.follows);
+router.get("/followerlist/:userid",userController.followerList);
+router.get("/myfollowerlist", verifyToken, userController.followerList);
+router.get("/followinglist/:userid", userController.followingList);
+router.get("/myfollowinglist", verifyToken, userController.followingList);
 module.exports = router;

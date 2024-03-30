@@ -1,198 +1,105 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
-import { ToolbarComponent } from '../toolbar/toolbar.component';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { InfiniteScrollCustomEvent, IonicModule } from '@ionic/angular';
+import { BlogCardHomeComponent } from '../home/blog-card-home/blog-card-home.component';
+import { blogs, data } from 'src/DataTypes';
+import { Router } from '@angular/router';
 import { APIService } from 'src/apiservice.service';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ToastrService } from 'ngx-toastr';
-import { FormsModule } from '@angular/forms';
-import { userDetails, data1 } from 'src/DataTypes';
-import { error } from 'console';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
   standalone: true,
-  imports: [
-    ToolbarComponent,
-    IonicModule,
-    MatToolbarModule,
-    CommonModule,
-    ToolbarComponent,
-    FormsModule,
-  ],
+  imports: [IonicModule, CommonModule, BlogCardHomeComponent],
 })
 export class ProfileComponent implements OnInit {
-  isLoggedIn = true;
-  password = { password: '', passwordConfirm: '' };
-  toggleChangePassword = false;
-  toggleChangeEmail = false;
-  newEmail: string = '';
-  emailVerification = false;
-  otp: string = '';
-  processing = false;
-  formData: userDetails = {
-    firstName: '',
-    lastName: '',
-    gender: '',
-    dob: '',
-    email: '',
-    // password: '',
-  };
+  // constructor() { }
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private api: APIService,
-    private sanitizer: DomSanitizer,
-    private toast: ToastrService
-  ) {}
+  // ngOnInit() {}
+
+  self: boolean = false;
+  posts!: blogs[];
+  page: number = 1;
+
+  constructor(private router: Router, private api: APIService,     private sanitizer: DomSanitizer
+    ) {}
 
   ngOnInit() {
-    this.api.getUserDetails().subscribe(
-      (response) => {
-        // console.log(response);
+    this.api.getPost(this.page)?.subscribe({
+      next: (response) => {
         if (
           'status' in response &&
           response.status === 'success' &&
           'data' in response
         ) {
-          this.formData = (response.data as data1).userDetails as userDetails;
-          this.formData.dob = new Date(this.formData.dob)
-            .toISOString()
-            .split('T')[0];
-        }
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
-  }
-
-  makeChanges() {
-    console.log('hello');
-    if (this.toggleChangePassword === true) {
-      this.changePassword();
-      return;
-    }
-    if (this.emailVerification === true) {
-      this.updateEmail();
-      return;
-    }
-    if (this.toggleChangeEmail === true) {
-      this.updateEmailVerification();
-      return;
-    }
-
-    this.api.setUserDetails(this.formData).subscribe(
-      (response) => {
-        // console.log(response);
-        if ('status' in response && response.status === 'success') {
-          this.toast.success('Profile Edited successfully');
-          this.router.navigate(['/profile']);
-        }
-      },
-      (err) => {
-        this.toast.error('Profile Edit unsuccessful');
-        console.log(err);
-      }
-    );
-  }
-
-  updatePasswordVerification() {
-    this.toggleChangeEmail = false;
-    this.api.updatePasswordVerification(this.formData.email).subscribe({
-      next: (response) => {
-        console.log(response);
-        //{status: 'success', value: true}
-        if ('status' in response && response.status === 'success') {
-          if ('value' in response && response.value === true) {
-            // this.toast.success('Enter new password');
-            this.toggleChangePassword = true;
-          } else this.toast.warning('ERROR');
-        }
-      },
-      error: (error) => {
-        this.toast.error('Error! Please try again later');
-      },
-    });
-  }
-  changePassword() {
-    if (this.password.password !== this.password.passwordConfirm) {
-      this.toast.warning('Password does not match!');
-      return;
-    }
-    this.api.updatePassword(this.password).subscribe({
-      next: (response) => {
-        console.log(response);
-        //{status: 'success', message: 'Password is updated successfully'}
-        if ('status' in response && response.status === 'success') {
-          if ('message' in response) {
-            const message: string = response.message as string;
-            this.toast.success(message);
-            this.password.password = '';
-            this.password.passwordConfirm = '';
-            this.toggleChangePassword = false;
+          this.posts = (response.data as data).blogs as blogs[];
+          for (let post of this.posts) {
+            post.time = new Date(post.time).toDateString().toString();
+            // Extract the first image URL from post.post_content
+            let imageURL = this.extractFirstImageURL(post.content);
+            if (imageURL === null) {
+              imageURL = '../../assets/travelImage/no-image.jpg';
+            }
+            imageURL = (
+              this.sanitizer.bypassSecurityTrustResourceUrl(imageURL) as any
+            ).changingThisBreaksApplicationSecurity;
+            post.imageURL = imageURL;
           }
-        } else {
-          this.toast.error('Error! Please try again later');
         }
       },
-      error: (error) => {
-        this.toast.error('Error! Please try again later');
+      error: (err) => {
+        console.log(err);
       },
     });
   }
-  initiateEmailVerification() {
-    this.toggleChangePassword = false;
-    this.toggleChangeEmail = true;
+  openBlog(id: string) {
+    this.router.navigate(['/blogdetails'], { queryParams: { id } });
   }
-  updateEmailVerification() {
-    this.processing = true;
-    this.api
-      .updateEmailVerification(this.formData.email, this.newEmail)
-      .subscribe({
-        next: (response) => {
-          console.log(response);
-          this.emailVerification = true;
-          this.toast.success(`Otp sent to ${this.newEmail}`);
-          this.processing = false;
-          //{status: 'success', message: 'Verification code is sent to hi@gmail.com', data: {…}}
-        },
-        error: (error) => {
-          console.log(error);
-          this.toast.error('Error! Please try again later');
-          this.processing = false;
-        },
-      });
-  }
-  updateEmail() {
-    this.processing = true;
-    this.api.updateEmail(this.otp, this.newEmail).subscribe({
-      next: (response) => {
-        console.log(response);
+  onIonInfinite(ev: any) {
+    this.page++;
+    this.api.getPost(this.page)?.subscribe(
+      (response) => {
+        if (
+          'status' in response &&
+          response.status === 'success' &&
+          'data' in response
+        ) {
+          let morePost = (response.data as data).blogs as blogs[];
+          for (let post of morePost) {
+            post.time = new Date(post.time).toDateString().toString();
 
-        this.ngOnInit();
-        this.toast.success('Email is updated successfully');
-        this.cancel();
-        this.processing = false;
-        this.newEmail = '';
+            // Extract the first image URL from post.post_content
+            let imageURL = this.extractFirstImageURL(post.content);
+            if (imageURL === null) {
+              imageURL = '../../assets/travelImage/no-image.jpg';
+            }
+            imageURL = (
+              this.sanitizer.bypassSecurityTrustResourceUrl(imageURL) as any
+            ).changingThisBreaksApplicationSecurity;
+            post.imageURL = imageURL;
+          }
+          this.posts.push(...morePost);
+        }
       },
-      error: (error) => {
-        console.log(error);
-        this.toast.error('Error! Please try again later');
-        this.processing = false;
-        this.newEmail = '';
-      },
-    });
+      (err) => {
+        console.log(err);
+      }
+    );
 
+    setTimeout(() => {
+      (ev as InfiniteScrollCustomEvent).target.complete();
+    }, 300);
   }
-  cancel() {
-    this.toggleChangePassword = false;
-    this.toggleChangeEmail = false;
-    this.emailVerification = false;
+
+  extractFirstImageURL(postContent: string): string | null {
+    const regex = /<img src="(.*?)"/g;
+    const match = regex.exec(postContent);
+    if (match) {
+      return match[1];
+    } else {
+      return null;
+    }
   }
 }

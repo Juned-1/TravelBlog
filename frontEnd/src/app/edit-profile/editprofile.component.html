@@ -1,0 +1,156 @@
+<ion-content>
+  <div class="container">
+    <h2 class="heading">Your Profile</h2>
+    <p class="para">You can edit your profile!</p>
+    <form>
+      <ion-item lines="none" class="ion-item">
+        <fieldset class="input-item">
+          <legend>First Name</legend>
+          <ion-input
+            type="text"
+            name="firstName"
+            [(ngModel)]="formData.firstName"
+            required
+            placeholder="{{ formData.firstName }}"
+            [disabled]="toggleChangePassword || toggleChangeEmail"
+          ></ion-input>
+        </fieldset>
+      </ion-item>
+      <ion-item lines="none" class="ion-item">
+        <fieldset class="input-item">
+          <legend>Last Name</legend>
+          <ion-input
+            type="text"
+            name="lastName"
+            [(ngModel)]="formData.lastName"
+            required
+            placeholder="{{ formData.lastName }}"
+            [disabled]="toggleChangePassword || toggleChangeEmail"
+          ></ion-input>
+        </fieldset>
+      </ion-item>
+      
+      <ion-item lines="none" class="ion-item">
+        <fieldset class="input-item">
+          <legend>Date of Birth</legend>
+          <ion-input
+            type="date"
+            placeholder="{{ formData.dob }}"
+            name="dateOfBirth"
+            [(ngModel)]="formData.dob"
+            required
+            [disabled]="toggleChangePassword || toggleChangeEmail"
+          ></ion-input>
+        </fieldset>
+      </ion-item>
+      <ion-item lines="none" class="ion-item">
+        <!--Gender input-->
+        <fieldset class="input-item">
+          <!-- <legend>Gender</legend> -->
+          <ion-select
+            justify="space-between"
+            label="Gender"
+            [(ngModel)]="formData.gender"
+            name="gender"
+            required
+            interface="popover"
+            value="{{ formData.gender }}"
+            [disabled]="toggleChangePassword || toggleChangeEmail"
+          >
+            <ion-select-option value="male">Male</ion-select-option>
+            <ion-select-option value="female">Female</ion-select-option>
+            <ion-select-option value="other">Other</ion-select-option>
+          </ion-select>
+        </fieldset>
+      </ion-item>
+      <ion-item lines="none" class="ion-item">
+        <fieldset class="input-item">
+          <legend>Email Id</legend>
+          <ion-input
+            type="email"
+            name="email"
+            [(ngModel)]="formData.email"
+            required
+            placeholder="{{ formData.email }}"
+            [disabled]="true"
+          ></ion-input>
+        </fieldset>
+      </ion-item>
+
+      <ion-item lines="none" class="ion-item" *ngIf="toggleChangeEmail">
+        <fieldset class="input-item">
+          <legend><strong>New Email Id</strong></legend>
+          <ion-input
+            type="email"
+            name="newemail"
+            [(ngModel)]="newEmail"
+            required
+            placeholder="Enter new email"
+          ></ion-input>
+        </fieldset>
+      </ion-item>
+
+      <ion-item lines="none" class="ion-item" *ngIf="emailVerification">
+        <fieldset class="input-item">
+          <legend>Enter OTP sent to your email</legend>
+          <ion-input
+            type="text"
+            name="OTP"
+            [(ngModel)]="otp"
+            required
+            placeholder="OTP"
+          ></ion-input>
+        </fieldset>
+      </ion-item>
+
+      <ion-item lines="none" class="ion-item" *ngIf="toggleChangePassword">
+        <fieldset class="input-item">
+          <legend><strong>New Password</strong> </legend>
+          <ion-input
+            type="password"
+            name="newpassword"
+            [(ngModel)]="password.password"
+            required="true"
+          ></ion-input>
+        </fieldset>
+      </ion-item>
+      <ion-item lines="none" class="ion-item" *ngIf="toggleChangePassword">
+        <fieldset class="input-item">
+          <legend><strong>Confirm New Password</strong></legend>
+          <ion-input
+            type="password"
+            name="confirmnewpassword"
+            [(ngModel)]="password.passwordConfirm"
+            required="true"
+          ></ion-input>
+        </fieldset>
+      </ion-item>
+
+      <br />
+      <ion-button
+        class="change-email-button"
+        *ngIf="!toggleChangeEmail && !toggleChangePassword"
+        (click)="initiateEmailVerification()"
+        >Change Email</ion-button
+      >
+      <ion-button
+        class="change-password-button"
+        *ngIf="!toggleChangePassword && !toggleChangeEmail"
+        (click)="updatePasswordVerification()"
+        >Change Password</ion-button
+      >
+      <ion-button
+        class="cancel-button"
+        *ngIf="toggleChangePassword || toggleChangeEmail"
+        (click)="cancel()"
+        >Cancel</ion-button
+      >
+      
+      <ion-button class="signup-button" (click)="makeChanges()" expand="block"
+        >Make changes <ion-spinner name="lines" *ngIf="processing"></ion-spinner
+          ></ion-button
+      >
+    </form>
+    <br />
+  </div>
+</ion-content>

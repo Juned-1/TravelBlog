@@ -1,0 +1,63 @@
+<ion-row class="row">
+  <ion-col class="persons" size="4">
+    <ion-content>
+      <ion-list>
+        <ion-list-header>
+          <h1>Chats</h1>
+        </ion-list-header>
+        <ion-item
+          *ngFor="let person of persons"
+          (click)="selectPerson(person)"
+          class="select"
+          [ngClass]="{ 'selected-item': person === selectedPerson }"
+        >
+          {{ person.name }}
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </ion-col>
+  <ion-col class="chat" size="8" color="light">
+    <ion-content #content id="content">
+      <div id="empty-msg-container" *ngIf="this.selectedPerson === null">
+        <div id="empty-msg">
+          <ion-card-title color="light">Select a Chat</ion-card-title>
+        </div>
+      </div>
+      <div class="message-wrap" *ngIf="selectedPerson">
+        <div
+          *ngFor="let message of selectedPerson.messages"
+          class="message"
+          [class.right]="message.userIsSender === true"
+        >
+          <div class="msg-detail">
+            <div class="msg-content">
+              <p>{{ message.message }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ion-content>
+    <div *ngIf="this.selectedPerson" class="border input-msg">
+      <ion-input
+        #chatInput
+        maxlength="140"
+        [(ngModel)]="editorMsg"
+        (focusin)="onFocus()"
+        clearInput="true"
+        label="Enter you message"
+        label-placement="floating"
+        fill="solid"
+        placeholder="Enter text"
+      ></ion-input>
+      <ion-button
+        class="send-button"
+        size="large"
+        fill="clear"
+        (click)="sendMessage()"
+        slot="end"
+      >
+        <ion-icon name="send-outline"></ion-icon>
+      </ion-button>
+    </div>
+  </ion-col>
+</ion-row>

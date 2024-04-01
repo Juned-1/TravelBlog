@@ -71,4 +71,4 @@ Thumbs.db
 
 #Config file
 /config.env
-/public/*
+public/

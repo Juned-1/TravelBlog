@@ -471,4 +471,4 @@ exports.isFollowed = catchAsync(async (req, res, next) => {
     status: "success",
     follow: false,
   });
-})
+});

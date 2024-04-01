@@ -455,3 +455,20 @@ exports.followingList = catchAsync(async (req, res, next) => {
     }
   });
 });
+
+exports.isFollowed = catchAsync(async (req, res, next) => {
+  const userid = req.params.userid;
+  const follow = await Followship.findOne({
+    where: {followerId: req.tokenData.id, followingId: userid}
+  });
+  if(!follow){
+    return res.status(200).json({
+      status: "success",
+      follow: false,
+    });
+  }
+  return res.status(200).json({
+    status: "success",
+    follow: false,
+  });
+})

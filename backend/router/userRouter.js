@@ -104,4 +104,5 @@ router.get("/followerlist/:userid",userController.followerList);
 router.get("/myfollowerlist", verifyToken, userController.followerList);
 router.get("/followinglist/:userid", userController.followingList);
 router.get("/myfollowinglist", verifyToken, userController.followingList);
+router.get("/isfollowed/:userid", verifyToken, userController.isFollowed);
 module.exports = router;

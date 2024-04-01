@@ -5,11 +5,12 @@ import { TexteditorComponent } from './texteditor/texteditor.component';
 import { LoginComponent } from './login/login.component';
 import { MyblogsComponent } from './myblogs/myblogs.component';
 import { BlogComponent } from './blog/blog.component';
-import { ProfileComponent } from './profile/profile.component';
+import { EditProfileComponent } from './edit-profile/editprofile.component';
 import { CanActivate } from './Services/Authorization/auth.guard';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { CommentsComponent } from './comments/components/comments/comments.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { ProfileComponent } from './profile/profile.component';
+import { ChatComponent } from './chat/chat.component';
 
 const routeConfig: Routes = [
   {
@@ -43,8 +44,8 @@ const routeConfig: Routes = [
     canActivate: [CanActivate],
   },
   {
-    path: 'profile',
-    component: ProfileComponent,
+    path: 'editprofile',
+    component: EditProfileComponent,
     canActivate: [CanActivate],
   },
   {
@@ -52,8 +53,12 @@ const routeConfig: Routes = [
     component: ForgotPasswordComponent,
   },
   {
-    path: 'trash',
-    component: PageNotFoundComponent,
+    path: 'profile',
+    component:ProfileComponent//PageNotFoundComponent,
+  },
+  {
+    path: 'chat',
+    component:ChatComponent,
   },
   { path: '**', component: PageNotFoundComponent },
 ];

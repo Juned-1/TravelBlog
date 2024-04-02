@@ -22,6 +22,7 @@ export class ProfileComponent implements OnInit {
   self: boolean = false;
   posts!: blogs[];
   page: number = 1;
+  persons: string[] = ['The Legend of Zelda','Pac-Man','Super Mario World','Pac-Man','Super Mario World'];
 
   constructor(private router: Router, private api: APIService,     private sanitizer: DomSanitizer
     ) {}

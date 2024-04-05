@@ -185,4 +185,11 @@ export class APIService {
     const baseurl = `http://localhost:8081/api/v1/comments/deletecomment/${commentid}`;
     return this.http.delete(baseurl, { withCredentials: true });
   }
+
+  getMyFollowerList(){
+    return this.http.get(
+      'http://localhost:8081/api/v1/users/myfollowerlist',
+      { withCredentials: true }
+    );
+  }
 }

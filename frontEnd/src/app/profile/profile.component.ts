@@ -23,6 +23,7 @@ export class ProfileComponent implements OnInit {
   posts!: blogs[];
   page: number = 1;
   persons: string[] = ['The Legend of Zelda','Pac-Man','Super Mario World','Pac-Man','Super Mario World'];
+  followerList: string[]=[];
 
   constructor(private router: Router, private api: APIService,     private sanitizer: DomSanitizer
     ) {}
@@ -48,6 +49,22 @@ export class ProfileComponent implements OnInit {
             ).changingThisBreaksApplicationSecurity;
             post.imageURL = imageURL;
           }
+        }
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
+
+
+    this.api.getMyFollowerList().subscribe({
+      next: (response) => {
+        if (
+          'status' in response &&
+          response.status === 'success' &&
+          'data' in response
+        ) {
+          console.log(response);
         }
       },
       error: (err) => {

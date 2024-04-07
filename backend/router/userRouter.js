@@ -57,7 +57,8 @@ router.patch("/updateemail", verifyToken, emailUpdate);
 
 router.post("/login", validate(validators.loginValidator), userLogin);
 router.get("/logout", userLogout);
-router.get("/getuserdetails", verifyToken, userController.getUserDetails);
+router.get("/getuserdetails/:userid", userController.getUserDetails);
+router.get("/getmydetails", verifyToken, userController.getUserDetails);
 router.patch("/setuserdetails", verifyToken, userController.setUserDetails);
 router.get("/authstatus", authorize);
 

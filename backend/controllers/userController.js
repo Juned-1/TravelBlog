@@ -8,8 +8,12 @@ const sharp = require("sharp");
 const fs = require("fs");
 const { Sequelize } = require("sequelize");
 exports.getUserDetails = catchAsync(async (req, res, next) => {
-  const uid = req.tokenData.id; //req.body.id;
-  const userDetails = await User.findOne({
+  const uid = req.params.userid || req.tokenData.id;
+  let mod = false;
+  if(req.tokenData && req.tokenData.id){
+    mod = true;
+  }
+  let userDetails = await User.findOne({
     attributes: ["email", "firstName", "lastName", "dob", "gender"],
     where: {
       id: uid,
@@ -18,6 +22,8 @@ exports.getUserDetails = catchAsync(async (req, res, next) => {
   if (!userDetails) {
     return next(new AppError("User does not exist", 400)); //bad request
   }
+  userDetails = userDetails.toJSON();
+  userDetails.modification = mod;
   return res.status(200).json({
     status: "success",
     data: {

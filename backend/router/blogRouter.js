@@ -9,5 +9,6 @@ router.patch("/editpost/:id",verifyToken,postController.editPost);
 router.delete("/deletepost/:id",verifyToken,postController.deletePost);
 router.patch("/likedislike/:id",verifyToken,postController.likedislike);
 router.get("/getpost",postController.getPost);
-router.get("/userpost",verifyToken,postController.getUserPost);
+router.get("/getmypost",verifyToken,postController.getUserPost);
+router.get("/userpost/:userid", postController.getUserPost);
 module.exports = router;

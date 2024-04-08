@@ -210,6 +210,7 @@ exports.getPost = catchAsync(async (req, res, next) => {
   const result = await Post.findAll({
     attributes: [
       "id",
+      "userId",
       "title",
       "subtitle",
       "content",
@@ -241,13 +242,17 @@ exports.getPost = catchAsync(async (req, res, next) => {
 exports.getUserPost = catchAsync(async (req, res, next) => {
   const limitQuery = 10;
   const offsetVal = req.query.page ? (+req.query.page - 1) * limitQuery : 0;
-  const uemail = req.tokenData.email;
+  //const uemail = req.tokenData.email;
+  const uid = req.params.userid || req.tokenData.id;
   const whereClause = search(req.query);
-  //console.log(whereClause);
-  //const sql = `SELECT posts.post_id, posts.post_title, posts.post_subtitle, posts.post_content, posts.post_video_url, users.firstName, users.lastName, posts.post_time FROM users,posts WHERE users.id = posts.user_id AND users.email = ?;`;
+  let mod = false;
+  if(req.tokenData && req.tokenData.id){
+    mod = true;
+  }
   const result = await Post.findAll({
     attributes: [
       "id",
+      "userId",
       "title",
       "subtitle",
       "content",
@@ -259,7 +264,7 @@ exports.getUserPost = catchAsync(async (req, res, next) => {
       {
         model: User, // Assuming your User model is named User
         attributes: [], // Ensure no attributes from User model are selected separately
-        where: { email: uemail },
+        where: { id : uid },
       },
     ],
     where: whereClause,
@@ -270,6 +275,7 @@ exports.getUserPost = catchAsync(async (req, res, next) => {
   return res.status(200).json({
     status: "success",
     resultLength: result.length,
+    modification : mod,
     data: {
       blogs: result,
     },

@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { InfiniteScrollCustomEvent, IonicModule } from '@ionic/angular';
 import { BlogCardHomeComponent } from '../home/blog-card-home/blog-card-home.component';
 import { blogs, data } from 'src/DataTypes';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Route, Router } from '@angular/router';
 import { APIService } from 'src/apiservice.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { error } from 'console';
 
 @Component({
   selector: 'app-profile',
@@ -18,17 +19,62 @@ export class ProfileComponent implements OnInit {
   // constructor() { }
 
   // ngOnInit() {}
+  fileName: string = '';
+  file!: FileList;
+  uploadingProfilePicture: boolean = false;
 
-  self: boolean = false;
+  @Input() self: boolean = true;
   posts!: blogs[];
   page: number = 1;
-  persons: string[] = ['The Legend of Zelda','Pac-Man','Super Mario World','Pac-Man','Super Mario World'];
-  followerList: string[]=[];
+  persons: string[] = [
+    'The Legend of Zelda',
+    'Pac-Man',
+    'Super Mario World',
+    'Pac-Man',
+    'Super Mario World',
+  ];
+  followerList: string[] = [];
+  id: string = '';
 
-  constructor(private router: Router, private api: APIService,     private sanitizer: DomSanitizer
-    ) {}
+  constructor(
+    private router: Router,
+    private api: APIService,
+    private sanitizer: DomSanitizer,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit() {
+    this.id = this.route.snapshot.queryParams['id'];
+
+    this.api.getUserDetails(this.id).subscribe({
+      next: response=>{
+        console.log(response);
+      },
+      error: error=>{
+        console.log(error);
+      }
+    })
+
+
+
+    
+
+    if (this.id !== undefined) {
+      this.self = false;
+      this.getOthersProfiledetails(this.id);
+      return;
+    }
+
+    const id = 'hello';
+    this.api.getprofile(id).subscribe({
+      next: (response) => {
+        console.log(response);
+      },
+      error: (error) => {},
+    });
+
+    this.id = this.route.snapshot.queryParams['id'];
+
     this.api.getPost(this.page)?.subscribe({
       next: (response) => {
         if (
@@ -56,7 +102,15 @@ export class ProfileComponent implements OnInit {
       },
     });
 
+    this.getFollowerList();
+  }
 
+  getOthersProfiledetails(id: string) {
+    console.log('On otherDetails function');
+    console.log(id);
+  }
+
+  getFollowerList() {
     this.api.getMyFollowerList().subscribe({
       next: (response) => {
         if (
@@ -72,9 +126,11 @@ export class ProfileComponent implements OnInit {
       },
     });
   }
+
   openBlog(id: string) {
     this.router.navigate(['/blogdetails'], { queryParams: { id } });
   }
+
   onIonInfinite(ev: any) {
     this.page++;
     this.api.getPost(this.page)?.subscribe(
@@ -119,5 +175,36 @@ export class ProfileComponent implements OnInit {
     } else {
       return null;
     }
+  }
+
+  gotoEditProfile() {
+    this.router.navigate(['/editprofile']);
+  }
+
+  unfollow() {}
+
+  uploadPofilePicture() {
+    this.uploadingProfilePicture = true;
+  }
+  cancel() {
+    this.uploadingProfilePicture = false;
+  }
+  onFileSelected(event: any) {
+    console.log(event);
+    this.file = event.srcElement.files;
+    this.fileName = event.srcElement.files[0].name;
+    console.log(this.fileName);
+    console.log(this.file);
+  }
+  submit() {
+    console.log('print');
+    this.api.uploadProfilePhoto(this.file).subscribe({
+      next: (response) => {
+        console.log(response);
+      },
+      error: (error) => {
+        console.log(error);
+      },
+    });
   }
 }

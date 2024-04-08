@@ -1,15 +1,25 @@
+<ion-backdrop [visible]="true" *ngIf="uploadingProfilePicture"></ion-backdrop>
+
 <ion-content [fullscreen]="true" color="light">
   <ion-grid class="main-header">
     <div class="pic-name">
       <ion-avatar class="avatar">
         <ion-img src="../../assets/2.png"></ion-img>
+        <!-- <ion-icon name="camera" class="camera-icon"></ion-icon> -->
       </ion-avatar>
+      <ion-icon
+        *ngIf="self"
+        name="create"
+        size="large"
+        class="edit-profile-button"
+        (click)="uploadPofilePicture()"
+      ></ion-icon>
       <h1 class="name">Bikram Upadhyaya</h1>
     </div>
   </ion-grid>
 
   <ion-row class="ion-padding-horizontal">
-    <ion-col size="4" class="col container">
+    <ion-col size="4" class="col">
       <ion-button
         *ngIf="!self"
         class="follow-btn"
@@ -17,13 +27,14 @@
         expand="full"
         >Follow</ion-button
       >
-      <ion-button
+      <!-- <ion-button
         *ngIf="self"
         class="message-btn"
         color="secondary"
         expand="full"
-        >Followers</ion-button
-      >
+        >Followers</ion-button 
+      >-->
+
       <ion-button
         *ngIf="!self"
         class="message-btn"
@@ -31,13 +42,21 @@
         expand="full"
         >Message</ion-button
       >
+
       <ion-button
         *ngIf="self"
         class="message-btn"
         color="secondary"
         expand="full"
+        (click)="gotoEditProfile()"
         >Edit Profile</ion-button
       >
+
+      <ion-item *ngIf="self" class="message-btn">
+        <ion-label>Lock Profile</ion-label>
+        <ion-toggle slot="end" color="dark"></ion-toggle>
+      </ion-item>
+
       <ion-item class="bio" lines="none" color="primary">
         <ion-icon name="ellipsis-horizontal-circle-outline"></ion-icon>
         <strong>Bio ::</strong>
@@ -99,14 +118,14 @@
           </ion-item>
           <ion-item *ngFor="let person of persons">
             <ion-label>{{ person }}</ion-label>
-            <ion-button>Unfollow</ion-button>
+            <ion-button (click)="unfollow()" *ngIf="self">Unfollow</ion-button>
           </ion-item>
         </ion-list>
       </ion-content>
     </ion-col>
   </ion-row>
 
-  <ion-grid>
+  <!-- <ion-grid>
     <ion-row>
       <ion-col
         size="12"
@@ -122,5 +141,21 @@
         <ion-infinite-scroll-content></ion-infinite-scroll-content>
       </ion-infinite-scroll>
     </ion-row>
-  </ion-grid>
+  </ion-grid> -->
 </ion-content>
+<div id="box" *ngIf="uploadingProfilePicture">
+  <!-- <input type="image"> -->
+
+  <form>
+    <input
+      type="file"
+      id="myFile"
+      name="filename"
+      (change)="onFileSelected($event)"
+    />
+    <ion-button (click)="submit()" color="dark">Submit</ion-button>
+  </form>
+  <ion-button class="ion-margin-start" color="light" (click)="cancel()"
+    >Cancel</ion-button
+  >
+</div>

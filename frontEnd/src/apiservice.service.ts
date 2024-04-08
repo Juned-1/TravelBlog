@@ -99,10 +99,17 @@ export class APIService {
     }
     return this.http.get(baseurl, { params, withCredentials: true });
   }
-  getUserDetails() {
-    return this.http.get('http://localhost:8081/api/v1/users/getuserdetails', {
+  getUserDetails(id:string) {
+    if(id==''){
+      return this.http.get('http://localhost:8081/api/v1/users/getuserdetails', {
       withCredentials: true,
     });
+    }
+    else{
+      return this.http.get(`http://localhost:8081/api/v1/users/getuserdetails/${id}`, {
+      withCredentials: true,
+    });
+    }
   }
   setUserDetails(data: any) {
     return this.http.patch(
@@ -186,10 +193,42 @@ export class APIService {
     return this.http.delete(baseurl, { withCredentials: true });
   }
 
-  getMyFollowerList(){
+  getMyFollowerList() {
+    return this.http.get('http://localhost:8081/api/v1/users/myfollowerlist', {
+      withCredentials: true,
+    });
+  }
+
+  followUnfollow(id: string) {
+    const baseurl = `http://localhost:8081/api/v1/users/follow/${id}`;
+    return this.http.post(baseurl, { withCredentials: true });
+  }
+
+  getprofile(id: string) {
     return this.http.get(
-      'http://localhost:8081/api/v1/users/myfollowerlist',
-      { withCredentials: true }
+      `http://localhost:8081/api/v1/users/getprofile/${id}`,
+      {
+        withCredentials: true,
+      }
     );
   }
+
+  // uploadProfilePhoto(files: File[]) {
+  //   const body = { photoType: 'profile', files, size: '256x256' };
+  //   const baseurl = `http://localhost:8081/api/v1/users/uploadphoto`;
+  //   return this.http.post(baseurl, body, { withCredentials: true });
+  // }
+  uploadProfilePhoto(files: FileList) {
+    const formData = new FormData();
+    formData.append('photoType', 'profile');
+    formData.append('size', '256x256');
+    for (let i = 0; i < files.length; i++) {
+      formData.append('images', files.item(i) as File, `file${i}`);
+    }
+
+    const baseUrl = 'http://localhost:8081/api/v1/users/uploadphoto';
+    return this.http.post(baseUrl, formData, { withCredentials: true });
+  }
+
+  
 }

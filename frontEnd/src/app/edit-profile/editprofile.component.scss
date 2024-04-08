@@ -56,3 +56,20 @@ ion-content {
   padding-left: 20px;
   text-align: left;
 }
+
+///////////////////////
+.wrapper {
+  padding: 15px;
+  // border: red solid 1px;
+  width: 100%;
+  text-align: center;
+}
+
+.image--cover {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+
+  object-fit: cover;
+  object-position: center right;
+}

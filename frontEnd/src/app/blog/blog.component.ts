@@ -4,7 +4,7 @@ import { IonicModule } from '@ionic/angular';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { APIService } from 'src/apiservice.service';
 import { ToastrService } from 'ngx-toastr';
 import { LikeObj, CountLike, LikeData, Post, PostData } from 'src/DataTypes';
@@ -30,6 +30,7 @@ export class BlogComponent implements OnInit, AfterViewInit {
   currentUserId : string = '';
 
   constructor(
+    private router: Router,
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
     private api: APIService,
@@ -97,5 +98,10 @@ export class BlogComponent implements OnInit, AfterViewInit {
     }
     let val = 'dislike';
     this.sendLikeDislike(val);
+  }
+
+  openProfilePage(){
+    const id = this.id;
+    this.router.navigate(['/profile'], { queryParams: { id } });
   }
 }

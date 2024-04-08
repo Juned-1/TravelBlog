@@ -57,6 +57,10 @@ const routeConfig: Routes = [
     component:ProfileComponent//PageNotFoundComponent,
   },
   {
+    path: 'myprofile',
+    component:ProfileComponent//PageNotFoundComponent,
+  },
+  {
     path: 'chat',
     component:ChatComponent,
   },

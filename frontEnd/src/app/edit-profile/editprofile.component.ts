@@ -41,7 +41,6 @@ export class EditProfileComponent implements OnInit {
     email: '',
     // password: '',
   };
-
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -51,7 +50,7 @@ export class EditProfileComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.api.getUserDetails().subscribe(
+    this.api.getUserDetails('').subscribe(
       (response) => {
         // console.log(response);
         if (

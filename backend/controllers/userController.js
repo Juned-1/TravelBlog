@@ -5,6 +5,7 @@ const Photo = require("../models/photoModel");
 const Followship = require("../models/followshipModel");
 const multer = require("multer");
 const sharp = require("sharp");
+const path = require("path");
 const fs = require("fs");
 const { Sequelize } = require("sequelize");
 exports.getUserDetails = catchAsync(async (req, res, next) => {
@@ -83,7 +84,7 @@ exports.resizePhoto = catchAsync(async (req, res, next) => {
         }-${new Date()}-${i + 1}.${extension}`;
         await sharp(file.buffer)
           .toFormat(`${extension}`)
-          .toFile(`public/images/${filename}`);
+          .toFile(path.join('public', 'images', filename));//`public/images/${filename}`
         return filename;
       })
     );
@@ -103,7 +104,7 @@ exports.resizePhoto = catchAsync(async (req, res, next) => {
         .resize(+width, +height)
         .toFormat("webp")
         .webp({ quality: 100 })
-        .toFile(`public/images/${filename}`);
+        .toFile(path.join('public', 'images', filename));//`public/images/${filename}`
       return filename;
     })
   );
@@ -200,7 +201,7 @@ exports.deletePhoto = catchAsync(async (req, res, next) => {
     );
   }
   //create delete path of photo
-  const photoFilePath = `public/images/${photo.photoName}`;
+  const photoFilePath = path.join('public', 'images', photo.photoName); //`public/images/${photo.photoName}`;
   fs.unlink(photoFilePath, async (err) => {
     if (err) {
       return next(new AppError("Error deleting photo file!", 500));

@@ -53,7 +53,7 @@ exports.getSpecificPost = catchAsync(async (req, res, next) => {
   const result = await Post.findOne({
     attributes: [
       "id",
-      //"userId",
+      "userId",
       "title",
       "subtitle",
       "content",

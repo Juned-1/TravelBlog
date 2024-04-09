@@ -99,17 +99,10 @@ export class APIService {
     }
     return this.http.get(baseurl, { params, withCredentials: true });
   }
-  getUserDetails(id:string) {
-    if(id==''){
-      return this.http.get('http://localhost:8081/api/v1/users/getuserdetails', {
+  getMyDetails() {
+    return this.http.get('http://localhost:8081/api/v1/users/getmydetails', {
       withCredentials: true,
     });
-    }
-    else{
-      return this.http.get(`http://localhost:8081/api/v1/users/getuserdetails/${id}`, {
-      withCredentials: true,
-    });
-    }
   }
   setUserDetails(data: any) {
     return this.http.patch(
@@ -230,5 +223,9 @@ export class APIService {
     return this.http.post(baseUrl, formData, { withCredentials: true });
   }
 
-  
+  getUserDetails(id: string) {
+    return this.http.get(
+      `http://localhost:8081/api/v1/users/getuserdetails/${id}`
+    );
+  }
 }

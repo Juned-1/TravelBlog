@@ -45,19 +45,16 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit() {
     this.id = this.route.snapshot.queryParams['id'];
+    console.log(this.id);
 
     this.api.getUserDetails(this.id).subscribe({
-      next: response=>{
+      next: (response) => {
         console.log(response);
       },
-      error: error=>{
+      error: (error) => {
         console.log(error);
-      }
-    })
-
-
-
-    
+      },
+    });
 
     if (this.id !== undefined) {
       this.self = false;
@@ -190,11 +187,8 @@ export class ProfileComponent implements OnInit {
     this.uploadingProfilePicture = false;
   }
   onFileSelected(event: any) {
-    console.log(event);
     this.file = event.srcElement.files;
     this.fileName = event.srcElement.files[0].name;
-    console.log(this.fileName);
-    console.log(this.file);
   }
   submit() {
     console.log('print');
@@ -206,5 +200,20 @@ export class ProfileComponent implements OnInit {
         console.log(error);
       },
     });
+  }
+  toggleFollow() {
+    this.api.followUnfollow(this.id).subscribe({
+      next: (response) => {
+        console.log(response);
+      },
+      error: (error) => {
+        console.log(error);
+      },
+    });
+  }
+
+  gotoChat(){
+    const id = this.id;
+    this.router.navigate(['/chat'], { queryParams: { id } });
   }
 }

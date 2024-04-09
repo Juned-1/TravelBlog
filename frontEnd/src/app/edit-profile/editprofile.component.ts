@@ -50,7 +50,7 @@ export class EditProfileComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.api.getUserDetails('').subscribe(
+    this.api.getMyDetails().subscribe(
       (response) => {
         // console.log(response);
         if (

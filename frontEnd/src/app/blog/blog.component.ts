@@ -48,6 +48,7 @@ export class BlogComponent implements OnInit, AfterViewInit {
           response.status === 'success' &&
           'data' in response
         ) {
+          console.log(response);
           this.post = (response.data as PostData).post as Post;
           this.content = this.sanitizer.bypassSecurityTrustHtml(
             this.post.content

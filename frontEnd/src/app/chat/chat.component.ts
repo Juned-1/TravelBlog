@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
@@ -10,7 +10,7 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, IonicModule, FormsModule],
 })
-export class ChatComponent {
+export class ChatComponent implements OnInit{
   persons = [
     {
       name: 'Person 1',
@@ -51,6 +51,11 @@ export class ChatComponent {
   // conversationId: string = '';
   // receiverFullName: string = '';
   // receiverId;
+
+ngOnInit(){
+  // this.id = this.route.snapshot.queryParams['id'];
+
+}
 
   selectPerson(person: any) {
     this.selectedPerson = person;

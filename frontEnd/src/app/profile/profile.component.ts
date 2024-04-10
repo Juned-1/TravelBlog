@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { InfiniteScrollCustomEvent, IonicModule } from '@ionic/angular';
 import { BlogCardHomeComponent } from '../home/blog-card-home/blog-card-home.component';
 import { blogs, data } from 'src/DataTypes';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { APIService } from 'src/apiservice.service';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -15,39 +15,118 @@ import { DomSanitizer } from '@angular/platform-browser';
   imports: [IonicModule, CommonModule, BlogCardHomeComponent],
 })
 export class ProfileComponent implements OnInit {
-  // constructor() { }
+  profileId: string = '';
+  loggedUserId!: string;
+  name!: string;
 
-  // ngOnInit() {}
-
-  self: boolean = false;
   posts!: blogs[];
   page: number = 1;
-  persons: string[] = ['The Legend of Zelda','Pac-Man','Super Mario World','Pac-Man','Super Mario World'];
 
-  constructor(private router: Router, private api: APIService,     private sanitizer: DomSanitizer
-    ) {}
+  segmentValue: string = 'default';
+  followingList: string[] = [
+    'Super Mario World',
+    'Super Mario World',
+    'Super Mario World',
+    'Super Mario World',
+    'Super Mario World',
+    'Super Mario World',
+  ];
+  followerList: string[] = [
+    'Pac-Man',
+    'Pac-Man',
+    'Pac-Man',
+    'Pac-Man',
+    'Pac-Man',
+    'Pac-Man',
+  ];
+  list: string[] = [];
+
+  constructor(
+    private router: Router,
+    private api: APIService,
+    private sanitizer: DomSanitizer,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit() {
-    this.api.getPost(this.page)?.subscribe({
+    const id = localStorage.getItem('currentUserId');
+    this.loggedUserId = id === null ? '' : id;
+
+    this.profileId = this.route.snapshot.queryParams['id'];
+
+    this.list = this.followingList;
+
+    this.getProfileDetails();
+
+    this.getFollowerList();
+
+    // this.api.getPost(this.page)?.subscribe({
+    //   next: (response) => {
+    //     if (
+    //       'status' in response &&
+    //       response.status === 'success' &&
+    //       'data' in response
+    //     ) {
+    //       this.posts = (response.data as data).blogs as blogs[];
+    //       for (let post of this.posts) {
+    //         post.time = new Date(post.time).toDateString().toString();
+    //         // Extract the first image URL from post.post_content
+    //         let imageURL = this.extractFirstImageURL(post.content);
+    //         if (imageURL === null) {
+    //           imageURL = '../../assets/travelImage/no-image.jpg';
+    //         }
+    //         imageURL = (
+    //           this.sanitizer.bypassSecurityTrustResourceUrl(imageURL) as any
+    //         ).changingThisBreaksApplicationSecurity;
+    //         post.imageURL = imageURL;
+    //       }
+    //     }
+    //   },
+    //   error: (err) => {
+    //     console.log(err);
+    //   },
+    // });
+  }
+
+  getProfileDetails() {
+    this.api.getUserDetails(this.profileId).subscribe({
       next: (response) => {
         if (
           'status' in response &&
           response.status === 'success' &&
           'data' in response
         ) {
-          this.posts = (response.data as data).blogs as blogs[];
-          for (let post of this.posts) {
-            post.time = new Date(post.time).toDateString().toString();
-            // Extract the first image URL from post.post_content
-            let imageURL = this.extractFirstImageURL(post.content);
-            if (imageURL === null) {
-              imageURL = '../../assets/travelImage/no-image.jpg';
+          console.log(response);
+          const userDetails = (
+            response.data as {
+              userDetails: {
+                dob: string;
+                email: string;
+                firstName: string;
+                gender: string;
+                lastName: string;
+                modification: string;
+              };
             }
-            imageURL = (
-              this.sanitizer.bypassSecurityTrustResourceUrl(imageURL) as any
-            ).changingThisBreaksApplicationSecurity;
-            post.imageURL = imageURL;
-          }
+          ).userDetails;
+
+          this.name = userDetails.firstName + ' ' + userDetails.lastName;
+        }
+      },
+      error: (error) => {
+        console.log(error);
+      },
+    });
+  }
+
+  getFollowerList() {
+    this.api.getMyFollowerList().subscribe({
+      next: (response) => {
+        if (
+          'status' in response &&
+          response.status === 'success' &&
+          'data' in response
+        ) {
         }
       },
       error: (err) => {
@@ -55,9 +134,11 @@ export class ProfileComponent implements OnInit {
       },
     });
   }
+
   openBlog(id: string) {
     this.router.navigate(['/blogdetails'], { queryParams: { id } });
   }
+
   onIonInfinite(ev: any) {
     this.page++;
     this.api.getPost(this.page)?.subscribe(
@@ -102,5 +183,28 @@ export class ProfileComponent implements OnInit {
     } else {
       return null;
     }
+  }
+
+  toggleFollow() {
+    this.api.followUnfollow(this.profileId).subscribe({
+      next: (response) => {
+        console.log(response);
+      },
+      error: (error) => {
+        console.log(error);
+      },
+    });
+  }
+
+  gotoChat() {
+    const id = this.profileId;
+    this.router.navigate(['/chat'], { queryParams: { id } });
+  }
+
+  segmentChanged(event: any) {
+    this.segmentValue = event.detail.value;
+    console.log(this.segmentValue);
+    if (this.segmentValue === 'default') this.list = this.followingList;
+    if (this.segmentValue === 'segment') this.list = this.followerList;
   }
 }

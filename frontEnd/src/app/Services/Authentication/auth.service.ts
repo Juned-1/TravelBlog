@@ -40,7 +40,6 @@ export class AuthService implements OnInit {
   getUserId() {
     const id = localStorage.getItem('currentUserId');
     this.currentUserId = id === null ? '' : id;
-    console.log(this.currentUserId);
     return this.currentUserId;
   }
 }

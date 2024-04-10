@@ -47,7 +47,7 @@ export class MyblogsComponent implements OnInit, AfterViewInit {
   }
   ngAfterViewInit() {}
   loadInitPost() {
-    this.api.userPost(this.page).subscribe(
+    this.api.getMyPost(this.page).subscribe(
       (response) => {
         if (
           'status' in response &&

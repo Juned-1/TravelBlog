@@ -29,7 +29,7 @@
           ></ion-input>
         </fieldset>
       </ion-item>
-      
+
       <ion-item lines="none" class="ion-item">
         <fieldset class="input-item">
           <legend>Date of Birth</legend>
@@ -105,7 +105,7 @@
 
       <ion-item lines="none" class="ion-item" *ngIf="toggleChangePassword">
         <fieldset class="input-item">
-          <legend><strong>New Password</strong> </legend>
+          <legend><strong>New Password</strong></legend>
           <ion-input
             type="password"
             name="newpassword"
@@ -145,11 +145,10 @@
         (click)="cancel()"
         >Cancel</ion-button
       >
-      
+
       <ion-button class="signup-button" (click)="makeChanges()" expand="block"
         >Make changes <ion-spinner name="lines" *ngIf="processing"></ion-spinner
-          ></ion-button
-      >
+      ></ion-button>
     </form>
     <br />
   </div>

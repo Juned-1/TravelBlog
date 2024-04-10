@@ -12,7 +12,7 @@
         [innerHTML]="post.subtitle"
       ></h2>
       <div id="extra-details">
-        <span id="blog-author" *ngIf="post !== undefined"
+        <span id="blog-author" *ngIf="post !== undefined" (click)="openProfilePage()"
           ><strong>{{ post.firstName + " " + post.lastName }}</strong></span
         >
         <span id="blog-date" *ngIf="post !== undefined"

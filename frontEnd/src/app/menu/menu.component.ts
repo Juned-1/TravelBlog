@@ -19,7 +19,6 @@ export class MenuComponent implements OnInit {
     { title: 'My Blogs', url: '/userblog', icon: 'paper-plane' },
     { title: 'Chats', url: '/chat', icon: 'chatbubbles' },
     { title: 'Profile', url: '/myprofile', icon: 'person' },
-    { title: 'Edit Profile', url: '/editprofile', icon: 'person' },
     { title: 'Trash', url: '/trash', icon: 'trash' },
   ];
 

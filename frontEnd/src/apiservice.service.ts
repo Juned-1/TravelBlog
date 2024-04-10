@@ -43,10 +43,9 @@ export class APIService {
     const params = new HttpParams().set('page', page.toString());
     return this.http.get(baseurl, { params, withCredentials: true });
   }
-  userPost(page: number) {
+  getMyPost(page: number) {
     const baseurl = 'http://localhost:8081/api/v1/blogs/userpost';
-    const params = new HttpParams().set('page', page.toString());
-    return this.http.get('http://localhost:8081/api/v1/blogs/userpost', {
+    return this.http.get('http://localhost:8081/api/v1/blogs/getmypost', {
       withCredentials: true,
     });
   }
@@ -194,7 +193,7 @@ export class APIService {
 
   followUnfollow(id: string) {
     const baseurl = `http://localhost:8081/api/v1/users/follow/${id}`;
-    return this.http.post(baseurl, { withCredentials: true });
+    return this.http.post(baseurl,{}, { withCredentials: true });
   }
 
   getprofile(id: string) {

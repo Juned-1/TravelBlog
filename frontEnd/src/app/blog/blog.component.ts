@@ -9,25 +9,33 @@ import { APIService } from 'src/apiservice.service';
 import { ToastrService } from 'ngx-toastr';
 import { LikeObj, CountLike, LikeData, Post, PostData } from 'src/DataTypes';
 import { AuthService } from '../Services/Authentication/auth.service';
-import { CommentsModule } from "../comments/comments.module";
+import { CommentsModule } from '../comments/comments.module';
 @Component({
-    selector: 'app-blog',
-    templateUrl: './blog.component.html',
-    styleUrls: ['./blog.component.scss'],
-    standalone: true,
-    imports: [IonicModule, MatToolbarModule, CommonModule, ToolbarComponent, CommentsModule]
+  selector: 'app-blog',
+  templateUrl: './blog.component.html',
+  styleUrls: ['./blog.component.scss'],
+  standalone: true,
+  imports: [
+    IonicModule,
+    MatToolbarModule,
+    CommonModule,
+    ToolbarComponent,
+    CommentsModule,
+  ],
 })
 export class BlogComponent implements OnInit, AfterViewInit {
   authenticate: AuthService = inject(AuthService);
 
   id!: string;
+  userid!: string;
+  loggedUserId!: string;
   post!: Post;
   time: String = '';
   content: string | SafeHtml = '';
   url: any = null;
   likes: number = 0;
   dislikes: number = 0;
-  currentUserId : string = '';
+  currentUserId: string = '';
 
   constructor(
     private router: Router,
@@ -38,6 +46,9 @@ export class BlogComponent implements OnInit, AfterViewInit {
   ) {}
   ngOnInit() {
     this.id = this.route.snapshot.queryParams['id'];
+
+    const id = localStorage.getItem('currentUserId');
+    this.loggedUserId = id === null ? '' : id;
   }
   ngAfterViewInit() {
     this.api.getSpecificPost(this.id).subscribe({
@@ -56,6 +67,7 @@ export class BlogComponent implements OnInit, AfterViewInit {
           this.time = new Date(this.post.time).toDateString().toString();
           this.likes = this.post.likeCount;
           this.dislikes = this.post.dislikeCount;
+          this.userid = this.post.userId;
         }
       },
       error: (err) => {
@@ -101,8 +113,9 @@ export class BlogComponent implements OnInit, AfterViewInit {
     this.sendLikeDislike(val);
   }
 
-  openProfilePage(){
-    const id = this.id;
-    this.router.navigate(['/profile'], { queryParams: { id } });
+  openProfilePage() {
+    const id = this.userid;
+    if (id === this.loggedUserId) this.router.navigate(['/myprofile']);
+    else this.router.navigate(['/profile'], { queryParams: { id } });
   }
 }

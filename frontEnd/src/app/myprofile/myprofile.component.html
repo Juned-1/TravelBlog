@@ -1,3 +1,5 @@
+<ion-backdrop [visible]="true" *ngIf="uploadingProfilePicture"></ion-backdrop>
+
 <ion-content [fullscreen]="true" color="light">
   <ion-grid class="main-header">
     <div class="pic-name">
@@ -5,28 +7,30 @@
         <ion-img src="../../assets/2.png"></ion-img>
         <!-- <ion-icon name="camera" class="camera-icon"></ion-icon> -->
       </ion-avatar>
-      <h1 class="name">{{name}}</h1>
+      <ion-icon
+        name="create"
+        size="large"
+        class="edit-profile-button"
+        (click)="uploadPofilePicture()"
+      ></ion-icon>
+      <h1 class="name">{{ name }}</h1>
     </div>
   </ion-grid>
 
   <ion-row class="ion-padding-horizontal">
     <ion-col size="4" class="col">
       <ion-button
-        class="follow-btn"
-        color="secondary"
-        expand="full"
-        (click)="toggleFollow()"
-        >Follow</ion-button
-      >
-
-
-      <ion-button
         class="message-btn"
         color="secondary"
         expand="full"
-        (click)="gotoChat()"
-        >Message</ion-button
+        (click)="gotoEditProfile()"
+        >Edit Profile</ion-button
       >
+
+      <ion-item class="message-btn">
+        <ion-label>Lock Profile</ion-label>
+        <ion-toggle slot="end" color="dark"></ion-toggle>
+      </ion-item>
 
       <ion-item class="bio" lines="none" color="primary">
         <ion-icon name="ellipsis-horizontal-circle-outline"></ion-icon>
@@ -90,18 +94,21 @@
               <ion-segment-button value="default">
                 <ion-label>Following (11)</ion-label>
               </ion-segment-button>
-              <ion-segment-button value="segment" >
+              <ion-segment-button value="segment">
                 <ion-label>Followers (22)</ion-label>
               </ion-segment-button>
             </ion-segment>
           </ion-item>
 
-          
           <ion-item *ngFor="let person of list; let index">
             <ion-avatar slot="start">
-              <img [src]="'https://picsum.photos/80/80?random=' + index" alt="avatar" />
+              <img
+                [src]="'https://picsum.photos/80/80?random=' + index"
+                alt="avatar"
+              />
             </ion-avatar>
             <ion-label>{{ person }}</ion-label>
+            <ion-button (click)="unfollow()" *ngIf="segmentValue==='default'">Unfollow</ion-button>
           </ion-item>
         </ion-list>
       </ion-content>
@@ -126,3 +133,19 @@
     </ion-row>
   </ion-grid> -->
 </ion-content>
+<div id="box" *ngIf="uploadingProfilePicture">
+  <!-- <input type="image"> -->
+
+  <form>
+    <input
+      type="file"
+      id="myFile"
+      name="filename"
+      (change)="onFileSelected($event)"
+    />
+    <ion-button (click)="submit()" color="dark">Submit</ion-button>
+  </form>
+  <ion-button class="ion-margin-start" color="light" (click)="cancel()"
+    >Cancel</ion-button
+  >
+</div>

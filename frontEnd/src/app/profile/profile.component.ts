@@ -3,10 +3,9 @@ import { Component, Input, OnInit } from '@angular/core';
 import { InfiniteScrollCustomEvent, IonicModule } from '@ionic/angular';
 import { BlogCardHomeComponent } from '../home/blog-card-home/blog-card-home.component';
 import { blogs, data } from 'src/DataTypes';
-import { ActivatedRoute, Route, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { APIService } from 'src/apiservice.service';
 import { DomSanitizer } from '@angular/platform-browser';
-import { error } from 'console';
 
 @Component({
   selector: 'app-profile',
@@ -16,25 +15,31 @@ import { error } from 'console';
   imports: [IonicModule, CommonModule, BlogCardHomeComponent],
 })
 export class ProfileComponent implements OnInit {
-  // constructor() { }
+  profileId: string = '';
+  loggedUserId!: string;
+  name!: string;
 
-  // ngOnInit() {}
-  fileName: string = '';
-  file!: FileList;
-  uploadingProfilePicture: boolean = false;
-
-  @Input() self: boolean = true;
   posts!: blogs[];
   page: number = 1;
-  persons: string[] = [
-    'The Legend of Zelda',
-    'Pac-Man',
+
+  segmentValue: string = 'default';
+  followingList: string[] = [
     'Super Mario World',
-    'Pac-Man',
+    'Super Mario World',
+    'Super Mario World',
+    'Super Mario World',
+    'Super Mario World',
     'Super Mario World',
   ];
-  followerList: string[] = [];
-  id: string = '';
+  followerList: string[] = [
+    'Pac-Man',
+    'Pac-Man',
+    'Pac-Man',
+    'Pac-Man',
+    'Pac-Man',
+    'Pac-Man',
+  ];
+  list: string[] = [];
 
   constructor(
     private router: Router,
@@ -44,67 +49,74 @@ export class ProfileComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.id = this.route.snapshot.queryParams['id'];
-    console.log(this.id);
+    const id = localStorage.getItem('currentUserId');
+    this.loggedUserId = id === null ? '' : id;
 
-    this.api.getUserDetails(this.id).subscribe({
-      next: (response) => {
-        console.log(response);
-      },
-      error: (error) => {
-        console.log(error);
-      },
-    });
+    this.profileId = this.route.snapshot.queryParams['id'];
 
-    if (this.id !== undefined) {
-      this.self = false;
-      this.getOthersProfiledetails(this.id);
-      return;
-    }
+    this.list = this.followingList;
 
-    const id = 'hello';
-    this.api.getprofile(id).subscribe({
-      next: (response) => {
-        console.log(response);
-      },
-      error: (error) => {},
-    });
+    this.getProfileDetails();
 
-    this.id = this.route.snapshot.queryParams['id'];
+    this.getFollowerList();
 
-    this.api.getPost(this.page)?.subscribe({
+    // this.api.getPost(this.page)?.subscribe({
+    //   next: (response) => {
+    //     if (
+    //       'status' in response &&
+    //       response.status === 'success' &&
+    //       'data' in response
+    //     ) {
+    //       this.posts = (response.data as data).blogs as blogs[];
+    //       for (let post of this.posts) {
+    //         post.time = new Date(post.time).toDateString().toString();
+    //         // Extract the first image URL from post.post_content
+    //         let imageURL = this.extractFirstImageURL(post.content);
+    //         if (imageURL === null) {
+    //           imageURL = '../../assets/travelImage/no-image.jpg';
+    //         }
+    //         imageURL = (
+    //           this.sanitizer.bypassSecurityTrustResourceUrl(imageURL) as any
+    //         ).changingThisBreaksApplicationSecurity;
+    //         post.imageURL = imageURL;
+    //       }
+    //     }
+    //   },
+    //   error: (err) => {
+    //     console.log(err);
+    //   },
+    // });
+  }
+
+  getProfileDetails() {
+    this.api.getUserDetails(this.profileId).subscribe({
       next: (response) => {
         if (
           'status' in response &&
           response.status === 'success' &&
           'data' in response
         ) {
-          this.posts = (response.data as data).blogs as blogs[];
-          for (let post of this.posts) {
-            post.time = new Date(post.time).toDateString().toString();
-            // Extract the first image URL from post.post_content
-            let imageURL = this.extractFirstImageURL(post.content);
-            if (imageURL === null) {
-              imageURL = '../../assets/travelImage/no-image.jpg';
+          console.log(response);
+          const userDetails = (
+            response.data as {
+              userDetails: {
+                dob: string;
+                email: string;
+                firstName: string;
+                gender: string;
+                lastName: string;
+                modification: string;
+              };
             }
-            imageURL = (
-              this.sanitizer.bypassSecurityTrustResourceUrl(imageURL) as any
-            ).changingThisBreaksApplicationSecurity;
-            post.imageURL = imageURL;
-          }
+          ).userDetails;
+
+          this.name = userDetails.firstName + ' ' + userDetails.lastName;
         }
       },
-      error: (err) => {
-        console.log(err);
+      error: (error) => {
+        console.log(error);
       },
     });
-
-    this.getFollowerList();
-  }
-
-  getOthersProfiledetails(id: string) {
-    console.log('On otherDetails function');
-    console.log(id);
   }
 
   getFollowerList() {
@@ -115,7 +127,6 @@ export class ProfileComponent implements OnInit {
           response.status === 'success' &&
           'data' in response
         ) {
-          console.log(response);
         }
       },
       error: (err) => {
@@ -174,35 +185,8 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  gotoEditProfile() {
-    this.router.navigate(['/editprofile']);
-  }
-
-  unfollow() {}
-
-  uploadPofilePicture() {
-    this.uploadingProfilePicture = true;
-  }
-  cancel() {
-    this.uploadingProfilePicture = false;
-  }
-  onFileSelected(event: any) {
-    this.file = event.srcElement.files;
-    this.fileName = event.srcElement.files[0].name;
-  }
-  submit() {
-    console.log('print');
-    this.api.uploadProfilePhoto(this.file).subscribe({
-      next: (response) => {
-        console.log(response);
-      },
-      error: (error) => {
-        console.log(error);
-      },
-    });
-  }
   toggleFollow() {
-    this.api.followUnfollow(this.id).subscribe({
+    this.api.followUnfollow(this.profileId).subscribe({
       next: (response) => {
         console.log(response);
       },
@@ -212,8 +196,15 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  gotoChat(){
-    const id = this.id;
+  gotoChat() {
+    const id = this.profileId;
     this.router.navigate(['/chat'], { queryParams: { id } });
+  }
+
+  segmentChanged(event: any) {
+    this.segmentValue = event.detail.value;
+    console.log(this.segmentValue);
+    if (this.segmentValue === 'default') this.list = this.followingList;
+    if (this.segmentValue === 'segment') this.list = this.followerList;
   }
 }

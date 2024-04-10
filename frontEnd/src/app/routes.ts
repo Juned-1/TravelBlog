@@ -11,6 +11,7 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ChatComponent } from './chat/chat.component';
+import { MyprofileComponent } from './myprofile/myprofile.component';
 
 const routeConfig: Routes = [
   {
@@ -54,11 +55,11 @@ const routeConfig: Routes = [
   },
   {
     path: 'profile',
-    component:ProfileComponent//PageNotFoundComponent,
+    component:ProfileComponent,
   },
   {
     path: 'myprofile',
-    component:ProfileComponent//PageNotFoundComponent,
+    component:MyprofileComponent,
   },
   {
     path: 'chat',

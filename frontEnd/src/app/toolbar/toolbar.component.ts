@@ -66,7 +66,7 @@ export class ToolbarComponent implements OnInit {
     if (e.detail.value == 'myblogs') this.routeToMyBlogs();
   }
   routeToProfile() {
-    this.router.navigate(['/profile']);
+    this.router.navigate(['/myprofile']);
   }
   openBlog(id: string) {
     this.router.navigate(['/blogdetails'], { queryParams: { id } });

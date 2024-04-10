@@ -1,9 +1,13 @@
 const { Sequelize, Op } = require("sequelize");
 const User = require("../models/userModel");
+const { promisify } = require("util");
+const jwt = require("jsonwebtoken");
+const { jwtSecret, environment } = require("../configuration");
 const Post = require("../models/postModel");
 const PostLike = require("../models/postLikeModel");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
+const Followship = require("../models/followshipModel");
 //const APIFeatures = require("../utils/apiFeatures");
 
 const search = (query) => {
@@ -50,7 +54,8 @@ exports.writePost = catchAsync(async (req, res, next) => {
 
 //getting specific post
 exports.getSpecificPost = catchAsync(async (req, res, next) => {
-  const result = await Post.findOne({
+
+  let result = await Post.findOne({
     attributes: [
       "id",
       "userId",
@@ -87,8 +92,28 @@ exports.getSpecificPost = catchAsync(async (req, res, next) => {
   if (!result) {
     return next(new AppError("Post does not exist with given ID", 404));
   }
+  result = result.toJSON();
+  const token = req.cookies.auth_token;
+  let isfollowed = false;
+  let self = false;
+  let decoded;
+  if (token) {
+    decoded = await promisify(jwt.verify)(token, jwtSecret);
+    if(decoded){
+      self = result.userId === decoded.id;
+    }
+    let follow = await Followship.findOne({
+      where : {followingId : result.userId, followerId : decoded.id }
+    });
+    if(follow){
+      isfollowed = true;
+    }
+  }
+  
   return res.status(200).json({
     status: "success",
+    isfollowed,
+    self,
     data: {
       post: result,
     },
@@ -246,7 +271,7 @@ exports.getUserPost = catchAsync(async (req, res, next) => {
   const uid = req.params.userid || req.tokenData.id;
   const whereClause = search(req.query);
   let mod = false;
-  if(req.tokenData && req.tokenData.id){
+  if (req.tokenData && req.tokenData.id) {
     mod = true;
   }
   const result = await Post.findAll({
@@ -264,7 +289,7 @@ exports.getUserPost = catchAsync(async (req, res, next) => {
       {
         model: User, // Assuming your User model is named User
         attributes: [], // Ensure no attributes from User model are selected separately
-        where: { id : uid },
+        where: { id: uid },
       },
     ],
     where: whereClause,
@@ -275,7 +300,43 @@ exports.getUserPost = catchAsync(async (req, res, next) => {
   return res.status(200).json({
     status: "success",
     resultLength: result.length,
-    modification : mod,
+    modification: mod,
+    data: {
+      blogs: result,
+    },
+  });
+});
+
+exports.searchPost = catchAsync(async (req, res, next) => {
+  const limitQuery = 10;
+  const offsetVal = req.query.page ? (+req.query.page - 1) * limitQuery : 0;
+  const whereClause = search(req.query);
+  const result = await Post.findAll({
+    attributes: [
+      "id",
+      "userId",
+      "title",
+      "subtitle",
+      "content",
+      [Sequelize.literal("User.firstName"), "firstName"],
+      [Sequelize.literal("User.lastName"), "lastName"],
+      "time",
+    ],
+    include: [
+      {
+        model: User,
+        attributes: [],
+      },
+    ],
+    where: whereClause,
+    order: [["time", "DESC"]],
+    limit: limitQuery,
+    offset: offsetVal,
+  });
+  return res.status(200).json({
+    status: "success",
+    resultLength: result.length,
+    modification: false,
     data: {
       blogs: result,
     },

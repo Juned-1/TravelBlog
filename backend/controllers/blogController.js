@@ -307,7 +307,7 @@ exports.getUserPost = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.searchPost = catchAsync(async (req, res, next) => {
+/*exports.searchPost = catchAsync(async (req, res, next) => {
   const limitQuery = 10;
   const offsetVal = req.query.page ? (+req.query.page - 1) * limitQuery : 0;
   const whereClause = search(req.query);
@@ -342,3 +342,4 @@ exports.searchPost = catchAsync(async (req, res, next) => {
     },
   });
 });
+*/

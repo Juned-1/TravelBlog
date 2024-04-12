@@ -8,14 +8,13 @@ const sharp = require("sharp");
 const path = require("path");
 const fs = require("fs");
 const { Sequelize } = require("sequelize");
+const { promisify } = require("util");
+const jwt = require("jsonwebtoken");
+const { jwtSecret, environment } = require("../configuration");
 exports.getUserDetails = catchAsync(async (req, res, next) => {
   const uid = req.params.userid || req.tokenData.id;
-  let mod = false;
-  if(req.tokenData && req.tokenData.id){
-    mod = true;
-  }
   let userDetails = await User.findOne({
-    attributes: ["email", "firstName", "lastName", "dob", "gender"],
+    attributes: ["id", "email", "firstName", "lastName", "dob", "gender"],
     where: {
       id: uid,
     },
@@ -24,7 +23,27 @@ exports.getUserDetails = catchAsync(async (req, res, next) => {
     return next(new AppError("User does not exist", 400)); //bad request
   }
   userDetails = userDetails.toJSON();
+  let mod = false;
+  let self = false;
+  let following = false;
+  if(req.tokenData && req.tokenData.id){
+    mod = true;
+    self = userDetails.id === req.tokenData.id;
+  }
+  const token = req.cookies.auth_token;
+  let decoded;
+  if (token) {
+    decoded = await promisify(jwt.verify)(token, jwtSecret);
+    let follow = await Followship.findOne({
+      where : {followingId : uid, followerId : decoded.id }
+    });
+    if(follow){
+      following = true;
+    }
+  }
   userDetails.modification = mod;
+  userDetails.self = self;
+  userDetails.following = following;
   return res.status(200).json({
     status: "success",
     data: {

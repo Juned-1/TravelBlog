@@ -13,6 +13,7 @@ const {
   updatePassword,
   updateEmailVerification,
   emailUpdate,
+  googleLogin,
 } = require("../controllers/authController");
 const userController = require("../controllers/userController");
 const { verifyToken, authorize } = require("../utils/token-manager.js");
@@ -101,9 +102,29 @@ router.patch("/unlockphoto/:photoid", verifyToken, userController.unlockPhoto);
 
 //following
 router.post("/follow/:userid", verifyToken, userController.follows);
-router.get("/followerlist/:userid",userController.followerList);
+router.get("/followerlist/:userid", userController.followerList);
 router.get("/myfollowerlist", verifyToken, userController.followerList);
 router.get("/followinglist/:userid", userController.followingList);
 router.get("/myfollowinglist", verifyToken, userController.followingList);
 router.get("/isfollowed/:userid", verifyToken, userController.isFollowed);
+
+//lock profile
+router.patch("/lockpofile", verifyToken, userController.lockProfile);
+router.patch("/unlockpofile", verifyToken, userController.unlockProfile);
+
+//bio
+router.patch("/addbio", verifyToken, userController.addBio);
+router.get("/getmybio", verifyToken, userController.getBio);
+router.get("/getbio/:userid", userController.getBio);
+router.patch("/removebio", verifyToken, userController.removeBio);
+
+//social Link
+router.patch("/addsocial", verifyToken, userController.addSocialAccount);
+router.get("/getmysocial/:type", verifyToken, userController.getSocialAccount);
+router.get("/getsocial/:type/:userid", userController.getSocialAccount);
+router.delete(
+  "/deletesocial/:socialid",
+  verifyToken,
+  userController.deleteSocialAccount
+);
 module.exports = router;

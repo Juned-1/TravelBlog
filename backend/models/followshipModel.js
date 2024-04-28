@@ -1,40 +1,25 @@
-const { DataTypes, UUIDV4 } = require("sequelize");
-const sequelize = require("../utils/dbConnection");
-const Followship = sequelize.define(
-  "Followship",
-  {
-    followerId: {
-      type: DataTypes.UUID,
-      defaultValue: UUIDV4,
-      len: 36,
-      allowNull: false,
-      primaryKey: true,
-      references: {
-        model: "User",
-        key: "id",
+module.exports = (sequelize, DataTypes, UUIDV4) => {
+  const Followship = sequelize.define(
+    "Followship",
+    {
+      followerId: {
+        type: DataTypes.UUID,
+        defaultValue: UUIDV4,
+        len: 36,
+        allowNull: false,
+        primaryKey: true,
+      },
+      followingId: {
+        type: DataTypes.UUID,
+        defaultValue: UUIDV4,
+        len: 36,
+        allowNull: false,
+        primaryKey: true,
       },
     },
-    followingId: {
-      type: DataTypes.UUID,
-      defaultValue: UUIDV4,
-      len: 36,
-      allowNull: false,
-      primaryKey: true,
-      references: {
-        model: "User",
-        key: "id",
-      },
-    },
-  },
-  {
-    timestamps: false,
-  }
-);
-
-
-Followship.sync({})
-  .then(() => console.log("Followship schema is ready"))
-  .catch((err) => {
-    console.log(err);
-  });
-module.exports = Followship;
+    {
+      timestamps: false,
+    }
+  );
+  return Followship;
+};

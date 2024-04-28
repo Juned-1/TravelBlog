@@ -17,5 +17,8 @@ module.exports = {
     devMailPort: process.env.DEV_MAIL_PORT,
     devMailSource: process.env.DEV_MAIL_SOURCE,
     prodMailSource: process.env.PROD_MAIL_SOURCE,
-    prodMailPassword: process.env.PROD_MAIL_PASSWORD
+    prodMailPassword: process.env.PROD_MAIL_PASSWORD,
+    messagePadding: process.env.MESSAGE_PADDING,
+    googleClientID : process.env.GOOGLE_CLIENT_ID,
+    googleClientSecret : process.env.GOOGLE_CLIENT_SECRET
 };

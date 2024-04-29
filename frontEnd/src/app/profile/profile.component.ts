@@ -15,12 +15,14 @@ import { DomSanitizer } from '@angular/platform-browser';
   imports: [IonicModule, CommonModule, BlogCardHomeComponent],
 })
 export class ProfileComponent implements OnInit {
+  following!: boolean;
   profileId: string = '';
   loggedUserId!: string;
   name!: string;
 
   posts!: blogs[];
   page: number = 1;
+  noOfPost:number = 0;
 
   segmentValue: string = 'default';
   followingList: string[] = [
@@ -57,35 +59,9 @@ export class ProfileComponent implements OnInit {
     this.list = this.followingList;
 
     this.getProfileDetails();
-
+    this.getFollowingList();
     this.getFollowerList();
-
-    // this.api.getPost(this.page)?.subscribe({
-    //   next: (response) => {
-    //     if (
-    //       'status' in response &&
-    //       response.status === 'success' &&
-    //       'data' in response
-    //     ) {
-    //       this.posts = (response.data as data).blogs as blogs[];
-    //       for (let post of this.posts) {
-    //         post.time = new Date(post.time).toDateString().toString();
-    //         // Extract the first image URL from post.post_content
-    //         let imageURL = this.extractFirstImageURL(post.content);
-    //         if (imageURL === null) {
-    //           imageURL = '../../assets/travelImage/no-image.jpg';
-    //         }
-    //         imageURL = (
-    //           this.sanitizer.bypassSecurityTrustResourceUrl(imageURL) as any
-    //         ).changingThisBreaksApplicationSecurity;
-    //         post.imageURL = imageURL;
-    //       }
-    //     }
-    //   },
-    //   error: (err) => {
-    //     console.log(err);
-    //   },
-    // });
+    this.getPosts();
   }
 
   getProfileDetails() {
@@ -106,11 +82,13 @@ export class ProfileComponent implements OnInit {
                 gender: string;
                 lastName: string;
                 modification: string;
+                following: boolean;
               };
             }
           ).userDetails;
 
           this.name = userDetails.firstName + ' ' + userDetails.lastName;
+          this.following = userDetails.following;
         }
       },
       error: (error) => {
@@ -119,14 +97,28 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  getFollowerList() {
-    this.api.getMyFollowerList().subscribe({
+  getPosts() {
+    this.api.getPostforProfile(this.profileId).subscribe({
       next: (response) => {
         if (
           'status' in response &&
           response.status === 'success' &&
           'data' in response
         ) {
+          this.posts = (response.data as data).blogs as blogs[];
+          for (let post of this.posts) {
+            this.noOfPost = this.noOfPost+1;
+            post.time = new Date(post.time).toDateString().toString();
+            // Extract the first image URL from post.post_content
+            let imageURL = this.extractFirstImageURL(post.content);
+            if (imageURL === null) {
+              imageURL = '../../assets/travelImage/no-image.jpg';
+            }
+            imageURL = (
+              this.sanitizer.bypassSecurityTrustResourceUrl(imageURL) as any
+            ).changingThisBreaksApplicationSecurity;
+            post.imageURL = imageURL;
+          }
         }
       },
       error: (err) => {
@@ -134,6 +126,9 @@ export class ProfileComponent implements OnInit {
       },
     });
   }
+
+  getFollowingList(){}
+  getFollowerList(){}
 
   openBlog(id: string) {
     this.router.navigate(['/blogdetails'], { queryParams: { id } });
@@ -188,6 +183,7 @@ export class ProfileComponent implements OnInit {
   toggleFollow() {
     this.api.followUnfollow(this.profileId).subscribe({
       next: (response) => {
+        this.following = !this.following;
         console.log(response);
       },
       error: (error) => {

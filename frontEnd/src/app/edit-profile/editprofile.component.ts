@@ -39,6 +39,11 @@ export class EditProfileComponent implements OnInit {
     gender: '',
     dob: '',
     email: '',
+    bio:'',
+    facebookLink:'',
+    twitterLink:'',
+    instagramLink:'',
+    linkedInLink:'',
     // password: '',
   };
   constructor(

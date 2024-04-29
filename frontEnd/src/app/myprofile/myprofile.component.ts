@@ -56,7 +56,8 @@ export class MyprofileComponent implements OnInit {
     this.loggedUserId = id === null ? '' : id;
 
     this.getMyProfileDetails();
-    this.getFollowerList();
+    this.getMyFollowerList();
+    this.getMyFollowingList();
   }
 
   getMyProfileDetails() {
@@ -89,7 +90,7 @@ export class MyprofileComponent implements OnInit {
       },
     });
   }
-  getFollowerList() {
+  getMyFollowerList() {
     this.api.getMyFollowerList().subscribe({
       next: (response) => {
         if (
@@ -105,6 +106,7 @@ export class MyprofileComponent implements OnInit {
       },
     });
   }
+  getMyFollowingList(){}
   gotoEditProfile() {
     this.router.navigate(['/editprofile']);
   }
@@ -120,7 +122,6 @@ export class MyprofileComponent implements OnInit {
     this.fileName = event.srcElement.files[0].name;
   }
   submit() {
-    console.log('print');
     this.api.uploadProfilePhoto(this.file).subscribe({
       next: (response) => {
         console.log(response);

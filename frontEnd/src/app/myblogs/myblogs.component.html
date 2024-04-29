@@ -42,6 +42,7 @@
           [post]="post"
           (deleteEvent)="onDeletePost($event)"
         ></app-myblogs-blog-card>
+        
       </ion-col>
       <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)">
         <ion-infinite-scroll-content></ion-infinite-scroll-content>

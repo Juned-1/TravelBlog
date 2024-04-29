@@ -43,13 +43,25 @@ export class APIService {
     const params = new HttpParams().set('page', page.toString());
     return this.http.get(baseurl, { params, withCredentials: true });
   }
-  getMyPost(page: number) {
-    const baseurl = 'http://localhost:8081/api/v1/blogs/userpost';
-    return this.http.get('http://localhost:8081/api/v1/blogs/getmypost', {
-      withCredentials: true,
-    });
+  getMyPost(parameter: SearchParameter, page: number) {
+    // return this.http.get('http://localhost:8081/api/v1/blogs/getmypost', {
+    //   withCredentials: true,
+    // });
+    let baseurl = 'http://localhost:8081/api/v1/blogs/getmypost';
+    let params = new HttpParams().set('page', parameter.page.toString());
+    if (parameter.title) {
+      params = params.append('title', encodeURIComponent(parameter.title));
+    }
+    if (parameter.subtitle) {
+      params = params.append(
+        'subtitle',
+        encodeURIComponent(parameter.subtitle)
+      );
+    }
+    return this.http.get(baseurl, { params, withCredentials: true });
   }
   getSpecificPost(id: string) {
+    console.log(id);
     const baseurl = `http://localhost:8081/api/v1/blogs/getspecificpost/${id}`;
     return this.http.get(baseurl, { withCredentials: true });
   }
@@ -72,20 +84,6 @@ export class APIService {
   }
   searchPost(parameter: SearchParameter) {
     const baseurl = 'http://localhost:8081/api/v1/blogs/getpost';
-    let params = new HttpParams().set('page', parameter.page.toString());
-    if (parameter.title) {
-      params = params.append('title', encodeURIComponent(parameter.title));
-    }
-    if (parameter.subtitle) {
-      params = params.append(
-        'subtitle',
-        encodeURIComponent(parameter.subtitle)
-      );
-    }
-    return this.http.get(baseurl, { params, withCredentials: true });
-  }
-  searchUserPost(parameter: SearchParameter) {
-    const baseurl = 'http://localhost:8081/api/v1/blogs/userpost';
     let params = new HttpParams().set('page', parameter.page.toString());
     if (parameter.title) {
       params = params.append('title', encodeURIComponent(parameter.title));
@@ -193,7 +191,7 @@ export class APIService {
 
   followUnfollow(id: string) {
     const baseurl = `http://localhost:8081/api/v1/users/follow/${id}`;
-    return this.http.post(baseurl,{}, { withCredentials: true });
+    return this.http.post(baseurl, {}, { withCredentials: true });
   }
 
   getprofile(id: string) {
@@ -205,11 +203,6 @@ export class APIService {
     );
   }
 
-  // uploadProfilePhoto(files: File[]) {
-  //   const body = { photoType: 'profile', files, size: '256x256' };
-  //   const baseurl = `http://localhost:8081/api/v1/users/uploadphoto`;
-  //   return this.http.post(baseurl, body, { withCredentials: true });
-  // }
   uploadProfilePhoto(files: FileList) {
     const formData = new FormData();
     formData.append('photoType', 'profile');
@@ -226,5 +219,9 @@ export class APIService {
     return this.http.get(
       `http://localhost:8081/api/v1/users/getuserdetails/${id}`
     );
+  }
+
+  getPostforProfile(id: string) {
+    return this.http.get(`http://localhost:8081/api/v1/blogs/userpost/${id}`);
   }
 }

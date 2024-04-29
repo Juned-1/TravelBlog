@@ -36,6 +36,8 @@ export class BlogComponent implements OnInit, AfterViewInit {
   likes: number = 0;
   dislikes: number = 0;
   currentUserId: string = '';
+  following!: boolean;
+  self!: boolean;
 
   constructor(
     private router: Router,
@@ -53,7 +55,6 @@ export class BlogComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.api.getSpecificPost(this.id).subscribe({
       next: (response) => {
-        console.log();
         if (
           'status' in response &&
           response.status === 'success' &&
@@ -68,6 +69,11 @@ export class BlogComponent implements OnInit, AfterViewInit {
           this.likes = this.post.likeCount;
           this.dislikes = this.post.dislikeCount;
           this.userid = this.post.userId;
+
+          this.following = (response as any).isfollowed;
+          this.self = (response as any).self;
+          console.log(this.following);
+          console.log(this.self);
         }
       },
       error: (err) => {

@@ -214,7 +214,8 @@ export class TexteditorComponent implements OnInit, OnDestroy {
         //console.log(response);
         if ('status' in response && response.status === 'success') {
           this.toast.success('Posted successfully');
-          this.router.navigate(['/userblog']);
+          // this.router.navigate(['/userblog']);
+          this.router.navigateByUrl('/userblog');
         }
       },
       (err) => {
@@ -311,9 +312,9 @@ export class TexteditorComponent implements OnInit, OnDestroy {
     this.editor.setText('');
   }
 
-  routeToHome() {
-    this.router.navigate(['/userblog']);
-  }
+  // routeToHome() {
+  //   this.router.navigate(['/userblog'],{});
+  // }
 
   getUrl() {
     // Load the HTML content using cheerio

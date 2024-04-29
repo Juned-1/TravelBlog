@@ -2,11 +2,9 @@ const { Op } = require("sequelize");
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
 const { jwtSecret, environment } = require("../configuration");
-const User = require("../models/userModel");
-const Post = require("../models/postModel");
-const Comment = require("../models/commentModel");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
+const { User, Post, Comment } = require("../models");
 
 exports.writeComment = catchAsync(async (req, res, next) => {
   let newComment = await Comment.create({

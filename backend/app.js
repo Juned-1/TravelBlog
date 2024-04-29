@@ -2,12 +2,12 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const cookieParser = require("cookie-parser");
+const passport = require("passport");
 const appRouter = require("./router/index.js");
-const sequelize = require("./utils/dbConnection.js");
 const AppError = require("./utils/appError.js");
 const globalErrorHandler = require("./controllers/errorController.js");
 const { cookieSecret, environment } = require("./configuration");
-const User = require("./models/userModel.js");
+require("./models");
 const app = express();
 //cross site request
 app.use(cors({ credentials: true, origin: "http://localhost:8100" }));
@@ -23,6 +23,11 @@ app.use(express.urlencoded({extended: false, limit: '50mb'}));
 
 //cookie Parser
 app.use(cookieParser(cookieSecret));
+
+//passport session set up
+//app.use(passport.initialize());
+//app.use(passport.session());
+
 app.use("/api/v1", appRouter);
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find url ${req.originalUrl} on this server!`, 404));

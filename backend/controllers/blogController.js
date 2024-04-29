@@ -1,14 +1,10 @@
 const { Sequelize, Op } = require("sequelize");
-const User = require("../models/userModel");
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
 const { jwtSecret, environment } = require("../configuration");
-const Post = require("../models/postModel");
-const PostLike = require("../models/postLikeModel");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
-const Followship = require("../models/followshipModel");
-//const APIFeatures = require("../utils/apiFeatures");
+const { User, Post, PostLike, Followship } = require("../models");
 
 const search = (query) => {
   let clause = {};
@@ -54,7 +50,6 @@ exports.writePost = catchAsync(async (req, res, next) => {
 
 //getting specific post
 exports.getSpecificPost = catchAsync(async (req, res, next) => {
-
   let result = await Post.findOne({
     attributes: [
       "id",
@@ -306,40 +301,3 @@ exports.getUserPost = catchAsync(async (req, res, next) => {
     },
   });
 });
-
-/*exports.searchPost = catchAsync(async (req, res, next) => {
-  const limitQuery = 10;
-  const offsetVal = req.query.page ? (+req.query.page - 1) * limitQuery : 0;
-  const whereClause = search(req.query);
-  const result = await Post.findAll({
-    attributes: [
-      "id",
-      "userId",
-      "title",
-      "subtitle",
-      "content",
-      [Sequelize.literal("User.firstName"), "firstName"],
-      [Sequelize.literal("User.lastName"), "lastName"],
-      "time",
-    ],
-    include: [
-      {
-        model: User,
-        attributes: [],
-      },
-    ],
-    where: whereClause,
-    order: [["time", "DESC"]],
-    limit: limitQuery,
-    offset: offsetVal,
-  });
-  return res.status(200).json({
-    status: "success",
-    resultLength: result.length,
-    modification: false,
-    data: {
-      blogs: result,
-    },
-  });
-});
-*/

@@ -1,8 +1,5 @@
 const catchAsync = require("../utils/catchAsync");
-const User = require("../models/userModel");
 const AppError = require("../utils/appError");
-const Photo = require("../models/photoModel");
-const Followship = require("../models/followshipModel");
 const multer = require("multer");
 const sharp = require("sharp");
 const path = require("path");
@@ -11,10 +8,21 @@ const { Sequelize } = require("sequelize");
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
 const { jwtSecret, environment } = require("../configuration");
+const { encryptAES, decryptAES } = require("../utils/encrypt");
+const { User, Photo, Followship, SocialAccount } = require("../models");
+
 exports.getUserDetails = catchAsync(async (req, res, next) => {
   const uid = req.params.userid || req.tokenData.id;
   let userDetails = await User.findOne({
-    attributes: ["id", "email", "firstName", "lastName", "dob", "gender"],
+    attributes: [
+      "id",
+      "email",
+      "firstName",
+      "lastName",
+      "dob",
+      "gender",
+      "lockProfile",
+    ],
     where: {
       id: uid,
     },
@@ -26,7 +34,7 @@ exports.getUserDetails = catchAsync(async (req, res, next) => {
   let mod = false;
   let self = false;
   let following = false;
-  if(req.tokenData && req.tokenData.id){
+  if (req.tokenData && req.tokenData.id) {
     mod = true;
     self = userDetails.id === req.tokenData.id;
   }
@@ -35,9 +43,9 @@ exports.getUserDetails = catchAsync(async (req, res, next) => {
   if (token) {
     decoded = await promisify(jwt.verify)(token, jwtSecret);
     let follow = await Followship.findOne({
-      where : {followingId : uid, followerId : decoded.id }
+      where: { followingId: uid, followerId: decoded.id },
     });
-    if(follow){
+    if (follow) {
       following = true;
     }
   }
@@ -103,7 +111,7 @@ exports.resizePhoto = catchAsync(async (req, res, next) => {
         }-${new Date()}-${i + 1}.${extension}`;
         await sharp(file.buffer)
           .toFormat(`${extension}`)
-          .toFile(path.join('public', 'images', filename));//`public/images/${filename}`
+          .toFile(path.join("public", "images", filename)); //`public/images/${filename}`
         return filename;
       })
     );
@@ -123,7 +131,7 @@ exports.resizePhoto = catchAsync(async (req, res, next) => {
         .resize(+width, +height)
         .toFormat("webp")
         .webp({ quality: 100 })
-        .toFile(path.join('public', 'images', filename));//`public/images/${filename}`
+        .toFile(path.join("public", "images", filename)); //`public/images/${filename}`
       return filename;
     })
   );
@@ -220,20 +228,12 @@ exports.deletePhoto = catchAsync(async (req, res, next) => {
     );
   }
   //create delete path of photo
-  const photoFilePath = path.join('public', 'images', photo.photoName); //`public/images/${photo.photoName}`;
-  fs.unlink(photoFilePath, async (err) => {
-    if (err) {
-      return next(new AppError("Error deleting photo file!", 500));
-    }
-    try {
-      await photo.destroy();
-      return res.status(204).json({
-        status: "success",
-        data: null,
-      });
-    } catch (err) {
-      return next(new AppError("Error deleting photo from database!", 500));
-    }
+  const photoFilePath = path.join("public", "images", photo.photoName); //`public/images/${photo.photoName}`;
+  await promisify(fs.unlink)(photoFilePath);
+  await photo.destroy();
+  return res.status(204).json({
+    status: "success",
+    data: null,
   });
 });
 
@@ -412,27 +412,27 @@ exports.unlockPhoto = catchAsync(async (req, res, next) => {
 exports.follows = catchAsync(async (req, res, next) => {
   const following = req.params.userid;
   const exist = await Followship.findOne({
-    where: { followerId: req.tokenData.id, followingId: following}
+    where: { followerId: req.tokenData.id, followingId: following },
   });
-  if(exist){
+  if (exist) {
     await exist.destroy();
     return res.status(200).json({
-      status: 'success',
-      message: 'Unfollowed successfully',
+      status: "success",
+      message: "Unfollowed successfully",
       follow: false,
     });
   }
   const follow = await Followship.create({
     followerId: req.tokenData.id,
-    followingId: following
+    followingId: following,
   });
-  if(!follow){
-    return next(new AppError('Failed to follow!',400));
+  if (!follow) {
+    return next(new AppError("Failed to follow!", 400));
   }
   return res.status(200).json({
-    status: 'success',
-    message: 'Followed successfully',
-    follow: true
+    status: "success",
+    message: "Followed successfully",
+    follow: true,
   });
 });
 
@@ -441,21 +441,41 @@ exports.followerList = catchAsync(async (req, res, next) => {
   const follower = await Followship.findAll({
     attributes: [
       "followerId",
-      [Sequelize.literal(`(SELECT firstName FROM Users WHERE Users.id = Followship.followerId)`), 'firstName'],
-      [Sequelize.literal(`(SELECT lastName FROM Users WHERE Users.id = Followship.followerId)`), 'lastName'],
-      [Sequelize.literal(`(SELECT photoName FROM Photos WHERE Photos.userId = Followship.followerId AND Photos.photoType = 'profile' AND Photos.isActive = 1)`), 'profilePhoto'],
-      [Sequelize.literal(`(SELECT photoId FROM Photos WHERE Photos.userId = Followship.followerId AND Photos.photoType = 'profile' AND Photos.isActive = 1)`), 'profilePhotoId'],
+      [
+        Sequelize.literal(
+          `(SELECT firstName FROM Users WHERE Users.id = Followship.followerId)`
+        ),
+        "firstName",
+      ],
+      [
+        Sequelize.literal(
+          `(SELECT lastName FROM Users WHERE Users.id = Followship.followerId)`
+        ),
+        "lastName",
+      ],
+      [
+        Sequelize.literal(
+          `(SELECT photoName FROM Photos WHERE Photos.userId = Followship.followerId AND Photos.photoType = 'profile' AND Photos.isActive = 1)`
+        ),
+        "profilePhoto",
+      ],
+      [
+        Sequelize.literal(
+          `(SELECT photoId FROM Photos WHERE Photos.userId = Followship.followerId AND Photos.photoType = 'profile' AND Photos.isActive = 1)`
+        ),
+        "profilePhotoId",
+      ],
     ],
-    where: { followingId : userid },
+    where: { followingId: userid },
   });
-  if(!follower){
-    return next(new AppError('No follower found!',400));
+  if (!follower) {
+    return next(new AppError("No follower found!", 400));
   }
   res.status(200).json({
-    status: 'success',
+    status: "success",
     data: {
-      followers: follower
-    }
+      followers: follower,
+    },
   });
 });
 
@@ -464,30 +484,50 @@ exports.followingList = catchAsync(async (req, res, next) => {
   const following = await Followship.findAll({
     attributes: [
       "followingId",
-      [Sequelize.literal(`(SELECT firstName FROM Users WHERE Users.id = Followship.followingId)`), 'firstName'],
-      [Sequelize.literal(`(SELECT lastName FROM Users WHERE Users.id = Followship.followingId)`), 'lastName'],
-      [Sequelize.literal(`(SELECT photoName FROM Photos WHERE Photos.userId = Followship.followingId AND Photos.photoType = 'profile' AND Photos.isActive = 1)`), 'profilePhoto'],
-      [Sequelize.literal(`(SELECT photoId FROM Photos WHERE Photos.userId = Followship.followingId AND Photos.photoType = 'profile' AND Photos.isActive = 1)`), 'profilePhotoId'],
+      [
+        Sequelize.literal(
+          `(SELECT firstName FROM Users WHERE Users.id = Followship.followingId)`
+        ),
+        "firstName",
+      ],
+      [
+        Sequelize.literal(
+          `(SELECT lastName FROM Users WHERE Users.id = Followship.followingId)`
+        ),
+        "lastName",
+      ],
+      [
+        Sequelize.literal(
+          `(SELECT photoName FROM Photos WHERE Photos.userId = Followship.followingId AND Photos.photoType = 'profile' AND Photos.isActive = 1)`
+        ),
+        "profilePhoto",
+      ],
+      [
+        Sequelize.literal(
+          `(SELECT photoId FROM Photos WHERE Photos.userId = Followship.followingId AND Photos.photoType = 'profile' AND Photos.isActive = 1)`
+        ),
+        "profilePhotoId",
+      ],
     ],
-    where: { followerId : userid },
+    where: { followerId: userid },
   });
-  if(!following){
-    return next(new AppError('No Following!',400));
+  if (!following) {
+    return next(new AppError("No Following!", 400));
   }
   res.status(200).json({
-    status: 'success',
+    status: "success",
     data: {
-      followings: following
-    }
+      followings: following,
+    },
   });
 });
 
 exports.isFollowed = catchAsync(async (req, res, next) => {
   const userid = req.params.userid;
   const follow = await Followship.findOne({
-    where: {followerId: req.tokenData.id, followingId: userid}
+    where: { followerId: req.tokenData.id, followingId: userid },
   });
-  if(!follow){
+  if (!follow) {
     return res.status(200).json({
       status: "success",
       follow: false,
@@ -498,3 +538,165 @@ exports.isFollowed = catchAsync(async (req, res, next) => {
     follow: true,
   });
 });
+
+exports.lockProfile = catchAsync(async (req, res, next) => {
+  const userid = req.tokenData.id;
+  const update = await User.update(
+    { lockProfile: true },
+    { where: { id: userid } }
+  );
+  if (!update) {
+    return next(new AppError("Unable to lock", 404));
+  }
+  return res.status(200).json({
+    status: "success",
+    data: {
+      lockProfile: true,
+    },
+  });
+});
+
+exports.unlockProfile = catchAsync(async (req, res, next) => {
+  const userid = req.tokenData.id;
+  const update = await User.update(
+    { lockProfile: false },
+    { where: { id: userid } }
+  );
+  if (!update) {
+    return next(new AppError("Unable to lock", 404));
+  }
+  return res.status(200).json({
+    status: "success",
+    data: {
+      lockProfile: false,
+    },
+  });
+});
+
+exports.addBio = catchAsync(async (req, res, next) => {
+  const userid = req.tokenData.id;
+  const key = userid.slice(0, 32);
+  const userbio = await encryptAES(req.body.bio, key);
+  const update = await User.update({ bio: userbio }, { where: { id: userid } });
+  if (!update) {
+    return next(new AppError("Failed to update bio", 404));
+  }
+  return res.status(201).json({
+    status: "success",
+    data: {
+      bio: req.body.bio,
+      modification: true,
+    },
+  });
+});
+
+exports.getBio = catchAsync(async (req, res, next) => {
+  const userid = req.params.userid || req.tokenData.id;
+  const userBio = await User.findOne({
+    attributes: ["bio"],
+    where: {
+      id: userid,
+    },
+  });
+  if (!userBio) {
+    return next(new AppError("Failed to find bio", 404));
+  }
+  const key = userid.slice(0, 32);
+  const bio = await decryptAES(userBio.toJSON().bio, key);
+  let modification = true;
+  if (!req.tokenData || !req.tokenData.id) {
+    modification = false;
+  }
+  return res.status(200).json({
+    status: "success",
+    data: {
+      bio,
+      modification,
+    },
+  });
+});
+
+exports.removeBio = catchAsync(async (req, res, next) => {
+  const userid = req.tokenData.id;
+  const update = await User.update({ bio: null }, { where: { id: userid } });
+  if (!update) {
+    return next(new AppError("Failed to remove bio", 404));
+  }
+  return res.status(200).json({
+    status: "success",
+    data: {
+      bio: "",
+      modification: true,
+    },
+  });
+});
+
+exports.addSocialAccount = catchAsync(async (req, res, next) => {
+  const userid = req.tokenData.id;
+  const key = userid.slice(0, 32);
+  //socialType = await encryptAES(req.body.socialAccountType, key);
+  socialLink = await encryptAES(req.body.socialAccountLink, key);
+  let social = await SocialAccount.findOne({
+    where: { userId: userid, socialAccountType: req.body.socialAccountType },
+  });
+  if (!social) {
+    social = await SocialAccount.create({
+      userId: userid,
+      socialAccountType: req.body.socialAccountType,
+      socialAccountLink: socialLink,
+    });
+  } else {
+    await social.update({ socialAccountLink: socialLink });
+  }
+  social = social.toJSON();
+  social.socialAccountLink = req.body.socialAccountLink;
+  return res.status(201).json({
+    status: "success",
+    data: {
+      modification : true,
+      social,
+    },
+  });
+});
+
+exports.getSocialAccount = catchAsync(async (req, res, next) => {
+  const userid = req.params.userid || req.tokenData.id;
+  const type = req.params.type;
+  const key = userid.slice(0, 32);
+  let social = await SocialAccount.findOne({
+    where: { userId: userid, socialAccountType: type },
+  });
+  if (!social) {
+    return next(new AppError(`No ${type} account link is found`, 400));
+  }
+  social = social.toJSON();
+  social.socialAccountLink = await decryptAES(social.socialAccountLink, key);
+  let modification = true;
+  if(!req.tokenData || !req.tokenData.id){
+    modification = false;
+  }
+  return res.status(200).json({
+    status: "success",
+    data: {
+      modification,
+      social,
+    },
+  });
+});
+
+exports.deleteSocialAccount = catchAsync(async (req, res, next) => {
+  const social = await SocialAccount.destroy({
+    where : {
+      socialId : req.params.socialid
+    }
+  });
+  if(!social){
+    return next(new AppError(`Failed to delete social account!`,400));
+  }
+  return res.status(204).json({
+    status : 'success',
+    data : {
+      modification : true
+    }
+  });
+})

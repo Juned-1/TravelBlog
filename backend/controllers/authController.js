@@ -1,13 +1,15 @@
 const crypto = require("crypto");
+const passport = require("passport");
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const { COOKIE_NAME } = require("../utils/constants.js");
 const { createToken } = require("../utils/token-manager.js");
-const { cookieDomain, jwtSecret, environment } = require("../configuration.js");
+const { cookieDomain, jwtSecret, environment, googleClientID, googleClientSecret } = require("../configuration.js");
 const { promisify } = require("util");
-const User = require("../models/userModel.js");
-const Token = require("../models/tokenModel.js");
 const catchAsync = require("../utils/catchAsync.js");
 const AppError = require("../utils/appError.js");
 const Email = require("../utils/email.js");
+const { User, Token } = require("../models");
+const { Strategy } = require("passport-google-oauth20");
 const createAndSendToken = (user, statusCode, res) => {
   res.clearCookie(COOKIE_NAME, {
     httpOnly: true,
@@ -422,3 +424,22 @@ exports.emailUpdate = catchAsync(async (req, res, next) => {
     message: "Email is Updated",
   });
 });
+
+/*exports.googleLogin = catchAsync(async (req, res, next) => {
+  const strategy = new GoogleStrategy({
+    clientID : googleClientID,
+    clientSecret : googleClientSecret,
+    callbackURL : 'http://localhost:8081'
+  });
+  passport.use(strategy, function (accessToken, refreshToken, profile, done){
+    console.log(profile);
+    done(null,profile);
+  });
+  //console.log(val);
+  res.status(200).json({
+    status : 'successful',
+    data : {
+      val
+    }
+  });
+});*/

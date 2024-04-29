@@ -11,5 +11,4 @@ router.patch("/likedislike/:id",verifyToken,postController.likedislike);
 router.get("/getpost",postController.getPost);
 router.get("/getmypost",verifyToken,postController.getUserPost);
 router.get("/userpost/:userid", postController.getUserPost);
-//router.get("/searchpost",postController.searchPost);
 module.exports = router;

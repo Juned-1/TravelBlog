@@ -1,58 +1,50 @@
-const { DataTypes, UUIDV4, Sequelize } = require("sequelize");
-const sequelize = require("../utils/dbConnection");
-const Comment = sequelize.define(
-  "Comment",
-  {
-    commentId: {
-      type: DataTypes.UUID,
-      defaultValue: UUIDV4,
-      primaryKey: true,
-      allowNull: false,
-      len: 36,
-    },
-    userId: {
-      type: DataTypes.UUID,
-      allowNull: false,
-      len: 36,
-    },
-    postId: {
-      type: DataTypes.UUID,
-      allowNull: false,
-      len: 36,
-    },
-    parentId: {
-      type: DataTypes.UUID,
-      allowNull: true,
-      references: {
-        model: "Comments",
-        key: "commentId",
+module.exports = (sequelize, DataTypes, UUIDV4) => {
+  const Comment = sequelize.define(
+    "Comment",
+    {
+      commentId: {
+        type: DataTypes.UUID,
+        defaultValue: UUIDV4,
+        primaryKey: true,
+        allowNull: false,
+        len: 36,
+      },
+      userId: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        len: 36,
+      },
+      postId: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        len: 36,
+      },
+      parentId: {
+        type: DataTypes.UUID,
+        allowNull: true,
+        references: {
+          model: "Comments",
+          key: "commentId",
+        },
+      },
+      commentText: {
+        type: DataTypes.BLOB("medium"),
+        allowNull: false,
+        get() {
+          const contentBuffer = this.getDataValue("commentText");
+          return contentBuffer ? contentBuffer.toString("utf-8") : null;
+        },
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+        onUpdate: DataTypes.NOW,
       },
     },
-    commentText: {
-      type: DataTypes.BLOB("medium"),
-      allowNull: false,
-      get() {
-        const contentBuffer = this.getDataValue("commentText");
-        return contentBuffer ? contentBuffer.toString("utf-8") : null;
-      },
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-      onUpdate: DataTypes.NOW,
-    },
-  },
-  {
-    timestamps: false,
-  }
-);
-Comment.hasMany(Comment, { as: "replies", foreignKey: "parentId", onDelete: "CASCADE"}); //as provides an alias
-Comment.belongsTo(Comment, { as: "parent", foreignKey: "parentId", onDelete: "CASCADE" });
-
-Comment.sync({})
-  .then(() => console.log("Comment Schema is ready"))
-  .catch((err) => {
-    console.log(err);
-  });
-module.exports = Comment;
+    {
+      timestamps: false,
+    }
+  );
+  return Comment;
+};

@@ -1,29 +1,29 @@
 module.exports = (sequelize, DataTypes, UUIDV4) => {
-  const Token = sequelize.define(
-    "Token",
+  const SocialAccount = sequelize.define(
+    "SocialAccount",
     {
-      id: {
+      socialId: {
         type: DataTypes.UUID,
         defaultValue: UUIDV4,
         primaryKey: true,
-        allowNull: false,
+        allownull: false,
+        len: 36,
       },
       userId: {
         type: DataTypes.UUID,
-        allowNull: false,
+        allownull: false,
+        len: 36,
       },
-      token: {
+      socialAccountType: {
         type: DataTypes.STRING,
       },
-      time: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-        onUpdate: DataTypes.NOW,
+      socialAccountLink: {
+        type: DataTypes.TEXT,
       },
     },
     {
       timestamps: false,
     }
   );
-  return Token;
+  return SocialAccount;
 };

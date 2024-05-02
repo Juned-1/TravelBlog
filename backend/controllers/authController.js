@@ -1,15 +1,26 @@
+const { hash } = require("bcrypt");
 const crypto = require("crypto");
 const passport = require("passport");
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const { COOKIE_NAME } = require("../utils/constants.js");
 const { createToken } = require("../utils/token-manager.js");
-const { cookieDomain, jwtSecret, environment, googleClientID, googleClientSecret } = require("../configuration.js");
+const {
+  cookieDomain,
+  jwtSecret,
+  environment,
+  googleClientID,
+  googleClientSecret,
+} = require("../configuration.js");
 const { promisify } = require("util");
 const catchAsync = require("../utils/catchAsync.js");
 const AppError = require("../utils/appError.js");
 const Email = require("../utils/email.js");
 const { User, Token } = require("../models");
-const { Strategy } = require("passport-google-oauth20");
+const { OAuth2Client } = require("google-auth-library");
+
+//Google O2Auth
+const gclient = new OAuth2Client(googleClientID);
+
 const createAndSendToken = (user, statusCode, res) => {
   res.clearCookie(COOKIE_NAME, {
     httpOnly: true,
@@ -48,6 +59,7 @@ const createVerificationToken = () => {
   return token;
 };
 exports.signupAuthorization = catchAsync(async (req, res, next) => {
+  const hashedPassword = await hash(req.body.password, 10);
   const user = await User.findOne({ where: { email: req.body.email } });
   if (!user) return next();
   const result = user.toJSON();
@@ -73,14 +85,18 @@ exports.signupAuthorization = catchAsync(async (req, res, next) => {
     if (!updateToken) {
       return next(new AppError("Verification failed! Please Try again!", 400));
     }
+    if (req.body.password !== req.body.passwordConfirm) {
+      return next(
+        new AppError("Password and Confirmation password does not match", 400)
+      );
+    }
     const updatedUser = User.update(
       {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         gender: req.body.gender,
         dob: req.body.dob,
-        password: req.body.password,
-        passwordConfirm: req.body.passwordConfirm,
+        password: hashedPassword,
       },
       {
         where: { id: result.id },
@@ -107,14 +123,17 @@ exports.signupAuthorization = catchAsync(async (req, res, next) => {
   }
 });
 exports.userSignup = catchAsync(async (req, res, next) => {
+  if (req.body.password !== req.body.passwordConfirm) {
+    return next(new AppError("Password and Confirmation password does not match", 400));
+  }
+  const hashedPassword = await hash(req.body.password, 10);
   const newUser = await User.create({
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     email: req.body.email,
     dob: req.body.dob,
     gender: req.body.gender,
-    password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm,
+    password: hashedPassword,
   });
   const result = newUser.toJSON();
   if (newUser) {
@@ -425,21 +444,30 @@ exports.emailUpdate = catchAsync(async (req, res, next) => {
   });
 });
 
-/*exports.googleLogin = catchAsync(async (req, res, next) => {
-  const strategy = new GoogleStrategy({
-    clientID : googleClientID,
-    clientSecret : googleClientSecret,
-    callbackURL : 'http://localhost:8081'
+exports.googleLogin = catchAsync(async (req, res, next) => {
+  let token = req.body.token;
+  const ticket = await gclient.verifyIdToken({
+    idToken: token,
+    audience: googleClientID, //client id
   });
-  passport.use(strategy, function (accessToken, refreshToken, profile, done){
-    console.log(profile);
-    done(null,profile);
+  //console.log(ticket);
+  const payload = ticket.getPayload();
+  //console.log(payload);
+  let user = await User.findOne({
+    where: {
+      email: payload.email,
+    },
   });
-  //console.log(val);
-  res.status(200).json({
-    status : 'successful',
-    data : {
-      val
-    }
-  });
-});*/
+  if (!user) {
+    user = await User.create({
+      firstName: payload.given_name,
+      lastName: payload.family_name,
+      email: payload.email,
+      isVerified: true,
+    });
+  }
+  user = user.toJSON();
+  delete user.isVerified;
+  delete user.password;
+  createAndSendToken(user, 200, res);
+});

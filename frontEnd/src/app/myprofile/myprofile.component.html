@@ -29,7 +29,7 @@
 
       <ion-item class="message-btn">
         <ion-label>Lock Profile</ion-label>
-        <ion-toggle slot="end" color="dark"></ion-toggle>
+        <ion-toggle slot="end" [checked]="lock" color="dark" (ionChange)="toggleProfile()"></ion-toggle>
       </ion-item>
 
       <ion-item class="bio" lines="none" color="primary">

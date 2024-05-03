@@ -215,13 +215,40 @@ export class APIService {
     return this.http.post(baseUrl, formData, { withCredentials: true });
   }
 
-  getUserDetails(id: string) {
+  getUserDetails(userid: string) {
     return this.http.get(
-      `http://localhost:8081/api/v1/users/getuserdetails/${id}`
+      `http://localhost:8081/api/v1/users/getuserdetails/${userid}`
     );
   }
 
   getPostforProfile(id: string) {
     return this.http.get(`http://localhost:8081/api/v1/blogs/userpost/${id}`);
+  }
+
+  toggleProfile(lock: boolean) {
+    // const baseurl = `http://localhost:8081/api/v1/blogs/editpost/${id}`;
+    // return this.http.patch(baseurl, data, { withCredentials: true });
+    const data = {};
+
+    if (lock) {
+      return this.http.patch(
+        `http://localhost:8081/api/v1/users/unlockpofile`,
+        data,
+        { withCredentials: true }
+      );
+    } else {
+      return this.http.patch(
+        `http://localhost:8081/api/v1/users/lockpofile`,
+        data,
+        { withCredentials: true }
+      );
+    }
+  }
+
+  getBio(userid: string) {
+    return this.http.get(`http://localhost:8081/api/v1/users/getbio/${userid}`);
+  }
+  getMyBio(id: string) {
+    return this.http.get(`http://localhost:8081/api/v1/users/getmybio`);
   }
 }

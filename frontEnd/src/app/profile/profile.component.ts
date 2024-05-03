@@ -23,6 +23,8 @@ export class ProfileComponent implements OnInit {
   posts!: blogs[];
   page: number = 1;
   noOfPost:number = 0;
+  lock = false;
+  bio:string = '';
 
   segmentValue: string = 'default';
   followingList: string[] = [
@@ -62,6 +64,7 @@ export class ProfileComponent implements OnInit {
     this.getFollowingList();
     this.getFollowerList();
     this.getPosts();
+    this.getBio();
   }
 
   getProfileDetails() {
@@ -83,12 +86,14 @@ export class ProfileComponent implements OnInit {
                 lastName: string;
                 modification: string;
                 following: boolean;
+                lockProfile:boolean;
               };
             }
           ).userDetails;
 
           this.name = userDetails.firstName + ' ' + userDetails.lastName;
           this.following = userDetails.following;
+          this.lock=userDetails.lockProfile;
         }
       },
       error: (error) => {
@@ -202,5 +207,15 @@ export class ProfileComponent implements OnInit {
     console.log(this.segmentValue);
     if (this.segmentValue === 'default') this.list = this.followingList;
     if (this.segmentValue === 'segment') this.list = this.followerList;
+  }
+  getBio(){
+    this.api.getBio(this.profileId).subscribe({
+      next: (response) => {
+        console.log(response);
+      },
+      error: (error) => {
+        console.log(error);
+      },
+    });
   }
 }

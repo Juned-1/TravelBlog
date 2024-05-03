@@ -22,6 +22,7 @@ import { APIService } from 'src/apiservice.service';
 })
 export class SignupComponent implements OnInit {
   emailVerification: boolean = false;
+  OTPVerification: boolean = false;
   signingIn: boolean = false;
   formData = {
     firstName: '',
@@ -74,12 +75,20 @@ export class SignupComponent implements OnInit {
     this.router.navigate(['/login']);
   }
   summitOTP() {
+    this.OTPVerification = true;
     this.api.sendOTP(this.userId, this.otp).subscribe(
       (response) => {
         if ('status' in response && response.status === 'success') {
           console.log(response);
           this.emailVerification = false;
           this.toast.success('Signup Successful');
+          this.formData.dob='';
+          this.formData.email='';
+          this.formData.firstName='';
+          this.formData.lastName='';
+          this.formData.password='';
+          this.formData.passwordConfirm='';
+          this.OTPVerification = false;
           this.router.navigate(['/login']);
         }
       },
@@ -91,6 +100,7 @@ export class SignupComponent implements OnInit {
         } else if (err.status === 409 && err.error.status === 'fail') {
           this.toast.warning(err.error.message);
         }
+        this.OTPVerification = false;
         this.signingIn = false;
       }
     );

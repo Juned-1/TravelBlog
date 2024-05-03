@@ -127,4 +127,7 @@ router.delete(
   verifyToken,
   userController.deleteSocialAccount
 );
+
+//google login
+router.patch('/googlelogin', googleLogin);
 module.exports = router;

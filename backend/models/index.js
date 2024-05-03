@@ -1,5 +1,5 @@
 const { Sequelize, DataTypes, UUIDV4 } = require("sequelize");
-const { hash, compare } = require("bcrypt");
+const { compare } = require("bcrypt");
 const {
   databaseName,
   databaseUserName,
@@ -22,7 +22,7 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.User = require("./userModel")(sequelize, DataTypes, UUIDV4, hash, compare);
+db.User = require("./userModel")(sequelize, DataTypes, UUIDV4, compare);
 db.Token = require("./tokenModel")(sequelize, DataTypes, UUIDV4);
 db.User.hasOne(db.Token, {
   foreignKey: "userId",

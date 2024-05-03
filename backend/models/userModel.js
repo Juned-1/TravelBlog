@@ -1,4 +1,4 @@
-module.exports = (sequelize, DataTypes, UUIDV4, hash, compare) => {
+module.exports = (sequelize, DataTypes, UUIDV4, compare) => {
   const User = sequelize.define(
     "User",
     {
@@ -30,21 +30,10 @@ module.exports = (sequelize, DataTypes, UUIDV4, hash, compare) => {
       },
       password: {
         type: DataTypes.STRING(300),
-        allowNull: false,
+        //allowNull: false,
       },
       bio : {
         type : DataTypes.TEXT
-      },
-      passwordConfirm: {
-        type: DataTypes.VIRTUAL,
-        allowNull: false,
-        validate: {
-          isPasswordMatch(value) {
-            if (value !== this.password) {
-              throw new Error("Password confirmation does not match password");
-            }
-          },
-        },
       },
       isVerified: {
         type: DataTypes.BOOLEAN,
@@ -58,20 +47,6 @@ module.exports = (sequelize, DataTypes, UUIDV4, hash, compare) => {
     {
       //tableName: 'users',
       timestamps: false,
-      hooks: {
-        beforeCreate: async (user, options) => {
-          // Hash the password before creating the user
-          const hashedPassword = await hash(user.password, 10);
-          user.password = hashedPassword;
-        },
-        beforeUpdate: async (user, options) => {
-          // Hash the password before updating the user
-          if (user.changed("password")) {
-            const hashedPassword = await hash(user.password, 10);
-            user.password = hashedPassword;
-          }
-        },
-      },
     }
   );
   // Add an instance method for password verification

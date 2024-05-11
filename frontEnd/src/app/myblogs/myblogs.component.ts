@@ -126,8 +126,10 @@ export class MyblogsComponent implements OnInit, AfterViewInit {
     }, 300);
   }
 
-  openBlog(id: string) {
-    this.router.navigate(['/blogdetails'], { queryParams: { id } });
+  openBlog(title:string, id: string) {
+    title = title.toLowerCase();
+    title = title.replace(/ /g,"-");
+    this.router.navigate([`/blogdetails/${title}`], { queryParams: { id } });
   }
   openEditor() {
     this.router.navigate(['/texteditor']);

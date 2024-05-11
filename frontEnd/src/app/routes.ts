@@ -30,7 +30,7 @@ const routeConfig: Routes = [
     title: 'Sign Up',
   },
   {
-    path: 'blogdetails',
+    path: 'blogdetails/:title',
     component: BlogComponent,
   },
   {

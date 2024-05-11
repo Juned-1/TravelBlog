@@ -78,8 +78,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
-  openBlog(id: string) {
-    this.router.navigate(['/blogdetails'], { queryParams: { id } });
+  openBlog(title:string,id: string) {
+    title = title.toLowerCase();
+    title = title.replace(/ /g,"-");
+    console.log(title);
+    // this.router.navigate(['/blogdetails'], { queryParams: { id } });
+    this.router.navigate([`blogdetails/${title}`], { queryParams: { id } });
   }
 
   showSlides(): void {

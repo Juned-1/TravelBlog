@@ -50,7 +50,6 @@ export class BlogComponent implements OnInit, AfterViewInit {
   ngOnInit() {
 
     this.id = this.route.snapshot.queryParams['id'];
-    console.log(this.id);
     const id = localStorage.getItem('currentUserId');
     this.loggedUserId = id === null ? '' : id;
   }

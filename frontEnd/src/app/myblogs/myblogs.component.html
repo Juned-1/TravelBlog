@@ -36,7 +36,7 @@
           trackBy: trackByPostId
         "
         class="home-cards"
-        (click)="openBlog(post.id)"
+        (click)="openBlog(post.title,post.id)"
       >
         <app-myblogs-blog-card
           [post]="post"

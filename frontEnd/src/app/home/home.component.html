@@ -37,6 +37,13 @@
       </div>
     </div>
   </header>
+  <div *ngIf="emptyPosts">
+    <div id="empty-msg-container">
+      <div id="empty-msg">
+        <ion-card-title color="light">Be the first to write a blog !</ion-card-title>
+      </div>
+    </div>
+  </div>
   <ion-grid>
     <ion-row>
       <ion-col

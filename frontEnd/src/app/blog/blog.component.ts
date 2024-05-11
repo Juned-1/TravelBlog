@@ -4,12 +4,13 @@ import { IonicModule } from '@ionic/angular';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { APIService } from 'src/apiservice.service';
 import { ToastrService } from 'ngx-toastr';
 import { LikeObj, CountLike, LikeData, Post, PostData } from 'src/DataTypes';
 import { AuthService } from '../Services/Authentication/auth.service';
 import { CommentsModule } from '../comments/comments.module';
+import { Observable, map } from 'rxjs';
 @Component({
   selector: 'app-blog',
   templateUrl: './blog.component.html',
@@ -47,8 +48,9 @@ export class BlogComponent implements OnInit, AfterViewInit {
     private toast: ToastrService
   ) {}
   ngOnInit() {
-    this.id = this.route.snapshot.queryParams['id'];
 
+    this.id = this.route.snapshot.queryParams['id'];
+    console.log(this.id);
     const id = localStorage.getItem('currentUserId');
     this.loggedUserId = id === null ? '' : id;
   }
@@ -60,7 +62,6 @@ export class BlogComponent implements OnInit, AfterViewInit {
           response.status === 'success' &&
           'data' in response
         ) {
-          console.log(response);
           this.post = (response.data as PostData).post as Post;
           this.content = this.sanitizer.bypassSecurityTrustHtml(
             this.post.content
@@ -72,8 +73,6 @@ export class BlogComponent implements OnInit, AfterViewInit {
 
           this.following = (response as any).isfollowed;
           this.self = (response as any).self;
-          console.log(this.following);
-          console.log(this.self);
         }
       },
       error: (err) => {

@@ -13,7 +13,6 @@ router.post(
   chatController.uploadAttachment,
   chatController.sendMessage
 );
-
 router.get("/allconversation", chatController.getAllConversation);
 router.get("/receivemessage/:convid", chatController.getMessage);
 router.delete("/deleteattachment/:attachmentId", chatController.deleteAttachment);

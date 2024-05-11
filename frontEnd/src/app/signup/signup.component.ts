@@ -7,6 +7,9 @@ import { Router } from '@angular/router';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
 import { ToastrService } from 'ngx-toastr';
 import { APIService } from 'src/apiservice.service';
+
+
+
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
@@ -19,6 +22,7 @@ import { APIService } from 'src/apiservice.service';
     MatDatepickerModule,
     ToolbarComponent,
   ],
+  
 })
 export class SignupComponent implements OnInit {
   emailVerification: boolean = false;
@@ -35,14 +39,88 @@ export class SignupComponent implements OnInit {
   };
   otp: string = '';
   userId: string = '';
+  
   constructor(
     private router: Router,
     private api: APIService,
-    private toast: ToastrService
+    private toast: ToastrService,
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    
+  }
+  isUserAbove12(dateOfBirth: string): boolean {
+    // Convert input string to Date object
+    const dob: Date = new Date(dateOfBirth);
+
+    // Get today's date
+    const today: Date = new Date();
+
+    // Calculate age difference in years
+    const ageDifferenceInMilliseconds: number = today.getTime() - dob.getTime();
+    const ageDifferenceInYears: number =
+      ageDifferenceInMilliseconds / (1000 * 3600 * 24 * 365.25);
+
+    // Check if user is above 12 years old
+    console.log(ageDifferenceInYears);
+    return ageDifferenceInYears > 12;
+  }
+  isValidPassword(password: string): boolean {
+    // Check length
+    if (password.length < 6) {
+      this.toast.warning('Password is too short');
+      return false; // Password is too short
+    }
+
+    // Check complexity
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /[0-9]/.test(password);
+    const hasSpecialChars = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    if (!(hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChars)) {
+      this.toast.warning('Password must include A-Z,a-z,0-9,special character');
+      return false; // Password doesn't meet complexity requirements
+    }
+
+    return true; // Password meets all criteria
+  }
+  isValidName(firstName: string, lastName: string): boolean {
+    // Check if first name and last name are non-empty strings
+    if (firstName.trim() === '' || lastName.trim() === '') {
+      this.toast.warning('First name or last name is empty');
+      return false; // First name or last name is empty
+    }
+
+    // Check if first name and last name contain only letters
+    const nameRegex = /^[a-zA-Z]+$/;
+    if (!nameRegex.test(firstName) || !nameRegex.test(lastName)) {
+      this.toast.warning(
+        'First name or last name contains special characters or numbers'
+      );
+      return false; // First name or last name contains special characters or numbers
+    }
+
+    return true; // Both first name and last name are valid
+  }
   signup() {
+    if (!this.isValidName(this.formData.firstName, this.formData.lastName)) {
+      return;
+    }
+    if (!this.isUserAbove12(this.formData.dob)) {
+      this.toast.warning('User must be atleast 12 years old');
+      return;
+    }
+
+    if (!this.isValidPassword(this.formData.password)) {
+      return;
+    }
+
+    if (this.formData.password !== this.formData.passwordConfirm) {
+      this.toast.warning('passwords and confirm password does not match!');
+      return;
+    }
+
     this.signingIn = true;
     this.api.signup(this.formData).subscribe(
       (response) => {
@@ -82,12 +160,12 @@ export class SignupComponent implements OnInit {
           console.log(response);
           this.emailVerification = false;
           this.toast.success('Signup Successful');
-          this.formData.dob='';
-          this.formData.email='';
-          this.formData.firstName='';
-          this.formData.lastName='';
-          this.formData.password='';
-          this.formData.passwordConfirm='';
+          this.formData.dob = '';
+          this.formData.email = '';
+          this.formData.firstName = '';
+          this.formData.lastName = '';
+          this.formData.password = '';
+          this.formData.passwordConfirm = '';
           this.OTPVerification = false;
           this.router.navigate(['/login']);
         }
@@ -124,5 +202,6 @@ export class SignupComponent implements OnInit {
       }
     );
   }
-  loginWithGoogle() {}
+  loginWithGoogle() {
+  }
 }

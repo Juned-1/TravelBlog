@@ -20,6 +20,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   posts!: blogs[];
   timeoutid: any = 0;
   page: number = 1;
+  emptyPosts = false;
   constructor(
     private router: Router,
     private api: APIService,
@@ -39,6 +40,14 @@ export class HomeComponent implements OnInit, OnDestroy {
           'data' in response
         ) {
           this.posts = (response.data as data).blogs as blogs[];
+
+          if(this.posts.length===0){
+            this.emptyPosts = true;
+          }
+          else{
+            this.emptyPosts = false;
+          }
+
           for (let post of this.posts) {
             post.time = new Date(post.time).toDateString().toString();
             // Extract the first image URL from post.post_content

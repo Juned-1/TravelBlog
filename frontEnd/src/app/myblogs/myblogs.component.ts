@@ -180,4 +180,3 @@ export class MyblogsComponent implements OnInit, AfterViewInit {
       });
   }
 }
-

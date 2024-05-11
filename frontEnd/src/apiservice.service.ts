@@ -251,4 +251,82 @@ export class APIService {
   getMyBio(id: string) {
     return this.http.get(`http://localhost:8081/api/v1/users/getmybio`);
   }
+
+  //CHAT APIs
+  createIndividualConversation(data: any): Observable<any> {
+    const baseUrl = 'http://localhost:8081/api/v1/chats';
+    return this.http.post<any>(`${baseUrl}/individualconversation`, data, {
+      withCredentials: true,
+    });
+  }
+
+  deleteConversation(convid: string): Observable<any> {
+    const baseUrl = 'http://localhost:8081/api/v1/chats';
+
+    return this.http.delete<any>(`${baseUrl}/deleteconversation/${convid}`, {
+      withCredentials: true,
+    });
+  }
+
+  sendMessage(convid: string, data: any): Observable<any> {
+    const baseUrl = 'http://localhost:8081/api/v1/chats';
+
+    return this.http.post<any>(`${baseUrl}/sendmessage/${convid}`, data, {
+      withCredentials: true,
+    });
+  }
+
+  getAllConversation(): Observable<any> {
+    const baseUrl = 'http://localhost:8081/api/v1/chats';
+
+    let page = 0;
+    const params = new HttpParams().set('page', page.toString());
+
+    return this.http.get<any>(`${baseUrl}/allconversation`, {
+      params,
+      withCredentials: true,
+    });
+  }
+
+  getMessage(convid: string): Observable<any> {
+    const baseUrl = 'http://localhost:8081/api/v1/chats';
+
+    return this.http.get<any>(`${baseUrl}/receivemessage/${convid}`, {
+      withCredentials: true,
+    });
+  }
+
+  deleteAttachment(attachmentId: string): Observable<any> {
+    const baseUrl = 'http://localhost:8081/api/v1/chats';
+
+    return this.http.delete<any>(
+      `${baseUrl}/deleteattachment/${attachmentId}`,
+      {
+        withCredentials: true,
+      }
+    );
+  }
+
+  deleteMessage(messageId: string): Observable<any> {
+    const baseUrl = 'http://localhost:8081/api/v1/chats';
+
+    return this.http.delete<any>(`${baseUrl}/deletemessage/${messageId}`, {
+      withCredentials: true,
+    });
+  }
+
+  editMessage(messageId: string, data: any): Observable<any> {
+    const baseUrl = 'http://localhost:8081/api/v1/chats';
+
+    return this.http.patch<any>(`${baseUrl}/editmessage/${messageId}`, data, {
+      withCredentials: true,
+    });
+  }
+
+  //googlelogin
+  googleLogin(token: string): Observable<any> {
+    const baseUrl = 'http://localhost:8081/api/v1/users';
+
+    return this.http.patch<any>(`${baseUrl}/googlelogin`, {token},{ withCredentials: true })
+  }
 }

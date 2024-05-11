@@ -204,18 +204,18 @@ export class ProfileComponent implements OnInit {
 
   segmentChanged(event: any) {
     this.segmentValue = event.detail.value;
-    console.log(this.segmentValue);
+    // console.log(this.segmentValue);
     if (this.segmentValue === 'default') this.list = this.followingList;
     if (this.segmentValue === 'segment') this.list = this.followerList;
   }
   getBio(){
-    this.api.getBio(this.profileId).subscribe({
-      next: (response) => {
-        console.log(response);
-      },
-      error: (error) => {
-        console.log(error);
-      },
-    });
+    // this.api.getBio(this.profileId).subscribe({
+    //   next: (response) => {
+    //     console.log(response);
+    //   },
+    //   error: (error) => {
+    //     console.log(error);
+    //   },
+    // });
   }
 }

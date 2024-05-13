@@ -80,23 +80,6 @@ export class TexteditorComponent implements OnInit, OnDestroy {
     private toast: ToastrService
   ) {}
   ngOnInit() {
-    // this.routerService = this.router.events.subscribe((event) => {
-    //   if (event instanceof NavigationEnd) {
-    //     this.api.authorise().subscribe(
-    //       (response) => {
-    //         const data = JSON.parse(JSON.stringify(response));
-    //         if (data.status === 'success' && data.message === 'Token verified') {
-    //           this.isLoggedIn = true;
-    //         }
-    //       },
-    //       (err) => {
-    //         localStorage.removeItem('travel-blog');
-    //         this.isLoggedIn = false;
-    //         this.router.navigate(['/']);
-    //       }
-    //     );
-    //   }
-    // });
     this.routerService = this.router.events.subscribe((event) => {
       if(event instanceof NavigationEnd){
         if(localStorage.getItem('travel-blog') !== null){
@@ -214,7 +197,8 @@ export class TexteditorComponent implements OnInit, OnDestroy {
         //console.log(response);
         if ('status' in response && response.status === 'success') {
           this.toast.success('Posted successfully');
-          this.router.navigate(['/userblog']);
+          // this.router.navigate(['/userblog']);
+          this.router.navigateByUrl('/userblog');
         }
       },
       (err) => {
@@ -309,10 +293,6 @@ export class TexteditorComponent implements OnInit, OnDestroy {
   }
   async clearEditor() {
     this.editor.setText('');
-  }
-
-  routeToHome() {
-    this.router.navigate(['/userblog']);
   }
 
   getUrl() {

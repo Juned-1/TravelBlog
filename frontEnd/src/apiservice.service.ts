@@ -43,13 +43,25 @@ export class APIService {
     const params = new HttpParams().set('page', page.toString());
     return this.http.get(baseurl, { params, withCredentials: true });
   }
-  getMyPost(page: number) {
-    const baseurl = 'http://localhost:8081/api/v1/blogs/userpost';
-    return this.http.get('http://localhost:8081/api/v1/blogs/getmypost', {
-      withCredentials: true,
-    });
+  getMyPost(parameter: SearchParameter, page: number) {
+    // return this.http.get('http://localhost:8081/api/v1/blogs/getmypost', {
+    //   withCredentials: true,
+    // });
+    let baseurl = 'http://localhost:8081/api/v1/blogs/getmypost';
+    let params = new HttpParams().set('page', parameter.page.toString());
+    if (parameter.title) {
+      params = params.append('title', encodeURIComponent(parameter.title));
+    }
+    if (parameter.subtitle) {
+      params = params.append(
+        'subtitle',
+        encodeURIComponent(parameter.subtitle)
+      );
+    }
+    return this.http.get(baseurl, { params, withCredentials: true });
   }
   getSpecificPost(id: string) {
+    console.log(id);
     const baseurl = `http://localhost:8081/api/v1/blogs/getspecificpost/${id}`;
     return this.http.get(baseurl, { withCredentials: true });
   }
@@ -72,20 +84,6 @@ export class APIService {
   }
   searchPost(parameter: SearchParameter) {
     const baseurl = 'http://localhost:8081/api/v1/blogs/getpost';
-    let params = new HttpParams().set('page', parameter.page.toString());
-    if (parameter.title) {
-      params = params.append('title', encodeURIComponent(parameter.title));
-    }
-    if (parameter.subtitle) {
-      params = params.append(
-        'subtitle',
-        encodeURIComponent(parameter.subtitle)
-      );
-    }
-    return this.http.get(baseurl, { params, withCredentials: true });
-  }
-  searchUserPost(parameter: SearchParameter) {
-    const baseurl = 'http://localhost:8081/api/v1/blogs/userpost';
     let params = new HttpParams().set('page', parameter.page.toString());
     if (parameter.title) {
       params = params.append('title', encodeURIComponent(parameter.title));
@@ -193,7 +191,7 @@ export class APIService {
 
   followUnfollow(id: string) {
     const baseurl = `http://localhost:8081/api/v1/users/follow/${id}`;
-    return this.http.post(baseurl,{}, { withCredentials: true });
+    return this.http.post(baseurl, {}, { withCredentials: true });
   }
 
   getprofile(id: string) {
@@ -205,11 +203,6 @@ export class APIService {
     );
   }
 
-  // uploadProfilePhoto(files: File[]) {
-  //   const body = { photoType: 'profile', files, size: '256x256' };
-  //   const baseurl = `http://localhost:8081/api/v1/users/uploadphoto`;
-  //   return this.http.post(baseurl, body, { withCredentials: true });
-  // }
   uploadProfilePhoto(files: FileList) {
     const formData = new FormData();
     formData.append('photoType', 'profile');
@@ -222,9 +215,118 @@ export class APIService {
     return this.http.post(baseUrl, formData, { withCredentials: true });
   }
 
-  getUserDetails(id: string) {
+  getUserDetails(userid: string) {
     return this.http.get(
-      `http://localhost:8081/api/v1/users/getuserdetails/${id}`
+      `http://localhost:8081/api/v1/users/getuserdetails/${userid}`
     );
+  }
+
+  getPostforProfile(id: string) {
+    return this.http.get(`http://localhost:8081/api/v1/blogs/userpost/${id}`);
+  }
+
+  toggleProfile(lock: boolean) {
+    // const baseurl = `http://localhost:8081/api/v1/blogs/editpost/${id}`;
+    // return this.http.patch(baseurl, data, { withCredentials: true });
+    const data = {};
+
+    if (lock) {
+      return this.http.patch(
+        `http://localhost:8081/api/v1/users/unlockpofile`,
+        data,
+        { withCredentials: true }
+      );
+    } else {
+      return this.http.patch(
+        `http://localhost:8081/api/v1/users/lockpofile`,
+        data,
+        { withCredentials: true }
+      );
+    }
+  }
+
+  getBio(userid: string) {
+    return this.http.get(`http://localhost:8081/api/v1/users/getbio/${userid}`);
+  }
+  getMyBio(id: string) {
+    return this.http.get(`http://localhost:8081/api/v1/users/getmybio`);
+  }
+
+  //CHAT APIs
+  createIndividualConversation(data: any): Observable<any> {
+    const baseUrl = 'http://localhost:8081/api/v1/chats';
+    return this.http.post<any>(`${baseUrl}/individualconversation`, data, {
+      withCredentials: true,
+    });
+  }
+
+  deleteConversation(convid: string): Observable<any> {
+    const baseUrl = 'http://localhost:8081/api/v1/chats';
+
+    return this.http.delete<any>(`${baseUrl}/deleteconversation/${convid}`, {
+      withCredentials: true,
+    });
+  }
+
+  sendMessage(convid: string, data: any): Observable<any> {
+    const baseUrl = 'http://localhost:8081/api/v1/chats';
+
+    return this.http.post<any>(`${baseUrl}/sendmessage/${convid}`, data, {
+      withCredentials: true,
+    });
+  }
+
+  getAllConversation(): Observable<any> {
+    const baseUrl = 'http://localhost:8081/api/v1/chats';
+
+    let page = 0;
+    const params = new HttpParams().set('page', page.toString());
+
+    return this.http.get<any>(`${baseUrl}/allconversation`, {
+      params,
+      withCredentials: true,
+    });
+  }
+
+  getMessage(convid: string): Observable<any> {
+    const baseUrl = 'http://localhost:8081/api/v1/chats';
+
+    return this.http.get<any>(`${baseUrl}/receivemessage/${convid}`, {
+      withCredentials: true,
+    });
+  }
+
+  deleteAttachment(attachmentId: string): Observable<any> {
+    const baseUrl = 'http://localhost:8081/api/v1/chats';
+
+    return this.http.delete<any>(
+      `${baseUrl}/deleteattachment/${attachmentId}`,
+      {
+        withCredentials: true,
+      }
+    );
+  }
+
+  deleteMessage(messageId: string): Observable<any> {
+    const baseUrl = 'http://localhost:8081/api/v1/chats';
+
+    return this.http.delete<any>(`${baseUrl}/deletemessage/${messageId}`, {
+      withCredentials: true,
+    });
+  }
+
+  editMessage(messageId: string, data: any): Observable<any> {
+    const baseUrl = 'http://localhost:8081/api/v1/chats';
+
+    return this.http.patch<any>(`${baseUrl}/editmessage/${messageId}`, data, {
+      withCredentials: true,
+    });
+  }
+
+  //googlelogin
+  googleLogin(token: string): Observable<any> {
+    const baseUrl = 'http://localhost:8081/api/v1/users';
+
+    return this.http.patch<any>(`${baseUrl}/googlelogin`, {token},{ withCredentials: true })
   }
 }

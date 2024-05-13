@@ -12,12 +12,35 @@
         [innerHTML]="post.subtitle"
       ></h2>
       <div id="extra-details">
-        <span id="blog-author" *ngIf="post !== undefined" (click)="openProfilePage()"
-          ><strong>{{ post.firstName + " " + post.lastName }}</strong></span
-        >
         <span id="blog-date" *ngIf="post !== undefined"
           ><strong>{{ time }}</strong></span
         >
+          <div
+            id="blog-author"
+            *ngIf="post !== undefined"
+            (click)="openProfilePage()"
+          >
+            <strong>{{ post.firstName + " " + post.lastName }}</strong>
+          </div>
+
+          <ion-button
+            *ngIf="following && !self"
+            style="max-width: 100px"
+            expand="block"
+            shape="round"
+            fill="outline"
+            size="small"
+            >Following</ion-button
+          >
+          <ion-button
+            *ngIf="!following && !self"
+            style="max-width: 100px"
+            expand="block"
+            shape="round"
+            size="small"
+            >Follow</ion-button
+          >
+
         <span>
           <ion-buttons slot="end">
             <ion-button (click)="like()">
@@ -53,5 +76,8 @@
 
   <!-- <ion-item-group> -->
   <ion-item-divider></ion-item-divider>
-  <comments currentUserId="{{ this.authenticate.currentUserId }}" currentPostId={{this.id}}></comments>
+  <comments
+    currentUserId="{{ this.authenticate.currentUserId }}"
+    currentPostId="{{ this.id }}"
+  ></comments>
 </ion-content>

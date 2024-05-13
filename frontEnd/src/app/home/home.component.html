@@ -37,6 +37,13 @@
       </div>
     </div>
   </header>
+  <div *ngIf="emptyPosts">
+    <div id="empty-msg-container">
+      <div id="empty-msg">
+        <ion-card-title color="light">Be the first to write a blog !</ion-card-title>
+      </div>
+    </div>
+  </div>
   <ion-grid>
     <ion-row>
       <ion-col
@@ -44,7 +51,7 @@
         sizeMd="6"
         *ngFor="let post of posts"
         class="home-cards"
-        (click)="openBlog(post.id)"
+        (click)="openBlog(post.title,post.id)"
       >
         <app-blog-card-home [post]="post"></app-blog-card-home>
         <h1></h1>

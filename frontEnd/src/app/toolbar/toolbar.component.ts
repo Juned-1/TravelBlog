@@ -41,6 +41,7 @@ export class ToolbarComponent implements OnInit {
     this.api.logout().subscribe(
       (response) => {
         localStorage.removeItem('travel-blog');
+        window.location.reload();
       },
       (err) => {
         console.log(err.error.message);

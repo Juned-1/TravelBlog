@@ -2,13 +2,9 @@
   <ion-card-header>
     <div>
       <ion-card-title [innerHTML]="post.title"></ion-card-title>
-      <ion-card-subtitle
-        [innerHTML]="post.subtitle"
-      ></ion-card-subtitle>
+      <ion-card-subtitle [innerHTML]="post.subtitle"></ion-card-subtitle>
       <div id="blog-info">
-        <span id="blog-author">{{
-          post.firstName + " " + post.lastName
-        }}</span>
+        <span id="blog-author">{{ post.firstName + " " + post.lastName }}</span>
         <span id="blog-date">{{ post.time }}</span>
       </div>
     </div>
@@ -19,7 +15,7 @@
       alt="Blog Post Image"
     />
   </ion-card-header>
-  <ion-buttons>
+  <ion-buttons >
     <ion-button
       id="{{ post.id }}"
       color="danger"
@@ -27,11 +23,14 @@
       (click)="deleteBlog($event)"
       >Delete</ion-button
     >
-    <ion-button
-      id="{{ post.id }}"
-      color="success"
-      fill="clear"
-      (click)="editBlog($event)"
+    <ion-alert
+      trigger="{{ post.id }}"
+      header="Are you sure ?"
+      [buttons]="alertButtons"
+      (didDismiss)="setResult($event)"
+    ></ion-alert>
+
+    <ion-button id="{{ post.id }}" color="success" fill="clear" (click)="editBlog($event)"
       >Edit</ion-button
     >
   </ion-buttons>

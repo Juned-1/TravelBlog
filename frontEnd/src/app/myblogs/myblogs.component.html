@@ -36,12 +36,13 @@
           trackBy: trackByPostId
         "
         class="home-cards"
-        (click)="openBlog(post.id)"
+        (click)="openBlog(post.title,post.id)"
       >
         <app-myblogs-blog-card
           [post]="post"
           (deleteEvent)="onDeletePost($event)"
         ></app-myblogs-blog-card>
+        
       </ion-col>
       <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)">
         <ion-infinite-scroll-content></ion-infinite-scroll-content>

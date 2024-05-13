@@ -34,20 +34,25 @@ export class MyblogsComponent implements OnInit, AfterViewInit {
   searchKeyword: string = '';
   searchResults: blogs[] = [];
   showSearchResult: boolean = false;
+  parameter!: SearchParameter;
 
   constructor(
-    private route: ActivatedRoute,
     private router: Router,
     private api: APIService,
     private sanitizer: DomSanitizer,
     private toast: ToastrService
   ) {}
   ngOnInit(): void {
+    this.parameter = {
+      page: 1,
+      title: '',
+      //subtitle : 'W'
+    };
       this.loadInitPost();
   }
   ngAfterViewInit() {}
   loadInitPost() {
-    this.api.getMyPost(this.page).subscribe(
+    this.api.getMyPost(this.parameter,this.page).subscribe(
       (response) => {
         if (
           'status' in response &&
@@ -121,8 +126,10 @@ export class MyblogsComponent implements OnInit, AfterViewInit {
     }, 300);
   }
 
-  openBlog(id: string) {
-    this.router.navigate(['/blogdetails'], { queryParams: { id } });
+  openBlog(title:string, id: string) {
+    title = title.toLowerCase();
+    title = title.replace(/ /g,"-");
+    this.router.navigate([`/blogdetails/${title}`], { queryParams: { id } });
   }
   openEditor() {
     this.router.navigate(['/texteditor']);
@@ -143,13 +150,14 @@ export class MyblogsComponent implements OnInit, AfterViewInit {
       this.showSearchResult = true;
     }
 
-    let parameter: SearchParameter = {
+    this.parameter = {
       page: 1,
       title: this.searchKeyword,
       //subtitle : 'W'
     };
+
     this.api
-      .searchUserPost(parameter)
+      .getMyPost(this.parameter,1)
       .subscribe((response) => {
         if (
           'status' in response &&
@@ -174,4 +182,3 @@ export class MyblogsComponent implements OnInit, AfterViewInit {
       });
   }
 }
-

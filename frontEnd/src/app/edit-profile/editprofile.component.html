@@ -65,6 +65,76 @@
       </ion-item>
       <ion-item lines="none" class="ion-item">
         <fieldset class="input-item">
+          <legend>Bio</legend>
+          <ion-input
+            type="text"
+            name="bio"
+            [(ngModel)]="formData.bio"
+            required
+            placeholder="{{ formData.bio }}"
+          ></ion-input>
+        </fieldset>
+      </ion-item>
+
+      <ion-item lines="none" class="ion-item">
+        <fieldset class="input-item">
+          <legend>
+            <ion-icon name="logo-facebook"> </ion-icon>
+          </legend>
+          <ion-input
+            type="text"
+            name="facebookLink"
+            [(ngModel)]="formData.facebookLink"
+            required
+            placeholder="{{ formData.facebookLink }}"
+          ></ion-input>
+        </fieldset>
+      </ion-item>
+      <ion-item lines="none" class="ion-item">
+        <fieldset class="input-item">
+          <legend>
+            <ion-icon name="logo-twitter"></ion-icon>
+          </legend>
+          <ion-input
+            type="text"
+            name="twitterLink"
+            [(ngModel)]="formData.twitterLink"
+            required
+            placeholder="{{ formData.twitterLink }}"
+          ></ion-input>
+        </fieldset>
+      </ion-item>
+      <ion-item lines="none" class="ion-item">
+        <fieldset class="input-item">
+          <legend>
+            <ion-icon name="logo-instagram"></ion-icon>
+          </legend>
+          <ion-input
+            type="text"
+            name="InstagramLink"
+            [(ngModel)]="formData.instagramLink"
+            required
+            placeholder="{{ formData.instagramLink }}"
+          ></ion-input>
+        </fieldset>
+      </ion-item>
+      <ion-item lines="none" class="ion-item">
+        <fieldset class="input-item">
+          <legend>
+            <ion-icon name="logo-linkedin"></ion-icon>
+          </legend>
+          <ion-input
+            type="text"
+            name="linkedInLink"
+            [(ngModel)]="formData.linkedInLink"
+            required
+            placeholder="{{ formData.linkedInLink }}"
+          ></ion-input>
+        </fieldset>
+      </ion-item>
+
+      <ion-item lines="none" class="ion-item">
+        <fieldset class="input-item">
           <legend>Email Id</legend>
           <ion-input
             type="email"

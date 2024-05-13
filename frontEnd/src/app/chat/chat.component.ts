@@ -2,6 +2,9 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
+import { APIService } from 'src/apiservice.service';
+import { ActivatedRoute } from '@angular/router';
+import { error } from 'console';
 
 @Component({
   selector: 'app-chat',
@@ -10,7 +13,8 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, IonicModule, FormsModule],
 })
-export class ChatComponent implements OnInit{
+export class ChatComponent implements OnInit {
+  date = new Date();
   persons = [
     {
       name: 'Person 1',
@@ -46,21 +50,48 @@ export class ChatComponent implements OnInit{
   selectedPerson: any = null;
   @ViewChild('content', { static: true }) private content: any;
   @ViewChild('chatInput', { static: true }) messageInput!: ElementRef;
-  editorMsg:string='';
+  editorMsg: string = '';
+  id: string | null = null;
+  conversations: any[] = [];
   // messages!: Message[];
   // conversationId: string = '';
   // receiverFullName: string = '';
   // receiverId;
+  constructor(private api: APIService, private route: ActivatedRoute) {}
+  ngOnInit() {
+    this.id = this.route.snapshot.queryParams['id'];
 
-ngOnInit(){
-  // this.id = this.route.snapshot.queryParams['id'];
+    // this.api.createIndividualConversation({recepientId: this.id}).subscribe(
+    //   (response)=>{
+    //     console.log(response);
+    //   },
+    //   (error)=>{
+    //     console.log(error);
+    //   }
+    // );
 
-}
+    console.log(this.id);
+    this.api.getAllConversation().subscribe(
+      (response) => {
+        console.log(response);
+        if (response.status === 'success') {
+          this.conversations = response.data.conversation;
+          console.log('All conversations:', this.conversations);
+
+        } else {
+          console.error('Failed to fetch conversations:', response);
+        }
+      },
+      (error) => {
+        // Handle error
+        console.error(error);
+      }
+    );
+  }
 
   selectPerson(person: any) {
     this.selectedPerson = person;
     this.scrollToBottom();
-
   }
 
   onFocus() {
@@ -84,8 +115,8 @@ ngOnInit(){
 
     console.log(this.selectedPerson);
 
-    this.persons.forEach(person => {
-      if(person.name===this.selectedPerson.name){
+    this.persons.forEach((person) => {
+      if (person.name === this.selectedPerson.name) {
         person.messages.push(message);
       }
     });

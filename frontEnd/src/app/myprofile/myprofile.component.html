@@ -29,7 +29,7 @@
 
       <ion-item class="message-btn">
         <ion-label>Lock Profile</ion-label>
-        <ion-toggle slot="end" color="dark"></ion-toggle>
+        <ion-toggle slot="end" [checked]="lock" color="dark" (ionChange)="toggleProfile()"></ion-toggle>
       </ion-item>
 
       <ion-item class="bio" lines="none" color="primary">
@@ -62,7 +62,7 @@
             <ion-icon name="water" color="primary"></ion-icon>
             <ion-label>
               <h1>43</h1>
-              <h2>Followers</h2>
+              <h2>Reads</h2>
             </ion-label>
           </ion-item>
         </ion-col>
@@ -70,16 +70,16 @@
           <div class="social-media">
             <span>Follow me in:</span>
             <a href="" class="media-link"
-              ><ion-icon name="logo-facebook"></ion-icon
+              ><ion-icon name="logo-facebook" size="large"></ion-icon
             ></a>
             <a href="" class="media-link"
-              ><ion-icon name="logo-linkedin"></ion-icon
+              ><ion-icon name="logo-linkedin" size="large"></ion-icon
             ></a>
             <a href="" class="media-link"
-              ><ion-icon name="logo-instagram"></ion-icon
+              ><ion-icon name="logo-instagram" size="large"></ion-icon
             ></a>
             <a href="" class="media-link"
-              ><ion-icon name="logo-twitter"></ion-icon
+              ><ion-icon name="logo-twitter" size="large"></ion-icon
             ></a>
           </div>
         </ion-col>

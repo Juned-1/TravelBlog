@@ -26,8 +26,41 @@ import { ToolbarComponent } from 'src/app/toolbar/toolbar.component';
 export class MyblogsBlogCardComponent implements OnInit {
   @Input() post: any;
   @Output() deleteEvent = new EventEmitter<string>();
+  idToDelete:string='';
+
+  public alertButtons = [
+    {
+      text: 'Cancel',
+      role: 'cancel',
+      handler: () => {
+        console.log('Alert canceled');
+        this.idToDelete = '';
+      },
+    },
+    {
+      text: 'YES',
+      role: 'confirm',
+      handler: () => {
+        this.api.deletePost(this.idToDelete).subscribe({
+          next: (response) => {
+            this.toast.success('Successfully Deleted');
+            this.deleteEvent.emit(this.idToDelete);
+          },
+          error: (err) => {
+            this.toast.error('Error deleting post');
+            console.log(err);
+          },
+        });
+      },
+    },
+  ];
+
+  setResult(ev:any) {
+    console.log(`Dismissed with role: ${ev.detail.role}`);
+  }
+
+
   constructor(
-    private route: ActivatedRoute,
     private router: Router,
     private api: APIService,
     private sanitizer: DomSanitizer,
@@ -38,17 +71,8 @@ export class MyblogsBlogCardComponent implements OnInit {
 
   deleteBlog(e: any) {
     e.stopPropagation();
-    const id = e.srcElement.id;
-    this.api.deletePost(id).subscribe({
-      next: (response) => {
-        this.toast.success('Successfully Deleted');
-        this.deleteEvent.emit(id);
-      },
-      error: (err) => {
-        this.toast.error('Error deleting post');
-        console.log(err);
-      },
-    });
+    this.idToDelete = e.srcElement.id;
+    
   }
   editBlog(e: any) {
     e.stopPropagation();

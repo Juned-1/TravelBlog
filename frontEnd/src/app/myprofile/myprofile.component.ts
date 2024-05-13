@@ -21,6 +21,7 @@ export class MyprofileComponent implements OnInit {
   file!: FileList;
   uploadingProfilePicture: boolean = false;
   segmentValue: string = 'default';
+  lock = false;
 
   posts!: blogs[];
   page: number = 1;
@@ -46,7 +47,6 @@ export class MyprofileComponent implements OnInit {
   constructor(
     private router: Router,
     private api: APIService,
-    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit() {
@@ -56,11 +56,12 @@ export class MyprofileComponent implements OnInit {
     this.loggedUserId = id === null ? '' : id;
 
     this.getMyProfileDetails();
-    this.getFollowerList();
+    this.getMyFollowerList();
+    this.getMyFollowingList();
   }
 
   getMyProfileDetails() {
-    this.api.getUserDetails(this.id).subscribe({
+    this.api.getMyDetails().subscribe({
       next: (response) => {
         console.log(response);
         if (
@@ -77,11 +78,14 @@ export class MyprofileComponent implements OnInit {
                 gender: string;
                 lastName: string;
                 modification: string;
+                lockProfile: boolean;
               };
             }
           ).userDetails;
 
           this.name = userDetails.firstName + ' ' + userDetails.lastName;
+          this.lock = userDetails.lockProfile;
+
         }
       },
       error: (error) => {
@@ -89,7 +93,7 @@ export class MyprofileComponent implements OnInit {
       },
     });
   }
-  getFollowerList() {
+  getMyFollowerList() {
     this.api.getMyFollowerList().subscribe({
       next: (response) => {
         if (
@@ -105,6 +109,7 @@ export class MyprofileComponent implements OnInit {
       },
     });
   }
+  getMyFollowingList(){}
   gotoEditProfile() {
     this.router.navigate(['/editprofile']);
   }
@@ -120,7 +125,6 @@ export class MyprofileComponent implements OnInit {
     this.fileName = event.srcElement.files[0].name;
   }
   submit() {
-    console.log('print');
     this.api.uploadProfilePhoto(this.file).subscribe({
       next: (response) => {
         console.log(response);
@@ -135,5 +139,21 @@ export class MyprofileComponent implements OnInit {
     console.log(this.segmentValue);
     if (this.segmentValue === 'default') this.list = this.followingList;
     if (this.segmentValue === 'segment') this.list = this.followerList;
+  }
+  toggleProfile(){
+    this.api.toggleProfile(this.lock).subscribe({
+      next: (response) => {
+        if (
+          'status' in response &&
+          response.status === 'success' &&
+          'data' in response
+        ) {
+          console.log(response);
+        }
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
   }
 }

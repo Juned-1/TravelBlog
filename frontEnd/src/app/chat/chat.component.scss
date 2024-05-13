@@ -120,6 +120,8 @@ ion-icon {
 }
 .persons {
   height: 100%;
+  margin: 0;
+  padding: 0;
 }
 .input-msg {
   display: flex;
@@ -127,6 +129,9 @@ ion-icon {
   justify-content: space-between;
   position: sticky;
   bottom: 0;
+}
+.select{
+  background-image : #02a582;
 }
 .select:hover {
   cursor: pointer;

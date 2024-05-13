@@ -1,23 +1,25 @@
 <ion-row class="row">
   <ion-col class="persons" size="4">
-    <ion-content>
-      <ion-list>
-        <ion-list-header>
-          <h1>Chats</h1>
+    <ion-content color="light">
+      <ion-list style="padding: 0;">
+        <ion-list-header color="primary">
+          <h1 style="padding-top: 10px;">Chats</h1>
         </ion-list-header>
         <ion-item
+        
           *ngFor="let person of persons"
           (click)="selectPerson(person)"
           class="select"
           [ngClass]="{ 'selected-item': person === selectedPerson }"
         >
-          {{ person.name }}
+        <strong>{{ person.name }}</strong>
+          
         </ion-item>
       </ion-list>
     </ion-content>
   </ion-col>
-  <ion-col class="chat" size="8" color="light">
-    <ion-content #content id="content">
+  <ion-col class="chat" size="8" style="padding: 0; margin: 0;">
+    <ion-content #content id="content" color="light">
       <div id="empty-msg-container" *ngIf="this.selectedPerson === null">
         <div id="empty-msg">
           <ion-card-title color="light">Select a Chat</ion-card-title>
@@ -30,13 +32,77 @@
           [class.right]="message.userIsSender === true"
         >
           <div class="msg-detail">
+            <div class="msg-info">
+              <p> {{date.toLocaleString()}} </p>
+            </div>
             <div class="msg-content">
               <p>{{ message.message }}</p>
             </div>
           </div>
+
+
+
+          <div *ngIf="true||message.userIsSender" class="msg-status">
+            <div *ngIf="true|| message.status === 'pending';else sent">
+              pending
+              <ion-icon name="checkmark-circle"></ion-icon>
+            </div>
+            <ng-template #sent>
+              <div *ngIf="message.status === 'sent';else seen">
+                sent
+                <ion-icon name="checkmark-circle-outline"></ion-icon>
+              </div>
+            </ng-template>
+            <ng-template #seen>
+              <div *ngIf="message.status === 'seen'">
+                seen
+                <ion-icon name="checkmark"></ion-icon>
+              </div>
+            </ng-template>
+          </div>
+
+
+
         </div>
       </div>
     </ion-content>
+
+
+    <!-- <ion-content #content id="content" class="ion-padding">
+      <div class="message-wrap">
+        <div *ngFor="let message of selectedPerson.messages" class="message" [class.right]=" message.userIsSender === true">
+          <div class="msg-detail">
+            <div class="msg-info">
+              <p> {{message.senderFullName}}</p>
+            </div>
+            <div class="msg-content">
+              <p>{{message.message}}</p>
+            </div>
+          </div>
+          <div *ngIf="message.userIsSender" class="msg-status">
+            <div *ngIf="message.status === 'pending';else sent">
+              pending
+              <ion-icon name="checkmark-circle"></ion-icon>
+            </div>
+            <ng-template #sent>
+              <div *ngIf="message.status === 'sent';else seen">
+                sent
+                <ion-icon name="checkmark-circle-outline"></ion-icon>
+              </div>
+            </ng-template>
+            <ng-template #seen>
+              <div *ngIf="message.status === 'seen'">
+                seen
+                <ion-icon name="checkmark"></ion-icon>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+      <div id="bottom"></div>
+    </ion-content> -->
+
+
     <div *ngIf="this.selectedPerson" class="border input-msg">
       <ion-input
         #chatInput

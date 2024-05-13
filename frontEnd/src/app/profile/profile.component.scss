@@ -27,6 +27,11 @@
 }
 .bio {
   margin-top: 20px;
+
+}
+.bio-header{
+  display: flex;
+  flex-direction: row;
 }
 .col{
   margin-top: 6vh;
@@ -97,4 +102,18 @@ ion-backdrop {
 }
 .file-input {
   display: none;
+}
+#lock-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70%;
+  background-color: #666565;
+  /* Set the height of the container to the viewport height */
+}
+#lock-msg {
+  background-color: #0000009d;
+  padding: 20px;
+  color: #ffff;
+  border-radius: 20px;
 }

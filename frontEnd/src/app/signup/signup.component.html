@@ -125,7 +125,8 @@
     </form>
     <div class="google-container">
       <ion-button (click)="summitOTP()" *ngIf="emailVerification">
-        <span>Summit OTP</span>
+        <span>Summit OTP <ion-spinner name="lines" *ngIf="OTPVerification"></ion-spinner
+          ></span>
       </ion-button>
       <ion-button (click)="loginWithGoogle()" *ngIf="!emailVerification">
         <span>SignUp with Google</span>

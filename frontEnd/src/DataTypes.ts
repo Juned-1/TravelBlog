@@ -22,9 +22,13 @@ export interface Post{
   lastName : string,
   likeCount : number,
   dislikeCount : number,
+  isfollowed: boolean,
+  self: boolean,
 }
 export interface PostData {
   post : Post
+  isfollowed:boolean,
+  self:boolean,
 };
 
 export interface sendPostBulk{
@@ -66,6 +70,12 @@ export interface userDetails {
   dob: string;
   gender: string;
   email: string;
+  bio:string;
+  facebookLink:string,
+  twitterLink:string,
+  instagramLink:string,
+  linkedInLink:string,
+
   // password: string;
 }
 export interface data1 {

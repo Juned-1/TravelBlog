@@ -128,3 +128,17 @@ h4 {
   color: #ffff;
   border-radius: 20px;
 }
+#empty-msg-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 50px;
+  /* Set the height of the container to the viewport height */
+}
+#empty-msg {
+  background-color: #0000009d;
+  padding: 20px;
+  color: #ffff;
+  border-radius: 20px;
+}

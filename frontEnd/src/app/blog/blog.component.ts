@@ -4,12 +4,13 @@ import { IonicModule } from '@ionic/angular';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { APIService } from 'src/apiservice.service';
 import { ToastrService } from 'ngx-toastr';
 import { LikeObj, CountLike, LikeData, Post, PostData } from 'src/DataTypes';
 import { AuthService } from '../Services/Authentication/auth.service';
 import { CommentsModule } from '../comments/comments.module';
+import { Observable, map } from 'rxjs';
 @Component({
   selector: 'app-blog',
   templateUrl: './blog.component.html',
@@ -36,6 +37,8 @@ export class BlogComponent implements OnInit, AfterViewInit {
   likes: number = 0;
   dislikes: number = 0;
   currentUserId: string = '';
+  following!: boolean;
+  self!: boolean;
 
   constructor(
     private router: Router,
@@ -45,21 +48,19 @@ export class BlogComponent implements OnInit, AfterViewInit {
     private toast: ToastrService
   ) {}
   ngOnInit() {
-    this.id = this.route.snapshot.queryParams['id'];
 
+    this.id = this.route.snapshot.queryParams['id'];
     const id = localStorage.getItem('currentUserId');
     this.loggedUserId = id === null ? '' : id;
   }
   ngAfterViewInit() {
     this.api.getSpecificPost(this.id).subscribe({
       next: (response) => {
-        console.log();
         if (
           'status' in response &&
           response.status === 'success' &&
           'data' in response
         ) {
-          console.log(response);
           this.post = (response.data as PostData).post as Post;
           this.content = this.sanitizer.bypassSecurityTrustHtml(
             this.post.content
@@ -68,6 +69,9 @@ export class BlogComponent implements OnInit, AfterViewInit {
           this.likes = this.post.likeCount;
           this.dislikes = this.post.dislikeCount;
           this.userid = this.post.userId;
+
+          this.following = (response as any).isfollowed;
+          this.self = (response as any).self;
         }
       },
       error: (err) => {

@@ -579,7 +579,7 @@ exports.isFollowed = catchAsync(async (req, res, next) => {
 
 exports.removeFollower = catchAsync(async (req, res, next) => {
   const removeFollow = await Followship.destroy({
-    where: { followerId: req.params.userid, followerId: req.tokenData.id },
+    where: { followingId: req.tokenData.id, followerId: req.params.userid },
   });
   if (!removeFollow) {
     return next(new AppError("Unable to remove", 400));

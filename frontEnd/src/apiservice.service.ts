@@ -183,6 +183,30 @@ export class APIService {
     return this.http.delete(baseurl, { withCredentials: true });
   }
 
+  getFollowingList(id: string) {
+    return this.http.get(
+      `http://localhost:8081/api/v1/users/followinglist/${id}`,
+      {
+        withCredentials: true,
+      }
+    );
+  }
+
+  getFollowerList(id: string) {
+    return this.http.get(
+      `http://localhost:8081/api/v1/users/followerlist/${id}`,
+      {
+        withCredentials: true,
+      }
+    );
+  }
+
+  getMyFollowingList() {
+    return this.http.get('http://localhost:8081/api/v1/users/myfollowinglist', {
+      withCredentials: true,
+    });
+  }
+
   getMyFollowerList() {
     return this.http.get('http://localhost:8081/api/v1/users/myfollowerlist', {
       withCredentials: true,
@@ -217,7 +241,8 @@ export class APIService {
 
   getUserDetails(userid: string) {
     return this.http.get(
-      `http://localhost:8081/api/v1/users/getuserdetails/${userid}`
+      `http://localhost:8081/api/v1/users/getuserdetails/${userid}`,
+      { withCredentials: true }
     );
   }
 
@@ -243,13 +268,6 @@ export class APIService {
         { withCredentials: true }
       );
     }
-  }
-
-  getBio(userid: string) {
-    return this.http.get(`http://localhost:8081/api/v1/users/getbio/${userid}`);
-  }
-  getMyBio(id: string) {
-    return this.http.get(`http://localhost:8081/api/v1/users/getmybio`);
   }
 
   //CHAT APIs
@@ -327,6 +345,48 @@ export class APIService {
   googleLogin(token: string): Observable<any> {
     const baseUrl = 'http://localhost:8081/api/v1/users';
 
-    return this.http.patch<any>(`${baseUrl}/googlelogin`, {token},{ withCredentials: true })
+    return this.http.patch<any>(
+      `${baseUrl}/googlelogin`,
+      { token },
+      { withCredentials: true }
+    );
+  }
+
+  //social and bio
+  setBio(bio: string): Observable<any> {
+    const baseUrl = 'http://localhost:8081/api/v1/users';
+
+    return this.http.patch<any>(
+      `${baseUrl}/addbio`,
+      { bio },
+      { withCredentials: true }
+    );
+  }
+
+  addSocial(socialAccountType: string, socialAccountLink: string) {
+    console.log('type',socialAccountType,':::link',socialAccountLink);
+    const baseUrl = 'http://localhost:8081/api/v1/users';
+
+    return this.http.patch<any>(
+      `${baseUrl}/addsocial`,
+      { socialAccountType, socialAccountLink },
+      { withCredentials: true }
+    );
+  }
+
+  getMyBio() {
+    const baseUrl = 'http://localhost:8081/api/v1/users';
+
+    return this.http.get<any>(`${baseUrl}/getmybio`, {
+      withCredentials: true,
+    });
+  }
+
+  getMySocialLinks(type:string){
+    const baseUrl = 'http://localhost:8081/api/v1/users';
+
+    return this.http.get<any>(`${baseUrl}/getmysocial/${type}`, {
+      withCredentials: true,
+    });
   }
 }

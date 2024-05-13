@@ -9,6 +9,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
 import { userDetails, data1 } from 'src/DataTypes';
+import { error } from 'console';
 
 @Component({
   selector: 'editapp-profile',
@@ -39,11 +40,11 @@ export class EditProfileComponent implements OnInit {
     gender: '',
     dob: '',
     email: '',
-    bio:'',
-    facebookLink:'',
-    twitterLink:'',
-    instagramLink:'',
-    linkedInLink:'',
+    bio: '',
+    facebookLink: '',
+    twitterLink: '',
+    instagramLink: '',
+    linkedInLink: '',
     // password: '',
   };
   constructor(
@@ -73,6 +74,8 @@ export class EditProfileComponent implements OnInit {
         console.log(err);
       }
     );
+
+    this.getMyBio();
   }
 
   makeChanges() {
@@ -95,7 +98,7 @@ export class EditProfileComponent implements OnInit {
         // console.log(response);
         if ('status' in response && response.status === 'success') {
           this.toast.success('Profile Edited successfully');
-          this.router.navigate(['/profile']);
+          this.router.navigate(['/myprofile']);
         }
       },
       (err) => {
@@ -103,6 +106,30 @@ export class EditProfileComponent implements OnInit {
         console.log(err);
       }
     );
+
+    this.api.setBio(this.formData.bio).subscribe({
+      next: (response) => {
+        console.log(response);
+      },
+      error: (error) => {},
+    });
+    const social: { type: string; link: string }[] = [
+      { type: 'facebook', link: this.formData.facebookLink },
+      { type: 'instagram', link: this.formData.instagramLink },
+      { type: 'twitter', link: this.formData.twitterLink },
+      { type: 'linkedin', link: this.formData.linkedInLink },
+    ];
+
+    social.forEach((item) => {
+      this.api.addSocial(item.type, item.link).subscribe({
+        next: (response) => {
+          console.log(response);
+        },
+        error: (error) => {
+          console.log(error);
+        },
+      });
+    });
   }
 
   updatePasswordVerification() {
@@ -130,7 +157,6 @@ export class EditProfileComponent implements OnInit {
     }
     this.api.updatePassword(this.password).subscribe({
       next: (response) => {
-        console.log(response);
         //{status: 'success', message: 'Password is updated successfully'}
         if ('status' in response && response.status === 'success') {
           if ('message' in response) {
@@ -191,11 +217,26 @@ export class EditProfileComponent implements OnInit {
         this.newEmail = '';
       },
     });
-
   }
   cancel() {
     this.toggleChangePassword = false;
     this.toggleChangeEmail = false;
     this.emailVerification = false;
+  }
+  getMyBio() {
+    this.api.getMyBio().subscribe({
+      next: (response) => {
+        if (
+          'status' in response &&
+          response.status === 'success' &&
+          'data' in response
+        ) {
+          this.formData.bio = response.data.bio;
+        }
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
   }
 }

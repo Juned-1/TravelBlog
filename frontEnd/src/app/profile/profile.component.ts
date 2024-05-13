@@ -2,7 +2,13 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { InfiniteScrollCustomEvent, IonicModule } from '@ionic/angular';
 import { BlogCardHomeComponent } from '../home/blog-card-home/blog-card-home.component';
-import { blogs, data } from 'src/DataTypes';
+import {
+  ApiResponseFollower,
+  ApiResponseFollowing,
+  Persons,
+  blogs,
+  data,
+} from 'src/DataTypes';
 import { ActivatedRoute, Router } from '@angular/router';
 import { APIService } from 'src/apiservice.service';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -22,28 +28,14 @@ export class ProfileComponent implements OnInit {
 
   posts!: blogs[];
   page: number = 1;
-  noOfPost:number = 0;
+  noOfPost: number = 0;
   lock = false;
-  bio:string = '';
+  bio: string = '';
 
   segmentValue: string = 'default';
-  followingList: string[] = [
-    'Super Mario World',
-    'Super Mario World',
-    'Super Mario World',
-    'Super Mario World',
-    'Super Mario World',
-    'Super Mario World',
-  ];
-  followerList: string[] = [
-    'Pac-Man',
-    'Pac-Man',
-    'Pac-Man',
-    'Pac-Man',
-    'Pac-Man',
-    'Pac-Man',
-  ];
-  list: string[] = [];
+  followingList: Persons[] = [];
+  followerList: Persons[] = [];
+  list: Persons[] = [];
 
   constructor(
     private router: Router,
@@ -57,8 +49,6 @@ export class ProfileComponent implements OnInit {
     this.loggedUserId = id === null ? '' : id;
 
     this.profileId = this.route.snapshot.queryParams['id'];
-
-    this.list = this.followingList;
 
     this.getProfileDetails();
     this.getFollowingList();
@@ -75,7 +65,6 @@ export class ProfileComponent implements OnInit {
           response.status === 'success' &&
           'data' in response
         ) {
-          console.log(response);
           const userDetails = (
             response.data as {
               userDetails: {
@@ -86,14 +75,14 @@ export class ProfileComponent implements OnInit {
                 lastName: string;
                 modification: string;
                 following: boolean;
-                lockProfile:boolean;
+                lockProfile: boolean;
               };
             }
           ).userDetails;
 
           this.name = userDetails.firstName + ' ' + userDetails.lastName;
           this.following = userDetails.following;
-          this.lock=userDetails.lockProfile;
+          this.lock = userDetails.lockProfile;
         }
       },
       error: (error) => {
@@ -112,7 +101,7 @@ export class ProfileComponent implements OnInit {
         ) {
           this.posts = (response.data as data).blogs as blogs[];
           for (let post of this.posts) {
-            this.noOfPost = this.noOfPost+1;
+            this.noOfPost = this.noOfPost + 1;
             post.time = new Date(post.time).toDateString().toString();
             // Extract the first image URL from post.post_content
             let imageURL = this.extractFirstImageURL(post.content);
@@ -132,11 +121,51 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  getFollowingList(){}
-  getFollowerList(){}
+  getFollowingList() {
+    this.api.getFollowingList(this.profileId).subscribe({
+      next: (response) => {
+        this.followingList = (response as ApiResponseFollowing).data.followings;
 
-  openBlog(id: string) {
-    this.router.navigate(['/blogdetails'], { queryParams: { id } });
+        this.followingList = this.followingList.map((obj) => {
+          // Assign new key
+          obj['id'] = obj['followingId'];
+          // Delete old key
+          delete obj['followingId'];
+          return obj;
+        });
+        this.list = this.followingList;
+      },
+      error: (error) => {
+        console.log(error);
+      },
+    });
+  }
+  getFollowerList() {
+    this.api.getFollowerList(this.profileId).subscribe({
+      next: (response) => {
+        this.followerList = (response as ApiResponseFollower).data.followers;
+
+        this.followerList = this.followerList.map((obj) => {
+          // Assign new key
+          obj['id'] = obj['followerId'];
+          // Delete old key
+          delete obj['followerId'];
+          return obj;
+        });
+
+        console.log(this.followerList);
+      },
+      error: (error) => {
+        console.log(error);
+      },
+    });
+  }
+
+  openBlog(title:string,id: string) {
+    title = title.toLowerCase();
+    title = title.replace(/ /g,"-");
+    console.log(title);
+    this.router.navigate([`blogdetails/${title}`], { queryParams: { id } });
   }
 
   onIonInfinite(ev: any) {
@@ -186,6 +215,7 @@ export class ProfileComponent implements OnInit {
   }
 
   toggleFollow() {
+    //Follow or Unfollow the profile
     this.api.followUnfollow(this.profileId).subscribe({
       next: (response) => {
         this.following = !this.following;
@@ -196,7 +226,11 @@ export class ProfileComponent implements OnInit {
       },
     });
   }
-
+  followUnfollow(e: any) {
+    //follow or unfollow profiles following or followers
+    const id = e.srcElement.id;
+    console.log(id);
+  }
   gotoChat() {
     const id = this.profileId;
     this.router.navigate(['/chat'], { queryParams: { id } });
@@ -208,7 +242,7 @@ export class ProfileComponent implements OnInit {
     if (this.segmentValue === 'default') this.list = this.followingList;
     if (this.segmentValue === 'segment') this.list = this.followerList;
   }
-  getBio(){
+  getBio() {
     // this.api.getBio(this.profileId).subscribe({
     //   next: (response) => {
     //     console.log(response);

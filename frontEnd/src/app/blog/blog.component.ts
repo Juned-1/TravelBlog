@@ -10,7 +10,6 @@ import { ToastrService } from 'ngx-toastr';
 import { LikeObj, CountLike, LikeData, Post, PostData } from 'src/DataTypes';
 import { AuthService } from '../Services/Authentication/auth.service';
 import { CommentsModule } from '../comments/comments.module';
-import { Observable, map } from 'rxjs';
 @Component({
   selector: 'app-blog',
   templateUrl: './blog.component.html',
@@ -121,5 +120,18 @@ export class BlogComponent implements OnInit, AfterViewInit {
     const id = this.userid;
     if (id === this.loggedUserId) this.router.navigate(['/myprofile']);
     else this.router.navigate(['/profile'], { queryParams: { id } });
+  }
+
+  toggleFollow() {
+    console.log(this.userid);
+    this.api.followUnfollow(this.userid).subscribe({
+      next: (response) => {
+        this.following = !this.following;
+        console.log(response);
+      },
+      error: (error) => {
+        console.log(error);
+      },
+    });
   }
 }

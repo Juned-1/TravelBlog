@@ -91,3 +91,25 @@ export interface userData1 {
     gender: String;
   };
 }
+
+export interface Persons {
+  id: string;
+  firstName: string;
+  lastName: string;
+  profilePhoto: string | null;
+  profilePhotoId: string | null;
+}
+
+export interface ApiResponseFollowing {
+  status: string;
+  data: {
+      followings: Persons[];
+  };
+}
+
+export interface ApiResponseFollower {
+  status: string;
+  data: {
+      followers: Persons[];
+  };
+}

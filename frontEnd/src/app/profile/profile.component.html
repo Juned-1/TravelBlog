@@ -49,7 +49,7 @@
             <strong>Bio :: </strong>
           </div>
           <em>
-            {{bio}}
+            {{ bio }}
           </em>
         </ion-item>
         <!-- <ion-item lines="none" color="primary" class="bio">
@@ -106,10 +106,10 @@
               <!-- <ion-label><strong>Following</strong></ion-label> -->
               <ion-segment value="default" (ionChange)="segmentChanged($event)">
                 <ion-segment-button value="default">
-                  <ion-label>Following (11)</ion-label>
+                  <ion-label>Following ({{ followingList.length }})</ion-label>
                 </ion-segment-button>
                 <ion-segment-button value="segment">
-                  <ion-label>Followers (22)</ion-label>
+                  <ion-label>Followers ({{ followerList.length }})</ion-label>
                 </ion-segment-button>
               </ion-segment>
             </ion-item>
@@ -121,7 +121,10 @@
                   alt="avatar"
                 />
               </ion-avatar>
-              <ion-label>{{ person }}</ion-label>
+              <ion-label>{{
+                person.firstName + " " + person.lastName
+              }}</ion-label>
+              <ion-button id="{{person.id}}" (click)="followUnfollow($event)">Follow</ion-button>
             </ion-item>
           </ion-list>
         </ion-content>
@@ -142,7 +145,7 @@
               sizeMd="6"
               *ngFor="let post of posts"
               class="home-cards"
-              (click)="openBlog(post.id)"
+              (click)="openBlog(post.title, post.id)"
             >
               <app-blog-card-home [post]="post"></app-blog-card-home>
               <h1></h1>
@@ -157,7 +160,9 @@
   </div>
   <div id="lock-container" *ngIf="lock">
     <div id="lock-msg">
-      <ion-card-title color="light">User has locked his profile!</ion-card-title>
+      <ion-card-title color="light"
+        >User has locked his profile!</ion-card-title
+      >
     </div>
   </div>
 </ion-content>

@@ -29,7 +29,12 @@
 
       <ion-item class="message-btn">
         <ion-label>Lock Profile</ion-label>
-        <ion-toggle slot="end" [checked]="lock" color="dark" (ionChange)="toggleProfile()"></ion-toggle>
+        <ion-toggle
+          slot="end"
+          [checked]="lock"
+          color="dark"
+          (ionChange)="toggleProfile()"
+        ></ion-toggle>
       </ion-item>
 
       <ion-item class="bio" lines="none" color="primary">
@@ -39,9 +44,7 @@
       <ion-item lines="none" color="primary">
         <ion-text>
           <em>
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Velit
-            voluptates quam non porro neque, alias dicta facilis illum tempora
-            fugit!
+            {{bio}}
           </em>
         </ion-text>
       </ion-item>
@@ -69,16 +72,16 @@
         <ion-col>
           <div class="social-media">
             <span>Follow me in:</span>
-            <a href="" class="media-link"
+            <a href="{{link.facebook}}" class="media-link"
               ><ion-icon name="logo-facebook" size="large"></ion-icon
             ></a>
-            <a href="" class="media-link"
+            <a href="{{link.linkedin}}" class="media-link"
               ><ion-icon name="logo-linkedin" size="large"></ion-icon
             ></a>
-            <a href="" class="media-link"
+            <a href="{{link.instagram}}" class="media-link"
               ><ion-icon name="logo-instagram" size="large"></ion-icon
             ></a>
-            <a href="" class="media-link"
+            <a href="{{link.twitter}}" class="media-link"
               ><ion-icon name="logo-twitter" size="large"></ion-icon
             ></a>
           </div>
@@ -92,10 +95,10 @@
             <!-- <ion-label><strong>Following</strong></ion-label> -->
             <ion-segment value="default" (ionChange)="segmentChanged($event)">
               <ion-segment-button value="default">
-                <ion-label>Following (11)</ion-label>
+                <ion-label>Following ({{ followingList.length }})</ion-label>
               </ion-segment-button>
               <ion-segment-button value="segment">
-                <ion-label>Followers (22)</ion-label>
+                <ion-label>Followers ({{ followerList.length }})</ion-label>
               </ion-segment-button>
             </ion-segment>
           </ion-item>
@@ -107,8 +110,12 @@
                 alt="avatar"
               />
             </ion-avatar>
-            <ion-label>{{ person }}</ion-label>
-            <ion-button (click)="unfollow()" *ngIf="segmentValue==='default'">Unfollow</ion-button>
+            <ion-label>{{
+              person.firstName + " " + person.lastName
+            }}</ion-label>
+            <ion-button (click)="unfollowOrRemove($event)" id={{person.id}}>{{
+              segmentValue === "default" ? "Unfollow" : "Remove"
+            }}</ion-button>
           </ion-item>
         </ion-list>
       </ion-content>

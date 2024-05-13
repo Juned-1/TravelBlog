@@ -635,6 +635,7 @@ exports.addSocialAccount = catchAsync(async (req, res, next) => {
   const userid = req.tokenData.id;
   const key = userid.slice(0, 32);
   //socialType = await encryptAES(req.body.socialAccountType, key);
+  console.log(req.body.socialAccountType,req.body.socialAccountLink);
   socialLink = await encryptAES(req.body.socialAccountLink, key);
   let social = await SocialAccount.findOne({
     where: { userId: userid, socialAccountType: req.body.socialAccountType },

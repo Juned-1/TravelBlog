@@ -196,7 +196,8 @@ exports.getAllConversation = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.sendMessage = catchAsync(async (req, res, next) => {
+exports.sendMessage = async (req, res, next, io) => {
+  //console.log(io);
   const convid = req.params.convid;
   const { messageText } = req.body;
   const senderId = req.tokenData.id;
@@ -247,6 +248,7 @@ exports.sendMessage = catchAsync(async (req, res, next) => {
   user = user.toJSON();
   message.Attachments = attachments === undefined ? [] : attachments;
   message.User = user;
+  io.to(convid).emit('newMessage', message);
   //message = [{...message}];
   return res.status(201).json({
     status: "succcess",
@@ -254,9 +256,10 @@ exports.sendMessage = catchAsync(async (req, res, next) => {
       message,
     },
   });
-});
+};
 
 exports.getMessage = catchAsync(async (req, res, next) => {
+  
   const convid = req.params.convid;
   const limitQuery = 50;
   const offsetVal = req.query.page ? (+req.query.page - 1) * limitQuery : 0;

@@ -7,14 +7,12 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
         defaultValue: UUIDV4,
         len: 36,
         allowNull: false,
-        primaryKey: true,
       },
       followingId: {
         type: DataTypes.UUID,
         defaultValue: UUIDV4,
         len: 36,
         allowNull: false,
-        primaryKey: true,
       },
     },
     {

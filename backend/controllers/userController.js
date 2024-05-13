@@ -22,7 +22,7 @@ exports.getUserDetails = catchAsync(async (req, res, next) => {
       "dob",
       "gender",
       "lockProfile",
-      "totalPostRead"
+      "totalPostRead",
     ],
     where: {
       id: uid,
@@ -477,16 +477,19 @@ exports.followerList = catchAsync(async (req, res, next) => {
     follower.map(async (el) => {
       el = el.toJSON();
       const isFollow = await Followship.findOne({
-        where : { followingId : el.followerId, followerId : req.tokenData.id }
+        where: { followingId: el.followerId, followerId: req.tokenData.id },
       });
-      if(!isFollow){
+      if (!isFollow) {
         el.following = false;
-      }else if(isFollow && isFollow.toJSON().followerId === req.tokenData.id){
+      } else if (
+        isFollow &&
+        isFollow.toJSON().followerId === req.tokenData.id
+      ) {
         el.following = true;
       }
       return el;
     })
-  )
+  );
   res.status(200).json({
     status: "success",
     data: {
@@ -535,16 +538,19 @@ exports.followingList = catchAsync(async (req, res, next) => {
     following.map(async (el) => {
       el = el.toJSON();
       const isFollow = await Followship.findOne({
-        where : { followingId : el.followingId, followerId : req.tokenData.id }
+        where: { followingId: el.followingId, followerId: req.tokenData.id },
       });
-      if(!isFollow){
+      if (!isFollow) {
         el.following = false;
-      }else if(isFollow && isFollow.toJSON().followerId === req.tokenData.id){
+      } else if (
+        isFollow &&
+        isFollow.toJSON().followerId === req.tokenData.id
+      ) {
         el.following = true;
       }
       return el;
     })
-  )
+  );
 
   res.status(200).json({
     status: "success",
@@ -573,30 +579,30 @@ exports.isFollowed = catchAsync(async (req, res, next) => {
 
 exports.removeFollower = catchAsync(async (req, res, next) => {
   const removeFollow = await Followship.destroy({
-    where : { followerId : req.params.userid, followerId : req.tokenData.id }
+    where: { followingId: req.tokenData.id, followerId: req.params.userid },
   });
-  if(!removeFollow){
-    return next(new AppError('Unable to remove',400));
+  if (!removeFollow) {
+    return next(new AppError("Unable to remove", 400));
   }
   return res.status(204).json({
-    status : 'success',
-    data : null
+    status: "success",
+    data: null,
   });
 });
 
 exports.lockProfile = catchAsync(async (req, res, next) => {
   const userid = req.tokenData.id;
   const user = await User.findOne({
-    where : { id : userid}
+    where: { id: userid },
   });
-  if(!user){
+  if (!user) {
     return next(new AppError("Unable to lock/unlock", 404));
   }
-  await user.update({ lockProfile : !user.lockProfile });
+  await user.update({ lockProfile: !user.lockProfile });
   return res.status(200).json({
     status: "success",
     data: {
-      lockProfile: user.lockProfile
+      lockProfile: user.lockProfile,
     },
   });
 });
@@ -630,7 +636,11 @@ exports.getBio = catchAsync(async (req, res, next) => {
     return next(new AppError("Failed to find bio", 404));
   }
   const key = userid.slice(0, 32);
-  const bio = await decryptAES(userBio.toJSON().bio, key);
+
+  const bio =
+    userBio.toJSON().bio === null
+      ? ""
+      : await decryptAES(userBio.toJSON().bio, key);
   let modification = true;
   if (!req.tokenData || !req.tokenData.id) {
     modification = false;
@@ -662,9 +672,7 @@ exports.removeBio = catchAsync(async (req, res, next) => {
 exports.addSocialAccount = catchAsync(async (req, res, next) => {
   const userid = req.tokenData.id;
   const key = userid.slice(0, 32);
-  //socialType = await encryptAES(req.body.socialAccountType, key);
-  console.log(req.body.socialAccountType,req.body.socialAccountLink);
-  socialLink = await encryptAES(req.body.socialAccountLink, key);
+  //socialLink = await encryptAES(req.body.socialAccountLink, key);
   let social = await SocialAccount.findOne({
     where: { userId: userid, socialAccountType: req.body.socialAccountType },
   });
@@ -672,13 +680,12 @@ exports.addSocialAccount = catchAsync(async (req, res, next) => {
     social = await SocialAccount.create({
       userId: userid,
       socialAccountType: req.body.socialAccountType,
-      socialAccountLink: socialLink,
+      socialAccountLink: req.body.socialAccountLink,
     });
   } else {
-    await social.update({ socialAccountLink: socialLink });
+    await social.update({ socialAccountLink: req.body.socialAccountLink });
   }
   social = social.toJSON();
-  social.socialAccountLink = req.body.socialAccountLink;
   return res.status(201).json({
     status: "success",
     data: {
@@ -699,7 +706,6 @@ exports.getSocialAccount = catchAsync(async (req, res, next) => {
     return next(new AppError(`No ${type} account link is found`, 400));
   }
   social = social.toJSON();
-  social.socialAccountLink = await decryptAES(social.socialAccountLink, key);
   let modification = true;
   if (!req.tokenData || !req.tokenData.id) {
     modification = false;

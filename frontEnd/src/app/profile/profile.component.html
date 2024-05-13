@@ -75,7 +75,7 @@
             <ion-item lines="none" class="container info ion-text-center">
               <ion-icon name="water" color="primary"></ion-icon>
               <ion-label>
-                <h1>43</h1>
+                <h1>{{reads}}</h1>
                 <h2>Reads</h2>
               </ion-label>
             </ion-item>
@@ -124,7 +124,8 @@
               <ion-label>{{
                 person.firstName + " " + person.lastName
               }}</ion-label>
-              <ion-button id="{{person.id}}" (click)="followUnfollow($event)">Follow</ion-button>
+              <ion-button id="{{person.id}}" *ngIf="person.following && person.selfFollow" (click)="followUnfollow($event)">Unfollow</ion-button>
+              <ion-button id="{{person.id}}" *ngIf="!person.following && person.selfFollow" (click)="followUnfollow($event)">Follow</ion-button>
             </ion-item>
           </ion-list>
         </ion-content>

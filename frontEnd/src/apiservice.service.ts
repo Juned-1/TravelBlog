@@ -218,6 +218,11 @@ export class APIService {
     return this.http.post(baseurl, {}, { withCredentials: true });
   }
 
+  removeFollower(userid: string) {
+    const url = `http://localhost:8081/api/v1/users/removefollower/${userid}`;
+    return this.http.delete(url, { withCredentials: true });
+  }
+
   getprofile(id: string) {
     return this.http.get(
       `http://localhost:8081/api/v1/users/getprofile/${id}`,

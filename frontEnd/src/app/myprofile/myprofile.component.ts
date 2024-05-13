@@ -43,6 +43,8 @@ export class MyprofileComponent implements OnInit {
     instagram: string;
     twitter: string;
   } = { facebook: '', linkedin: '', instagram: '', twitter: '' };
+  noOfPosts:number = 10;
+  reads:number = 0;
 
   constructor(private router: Router, private api: APIService) {}
 
@@ -98,6 +100,7 @@ export class MyprofileComponent implements OnInit {
           response.status === 'success' &&
           'data' in response
         ) {
+          console.log(response);
           const userDetails = (
             response.data as {
               userDetails: {
@@ -108,12 +111,16 @@ export class MyprofileComponent implements OnInit {
                 lastName: string;
                 modification: string;
                 lockProfile: boolean;
+                totalPostRead:number;
               };
             }
           ).userDetails;
 
           this.name = userDetails.firstName + ' ' + userDetails.lastName;
           this.lock = userDetails.lockProfile;
+          
+          this.reads = userDetails.totalPostRead;
+          if(this.reads === null) this.reads = 0;
         }
       },
       error: (error) => {
@@ -147,10 +154,12 @@ export class MyprofileComponent implements OnInit {
 
         this.followerList = this.followerList.map((obj) => {
           // Assign new key
-          obj['id'] = obj['followingId'];
+          obj['id'] = obj['followerId'];
           // Delete old key
-          delete obj['followingId'];
+          delete obj['followerId'];
+          console.log(obj.firstName, obj.id);
           return obj;
+
         });
       },
       error: (error) => {
@@ -204,11 +213,15 @@ export class MyprofileComponent implements OnInit {
     });
   }
   unfollowOrRemove(e: any) {
-    if (this.segmentValue === 'default') {
-      const id = e.srcElement.id;
-      this.api.followUnfollow(id).subscribe({
+    const id = e.srcElement.id;
+    if (this.segmentValue == 'default') {
+      console.log('Unfollow a User');
+
+      //Unfollow a user
+      this.api.followUnfollow(id).subscribe({   
         next: (response) => {
           // Find index of object with the specified id
+          console.log(response);
           const indexToRemove = this.followingList.findIndex(
             (obj) => obj.id === id
           );
@@ -223,8 +236,17 @@ export class MyprofileComponent implements OnInit {
         },
       });
     } else {
-      //remove a follower
-      console.log('Remove not implemented');
+      //remove a user
+      console.log('removeFollower');
+      console.log(id);
+      this.api.removeFollower(id).subscribe({
+        next:reponse=>{
+          console.log(reponse);
+        },
+        error:error=>{
+          console.log(error);
+        }
+      })
     }
   }
 }

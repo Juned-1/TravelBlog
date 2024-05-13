@@ -55,7 +55,7 @@
           <ion-item lines="none" class="container info ion-text-center">
             <ion-icon name="water" color="primary"></ion-icon>
             <ion-label>
-              <h1>34</h1>
+              <h1>{{noOfPosts}}</h1>
               <h2>Posts</h2>
             </ion-label>
           </ion-item>
@@ -64,7 +64,7 @@
           <ion-item lines="none" class="container info ion-text-center">
             <ion-icon name="water" color="primary"></ion-icon>
             <ion-label>
-              <h1>43</h1>
+              <h1>{{reads}}</h1>
               <h2>Reads</h2>
             </ion-label>
           </ion-item>
@@ -103,20 +103,34 @@
             </ion-segment>
           </ion-item>
 
-          <ion-item *ngFor="let person of list; let index">
-            <ion-avatar slot="start">
-              <img
+          <div *ngIf="segmentValue === 'default'">
+            <ion-item *ngFor="let person of followingList; let index">
+              <ion-avatar slot="start">
+                <img
                 [src]="'https://picsum.photos/80/80?random=' + index"
                 alt="avatar"
+                />
+              </ion-avatar>
+              <ion-label>{{
+                person.firstName + " " + person.lastName
+              }}</ion-label>
+            <ion-button (click)="unfollowOrRemove($event)" id={{person.id}}>Unfollow</ion-button>
+          </ion-item>
+        </div>
+        <div *ngIf="segmentValue !== 'default'">
+          <ion-item *ngFor="let person of followerList; let index">
+            <ion-avatar slot="start">
+              <img
+              [src]="'https://picsum.photos/80/80?random=' + index"
+              alt="avatar"
               />
             </ion-avatar>
             <ion-label>{{
               person.firstName + " " + person.lastName
             }}</ion-label>
-            <ion-button (click)="unfollowOrRemove($event)" id={{person.id}}>{{
-              segmentValue === "default" ? "Unfollow" : "Remove"
-            }}</ion-button>
-          </ion-item>
+          <ion-button (click)="unfollowOrRemove($event)" id={{person.id}}>Remove</ion-button>
+        </ion-item>
+      </div>
         </ion-list>
       </ion-content>
     </ion-col>

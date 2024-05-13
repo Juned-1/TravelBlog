@@ -98,6 +98,8 @@ export interface Persons {
   lastName: string;
   profilePhoto: string | null;
   profilePhotoId: string | null;
+  following: boolean;
+  selfFollow: boolean;
 }
 
 export interface ApiResponseFollowing {

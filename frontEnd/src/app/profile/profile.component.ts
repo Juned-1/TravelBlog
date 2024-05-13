@@ -36,6 +36,8 @@ export class ProfileComponent implements OnInit {
   followingList: Persons[] = [];
   followerList: Persons[] = [];
   list: Persons[] = [];
+  reads: number = 0;
+
 
   constructor(
     private router: Router,
@@ -76,6 +78,7 @@ export class ProfileComponent implements OnInit {
                 modification: string;
                 following: boolean;
                 lockProfile: boolean;
+                totalPostRead:number;
               };
             }
           ).userDetails;
@@ -83,6 +86,9 @@ export class ProfileComponent implements OnInit {
           this.name = userDetails.firstName + ' ' + userDetails.lastName;
           this.following = userDetails.following;
           this.lock = userDetails.lockProfile;
+          
+          this.reads = userDetails.totalPostRead;
+          if(this.reads === null) this.reads = 0;
         }
       },
       error: (error) => {
@@ -124,9 +130,13 @@ export class ProfileComponent implements OnInit {
   getFollowingList() {
     this.api.getFollowingList(this.profileId).subscribe({
       next: (response) => {
+        console.log(response);
         this.followingList = (response as ApiResponseFollowing).data.followings;
 
         this.followingList = this.followingList.map((obj) => {
+          
+          obj['selfFollow'] = obj['followingId']===this.loggedUserId?false:true;
+          
           // Assign new key
           obj['id'] = obj['followingId'];
           // Delete old key
@@ -144,8 +154,10 @@ export class ProfileComponent implements OnInit {
     this.api.getFollowerList(this.profileId).subscribe({
       next: (response) => {
         this.followerList = (response as ApiResponseFollower).data.followers;
-
         this.followerList = this.followerList.map((obj) => {
+
+          obj['selfFollow'] = obj['followerId']===this.loggedUserId?false:true;
+
           // Assign new key
           obj['id'] = obj['followerId'];
           // Delete old key

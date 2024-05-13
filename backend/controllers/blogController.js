@@ -88,6 +88,12 @@ exports.getSpecificPost = catchAsync(async (req, res, next) => {
     return next(new AppError("Post does not exist with given ID", 404));
   }
   result = result.toJSON();
+  //updating total post read
+  const user = await User.findByPk(result.userId);
+  await user.update({
+    totalPostRead : user.totalPostRead === null ? 1 : user.totalPostRead + 1
+  });
+  
   const token = req.cookies.auth_token;
   let isfollowed = false;
   let self = false;

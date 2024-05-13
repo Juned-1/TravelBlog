@@ -22,6 +22,7 @@ exports.getUserDetails = catchAsync(async (req, res, next) => {
       "dob",
       "gender",
       "lockProfile",
+      "totalPostRead"
     ],
     where: {
       id: uid,

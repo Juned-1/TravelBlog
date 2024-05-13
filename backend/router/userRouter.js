@@ -102,15 +102,15 @@ router.patch("/unlockphoto/:photoid", verifyToken, userController.unlockPhoto);
 
 //following
 router.post("/follow/:userid", verifyToken, userController.follows);
-router.get("/followerlist/:userid", userController.followerList);
+router.get("/followerlist/:userid", verifyToken, userController.followerList);
 router.get("/myfollowerlist", verifyToken, userController.followerList);
-router.get("/followinglist/:userid", userController.followingList);
+router.get("/followinglist/:userid", verifyToken, userController.followingList);
 router.get("/myfollowinglist", verifyToken, userController.followingList);
 router.get("/isfollowed/:userid", verifyToken, userController.isFollowed);
+router.delete("/removefollower/:userid",verifyToken,userController.removeFollower);
 
 //lock profile
 router.patch("/lockpofile", verifyToken, userController.lockProfile);
-router.patch("/unlockpofile", verifyToken, userController.unlockProfile);
 
 //bio
 router.patch("/addbio", verifyToken, userController.addBio);

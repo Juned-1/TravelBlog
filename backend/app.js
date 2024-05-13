@@ -5,12 +5,9 @@ const cookieParser = require("cookie-parser");
 const passport = require("passport");
 const appRouter = require("./router/index.js");
 const AppError = require("./utils/appError.js");
-const globalErrorHandler = require("./controllers/errorController.js");
+
 const {
   cookieSecret,
-  environment,
-  googleClientID,
-  googleClientSecret,
 } = require("./configuration");
 require("./models");
 const app = express();
@@ -29,13 +26,7 @@ app.use(express.urlencoded({ extended: false, limit: "50mb" }));
 //cookie Parser
 app.use(cookieParser(cookieSecret));
 
-//passport session set up
-//app.use(passport.initialize());
-//app.use(passport.session());
+
 app.use("/api/v1", appRouter);
-app.all("*", (req, res, next) => {
-  next(new AppError(`Can't find url ${req.originalUrl} on this server!`, 404));
-});
-//Error handling middleware
-app.use(globalErrorHandler);
+
 module.exports = app;

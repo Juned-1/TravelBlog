@@ -22,6 +22,7 @@ exports.getUserDetails = catchAsync(async (req, res, next) => {
       "dob",
       "gender",
       "lockProfile",
+      "totalPostRead"
     ],
     where: {
       id: uid,
@@ -438,8 +439,9 @@ exports.follows = catchAsync(async (req, res, next) => {
 
 exports.followerList = catchAsync(async (req, res, next) => {
   const userid = req.params.userid || req.tokenData.id;
-  const follower = await Followship.findAll({
+  let follower = await Followship.findAll({
     attributes: [
+      "followingId",
       "followerId",
       [
         Sequelize.literal(
@@ -471,6 +473,20 @@ exports.followerList = catchAsync(async (req, res, next) => {
   if (!follower) {
     return next(new AppError("No follower found!", 400));
   }
+  follower = await Promise.all(
+    follower.map(async (el) => {
+      el = el.toJSON();
+      const isFollow = await Followship.findOne({
+        where : { followingId : el.followerId, followerId : req.tokenData.id }
+      });
+      if(!isFollow){
+        el.following = false;
+      }else if(isFollow && isFollow.toJSON().followerId === req.tokenData.id){
+        el.following = true;
+      }
+      return el;
+    })
+  )
   res.status(200).json({
     status: "success",
     data: {
@@ -481,9 +497,10 @@ exports.followerList = catchAsync(async (req, res, next) => {
 
 exports.followingList = catchAsync(async (req, res, next) => {
   const userid = req.params.userid || req.tokenData.id;
-  const following = await Followship.findAll({
+  let following = await Followship.findAll({
     attributes: [
       "followingId",
+      "followerId",
       [
         Sequelize.literal(
           `(SELECT firstName FROM Users WHERE Users.id = Followship.followingId)`
@@ -514,6 +531,21 @@ exports.followingList = catchAsync(async (req, res, next) => {
   if (!following) {
     return next(new AppError("No Following!", 400));
   }
+  following = await Promise.all(
+    following.map(async (el) => {
+      el = el.toJSON();
+      const isFollow = await Followship.findOne({
+        where : { followingId : el.followingId, followerId : req.tokenData.id }
+      });
+      if(!isFollow){
+        el.following = false;
+      }else if(isFollow && isFollow.toJSON().followerId === req.tokenData.id){
+        el.following = true;
+      }
+      return el;
+    })
+  )
+
   res.status(200).json({
     status: "success",
     data: {
@@ -539,36 +571,32 @@ exports.isFollowed = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.lockProfile = catchAsync(async (req, res, next) => {
-  const userid = req.tokenData.id;
-  const update = await User.update(
-    { lockProfile: true },
-    { where: { id: userid } }
-  );
-  if (!update) {
-    return next(new AppError("Unable to lock", 404));
+exports.removeFollower = catchAsync(async (req, res, next) => {
+  const removeFollow = await Followship.destroy({
+    where : { followerId : req.params.userid, followerId : req.tokenData.id }
+  });
+  if(!removeFollow){
+    return next(new AppError('Unable to remove',400));
   }
-  return res.status(200).json({
-    status: "success",
-    data: {
-      lockProfile: true,
-    },
+  return res.status(204).json({
+    status : 'success',
+    data : null
   });
 });
 
-exports.unlockProfile = catchAsync(async (req, res, next) => {
+exports.lockProfile = catchAsync(async (req, res, next) => {
   const userid = req.tokenData.id;
-  const update = await User.update(
-    { lockProfile: false },
-    { where: { id: userid } }
-  );
-  if (!update) {
-    return next(new AppError("Unable to lock", 404));
+  const user = await User.findOne({
+    where : { id : userid}
+  });
+  if(!user){
+    return next(new AppError("Unable to lock/unlock", 404));
   }
+  await user.update({ lockProfile : !user.lockProfile });
   return res.status(200).json({
     status: "success",
     data: {
-      lockProfile: false,
+      lockProfile: user.lockProfile
     },
   });
 });
@@ -654,7 +682,7 @@ exports.addSocialAccount = catchAsync(async (req, res, next) => {
   return res.status(201).json({
     status: "success",
     data: {
-      modification : true,
+      modification: true,
       social,
     },
   });
@@ -673,7 +701,7 @@ exports.getSocialAccount = catchAsync(async (req, res, next) => {
   social = social.toJSON();
   social.socialAccountLink = await decryptAES(social.socialAccountLink, key);
   let modification = true;
-  if(!req.tokenData || !req.tokenData.id){
+  if (!req.tokenData || !req.tokenData.id) {
     modification = false;
   }
   return res.status(200).json({
@@ -687,17 +715,17 @@ exports.getSocialAccount = catchAsync(async (req, res, next) => {
 
 exports.deleteSocialAccount = catchAsync(async (req, res, next) => {
   const social = await SocialAccount.destroy({
-    where : {
-      socialId : req.params.socialid
-    }
+    where: {
+      socialId: req.params.socialid,
+    },
   });
-  if(!social){
-    return next(new AppError(`Failed to delete social account!`,400));
+  if (!social) {
+    return next(new AppError(`Failed to delete social account!`, 400));
   }
   return res.status(204).json({
-    status : 'success',
-    data : {
-      modification : true
-    }
+    status: "success",
+    data: {
+      modification: true,
+    },
   });
-})
+});

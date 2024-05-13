@@ -1,7 +1,5 @@
 const { hash } = require("bcrypt");
 const crypto = require("crypto");
-const passport = require("passport");
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const { COOKIE_NAME } = require("../utils/constants.js");
 const { createToken } = require("../utils/token-manager.js");
 const {

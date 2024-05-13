@@ -43,6 +43,9 @@ module.exports = (sequelize, DataTypes, UUIDV4, compare) => {
         type : DataTypes.BOOLEAN,
         defaultValue : false
       },
+      totalPostRead : {
+        type : DataTypes.BIGINT
+      }
     },
     {
       //tableName: 'users',

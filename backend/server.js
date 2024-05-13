@@ -1,5 +1,26 @@
+const http = require("http");
+const { Server } = require("socket.io");
+const app = require("./app");
 const { applicationPort } = require("./configuration");
-const { server } = require("./socket");
+const globalErrorHandler = require("./controllers/errorController.js");
+
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:8100",
+    methods: ["GET", "POST", "PATCH", "DELETE"],
+  },
+});
+
+//management chat api 
+const chatRoute = require('./router/chatRouter')(io);
+app.use("/api/v1/chats",chatRoute);
+//App error handling 
+app.all("*", (req, res, next) => {
+  next(new AppError(`Can't find url ${req.originalUrl} on this server!`, 404));
+});
+//Error handling middleware
+app.use(globalErrorHandler);
 //synchronous uncaught exception handling
 
 process.on("uncaughtException", (err) => {

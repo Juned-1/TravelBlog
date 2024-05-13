@@ -637,11 +637,11 @@ exports.getBio = catchAsync(async (req, res, next) => {
     return next(new AppError("Failed to find bio", 404));
   }
   const key = userid.slice(0, 32);
-  
-  const bio = userBio.toJSON().bio === null ? '' : await decryptAES(
-    userBio.toJSON().bio,
-    key
-  );
+
+  const bio =
+    userBio.toJSON().bio === null
+      ? ""
+      : await decryptAES(userBio.toJSON().bio, key);
   let modification = true;
   if (!req.tokenData || !req.tokenData.id) {
     modification = false;
@@ -674,6 +674,7 @@ exports.addSocialAccount = catchAsync(async (req, res, next) => {
   const userid = req.tokenData.id;
   const key = userid.slice(0, 32);
   //socialType = await encryptAES(req.body.socialAccountType, key);
+  console.log(req.body.socialAccountType, req.body.socialAccountLink);
   socialLink = await encryptAES(req.body.socialAccountLink, key);
   let social = await SocialAccount.findOne({
     where: { userId: userid, socialAccountType: req.body.socialAccountType },
@@ -709,11 +710,15 @@ exports.getSocialAccount = catchAsync(async (req, res, next) => {
     return next(new AppError(`No ${type} account link is found`, 400));
   }
   social = social.toJSON();
-  social.socialAccountLink = await decryptAES(social.socialAccountLink, key);
+  social.socialAccountLink =
+    social.socialAccountLink === null
+      ? ""
+      : await decryptAES(social.socialAccountLink, key);
   let modification = true;
   if (!req.tokenData || !req.tokenData.id) {
     modification = false;
   }
+  console.log(social);
   return res.status(200).json({
     status: "success",
     data: {

@@ -9,7 +9,7 @@ const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
 const { jwtSecret, environment } = require("../configuration");
 const { encryptAES, decryptAES } = require("../utils/encrypt");
-const { User, Photo, Followship, SocialAccount } = require("../models");
+const { User, Photo, Followship, SocialAccount, Post } = require("../models");
 
 exports.getUserDetails = catchAsync(async (req, res, next) => {
   const uid = req.params.userid || req.tokenData.id;
@@ -38,6 +38,10 @@ exports.getUserDetails = catchAsync(async (req, res, next) => {
   if (req.tokenData && req.tokenData.id) {
     mod = true;
     self = userDetails.id === req.tokenData.id;
+    const numberOfPost = await Post.count({
+      where : { userId : uid }
+    });
+    userDetails.numberOfPost = numberOfPost;
   }
   const token = req.cookies.auth_token;
   let decoded;

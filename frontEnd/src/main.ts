@@ -16,9 +16,9 @@ import env from './env'
 
 
 
-if (environment.production) {
-  enableProdMode();
-}
+// if (environment.production) {
+//   enableProdMode();
+// }
 
 bootstrapApplication(AppComponent, {
   providers: [

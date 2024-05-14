@@ -43,8 +43,8 @@ export class MyprofileComponent implements OnInit {
     instagram: string;
     twitter: string;
   } = { facebook: '', linkedin: '', instagram: '', twitter: '' };
-  noOfPosts:number = 10;
-  reads:number = 0;
+  noOfPosts: number = 10;
+  reads: number = 0;
 
   constructor(private router: Router, private api: APIService) {}
 
@@ -60,20 +60,23 @@ export class MyprofileComponent implements OnInit {
     this.getMyBio();
     this.getMySocialLinks();
   }
-  getMySocialLinks(){
-    const socialTypes = ['facebook','linkedin','instagram','twitter'];
-    socialTypes.forEach(item=>{
+  getMySocialLinks() {
+    const socialTypes = ['facebook', 'linkedin', 'instagram', 'twitter'];
+    socialTypes.forEach((item) => {
       this.api.getMySocialLinks(item).subscribe({
-        next:(response)=>{
-          console.log(response);
+        next: (response) => {
           this.link[item] = response.data.social.socialAccountLink;
+          console.log('success from getmysociallink');
           console.log(this.link);
+          if (this.link[item] == null)
+            this.link[item] = `https://www.${item}.com/`;
         },
-        error:error=>{
-          console.log(error);
-        }
-      })
-    })
+        error: (error) => {
+          console.log(this.link);
+          this.link[item] = `https://www.${item}.com/`;
+        },
+      });
+    });
   }
   getMyBio() {
     this.api.getMyBio().subscribe({
@@ -111,16 +114,16 @@ export class MyprofileComponent implements OnInit {
                 lastName: string;
                 modification: string;
                 lockProfile: boolean;
-                totalPostRead:number;
+                totalPostRead: number;
               };
             }
           ).userDetails;
 
           this.name = userDetails.firstName + ' ' + userDetails.lastName;
           this.lock = userDetails.lockProfile;
-          
+
           this.reads = userDetails.totalPostRead;
-          if(this.reads === null) this.reads = 0;
+          if (this.reads === null) this.reads = 0;
         }
       },
       error: (error) => {
@@ -159,7 +162,6 @@ export class MyprofileComponent implements OnInit {
           delete obj['followerId'];
           console.log(obj.firstName, obj.id);
           return obj;
-
         });
       },
       error: (error) => {
@@ -218,7 +220,7 @@ export class MyprofileComponent implements OnInit {
       console.log('Unfollow a User');
 
       //Unfollow a user
-      this.api.followUnfollow(id).subscribe({   
+      this.api.followUnfollow(id).subscribe({
         next: (response) => {
           // Find index of object with the specified id
           console.log(response);
@@ -240,13 +242,16 @@ export class MyprofileComponent implements OnInit {
       console.log('removeFollower');
       console.log(id);
       this.api.removeFollower(id).subscribe({
-        next:reponse=>{
+        next: (reponse) => {
           console.log(reponse);
+          this.followerList = this.followerList.filter((person) => {
+            return person.id !== id;
+          });
         },
-        error:error=>{
+        error: (error) => {
           console.log(error);
-        }
-      })
+        },
+      });
     }
   }
 }

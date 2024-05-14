@@ -37,7 +37,12 @@ export class ProfileComponent implements OnInit {
   followerList: Persons[] = [];
   list: Persons[] = [];
   reads: number = 0;
-
+  link: {
+    facebook: string;
+    linkedin: string;
+    instagram: string;
+    twitter: string;
+  } = { facebook: '', linkedin: '', instagram: '', twitter: '' };
 
   constructor(
     private router: Router,
@@ -57,8 +62,32 @@ export class ProfileComponent implements OnInit {
     this.getFollowerList();
     this.getPosts();
     this.getBio();
+    this.getSocialLinks();
   }
-
+  getSocialLinks(){
+    const socialTypes = ['facebook', 'linkedin', 'instagram', 'twitter'];
+    socialTypes.forEach((item) => {
+      this.api.getSocialLinks(item,this.profileId).subscribe({
+        next: (response) => {
+          if (
+            'status' in response &&
+            response.status === 'success' &&
+            'data' in response
+          ){
+            this.link[item] = response.data.social.socialAccountLink;
+            if (this.link[item] == null)
+              this.link[item] = `https://www.${item}.com/`;
+          }
+          else{
+            this.link[item] = `https://www.${item}.com/`;
+          }
+        },
+        error: (error) => {
+          this.link[item] = `https://www.${item}.com/`;
+        },
+      });
+    });
+  }
   getProfileDetails() {
     this.api.getUserDetails(this.profileId).subscribe({
       next: (response) => {
@@ -78,7 +107,7 @@ export class ProfileComponent implements OnInit {
                 modification: string;
                 following: boolean;
                 lockProfile: boolean;
-                totalPostRead:number;
+                totalPostRead: number;
               };
             }
           ).userDetails;
@@ -86,9 +115,9 @@ export class ProfileComponent implements OnInit {
           this.name = userDetails.firstName + ' ' + userDetails.lastName;
           this.following = userDetails.following;
           this.lock = userDetails.lockProfile;
-          
+
           this.reads = userDetails.totalPostRead;
-          if(this.reads === null) this.reads = 0;
+          if (this.reads === null) this.reads = 0;
         }
       },
       error: (error) => {
@@ -130,13 +159,12 @@ export class ProfileComponent implements OnInit {
   getFollowingList() {
     this.api.getFollowingList(this.profileId).subscribe({
       next: (response) => {
-        console.log(response);
         this.followingList = (response as ApiResponseFollowing).data.followings;
 
         this.followingList = this.followingList.map((obj) => {
-          
-          obj['selfFollow'] = obj['followingId']===this.loggedUserId?false:true;
-          
+          obj['selfFollow'] =
+            obj['followingId'] === this.loggedUserId ? false : true;
+
           // Assign new key
           obj['id'] = obj['followingId'];
           // Delete old key
@@ -155,8 +183,8 @@ export class ProfileComponent implements OnInit {
       next: (response) => {
         this.followerList = (response as ApiResponseFollower).data.followers;
         this.followerList = this.followerList.map((obj) => {
-
-          obj['selfFollow'] = obj['followerId']===this.loggedUserId?false:true;
+          obj['selfFollow'] =
+            obj['followerId'] === this.loggedUserId ? false : true;
 
           // Assign new key
           obj['id'] = obj['followerId'];
@@ -164,8 +192,6 @@ export class ProfileComponent implements OnInit {
           delete obj['followerId'];
           return obj;
         });
-
-        console.log(this.followerList);
       },
       error: (error) => {
         console.log(error);
@@ -173,10 +199,9 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  openBlog(title:string,id: string) {
+  openBlog(title: string, id: string) {
     title = title.toLowerCase();
-    title = title.replace(/ /g,"-");
-    console.log(title);
+    title = title.replace(/ /g, '-');
     this.router.navigate([`blogdetails/${title}`], { queryParams: { id } });
   }
 
@@ -231,7 +256,6 @@ export class ProfileComponent implements OnInit {
     this.api.followUnfollow(this.profileId).subscribe({
       next: (response) => {
         this.following = !this.following;
-        console.log(response);
       },
       error: (error) => {
         console.log(error);
@@ -241,7 +265,19 @@ export class ProfileComponent implements OnInit {
   followUnfollow(e: any) {
     //follow or unfollow profiles following or followers
     const id = e.srcElement.id;
-    console.log(id);
+
+    this.api.followUnfollow(id).subscribe({
+      next: (response) => {
+        this.followingList.forEach((person) => {
+          if (person.id === id) {
+            person.following = !person.following;
+          }
+        });
+      },
+      error: (error) => {
+        console.log(error);
+      },
+    });
   }
   gotoChat() {
     const id = this.profileId;
@@ -250,18 +286,19 @@ export class ProfileComponent implements OnInit {
 
   segmentChanged(event: any) {
     this.segmentValue = event.detail.value;
-    // console.log(this.segmentValue);
     if (this.segmentValue === 'default') this.list = this.followingList;
     if (this.segmentValue === 'segment') this.list = this.followerList;
   }
   getBio() {
-    // this.api.getBio(this.profileId).subscribe({
-    //   next: (response) => {
-    //     console.log(response);
-    //   },
-    //   error: (error) => {
-    //     console.log(error);
-    //   },
-    // });
+    this.api.getBio(this.profileId).subscribe({
+      next: (response) => {
+        console.log(response);
+        this.bio = response.data.bio;
+        console.log(this.bio);
+      },
+      error: (error) => {
+        console.log(error);
+      },
+    });
   }
 }

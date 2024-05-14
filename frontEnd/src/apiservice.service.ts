@@ -358,7 +358,7 @@ export class APIService {
   }
 
   //social and bio
-  setBio(bio: string): Observable<any> {
+  setBio(bio: string): Observable<any> {//setMybio
     const baseUrl = 'http://localhost:8081/api/v1/users';
 
     return this.http.patch<any>(
@@ -369,7 +369,7 @@ export class APIService {
   }
 
   addSocial(socialAccountType: string, socialAccountLink: string) {
-    console.log('type',socialAccountType,':::link',socialAccountLink);
+    console.log('type', socialAccountType, ':::link', socialAccountLink);
     const baseUrl = 'http://localhost:8081/api/v1/users';
 
     return this.http.patch<any>(
@@ -386,11 +386,24 @@ export class APIService {
       withCredentials: true,
     });
   }
-
-  getMySocialLinks(type:string){
+  getBio(id: string) {
+    const baseUrl = 'http://localhost:8081/api/v1/users';
+    return this.http.get<any>(`${baseUrl}/getbio/${id}`, {
+      withCredentials: true,
+    });
+  }
+  getMySocialLinks(type: string) {
     const baseUrl = 'http://localhost:8081/api/v1/users';
 
     return this.http.get<any>(`${baseUrl}/getmysocial/${type}`, {
+      withCredentials: true,
+    });
+  }
+
+  getSocialLinks(type:string, userid: string) {
+    const baseUrl = 'http://localhost:8081/api/v1/users';
+
+    return this.http.get<any>(`${baseUrl}/getsocial/${type}/${userid}`, {
       withCredentials: true,
     });
   }

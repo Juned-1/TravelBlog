@@ -55,15 +55,18 @@ const routeConfig: Routes = [
   },
   {
     path: 'profile',
-    component:ProfileComponent,
+    component: ProfileComponent,
+    canActivate: [CanActivate],
   },
   {
     path: 'myprofile',
-    component:MyprofileComponent,
+    component: MyprofileComponent,
+    canActivate: [CanActivate],
   },
   {
     path: 'chat',
-    component:ChatComponent,
+    component: ChatComponent,
+    canActivate: [CanActivate],
   },
   { path: '**', component: PageNotFoundComponent },
 ];

@@ -39,7 +39,7 @@ exports.getUserDetails = catchAsync(async (req, res, next) => {
     mod = true;
     self = userDetails.id === req.tokenData.id;
     const numberOfPost = await Post.count({
-      where : { userId : uid }
+      where: { userId: uid },
     });
     userDetails.numberOfPost = numberOfPost;
   }
@@ -110,14 +110,14 @@ exports.resizePhoto = catchAsync(async (req, res, next) => {
   if (req.body.size === "original") {
     req.files = await Promise.all(
       req.files.map(async (file, i) => {
-        const extension = file.mimetype.split("/")[1];
+        /*const extension = file.mimetype.split("/")[1];
         const filename = `user-${req.body.photoType}-${
           req.tokenData.id
-        }-${new Date()}-${i + 1}.${extension}`;
-        await sharp(file.buffer)
-          .toFormat(`${extension}`)
-          .toFile(path.join("public", "images", filename)); //`public/images/${filename}`
-        return filename;
+        }-${new Date()}-${i + 1}.${extension}`;*/
+        return await sharp(file.buffer).toBuffer();
+        //.toFormat(`${extension}`)
+        //.toFile(path.join("public", "images", filename)); //`public/images/${filename}`
+        //return filename;
       })
     );
     return next(); //without return, after finishing next middleware it will again and execute rest body andd try to send response
@@ -129,38 +129,42 @@ exports.resizePhoto = catchAsync(async (req, res, next) => {
   }
   req.files = await Promise.all(
     req.files.map(async (file, i) => {
-      const filename = `user-${req.body.photoType}-${
+      /*const filename = `user-${req.body.photoType}-${
         req.tokenData.id
-      }-${new Date()}-${i + 1}.webp`;
-      await sharp(file.buffer)
+      }-${new Date()}-${i + 1}.webp`;*/
+      return await sharp(file.buffer)
         .resize(+width, +height)
         .toFormat("webp")
         .webp({ quality: 100 })
-        .toFile(path.join("public", "images", filename)); //`public/images/${filename}`
-      return filename;
+        .toBuffer();
+      //.toFile(path.join("public", "images", filename)); //`public/images/${filename}`
+      //return filename;
     })
   );
   next();
 });
 exports.uploadImages = upload.array("images", 3);
 exports.uploadPhoto = catchAsync(async (req, res, next) => {
-  const upload = await Promise.all(
+  req.files = req.files.map(file => file.toString('base64'));
+  let upload = await Promise.all(
     req.files.map(async (file) => {
       return await Photo.create({
         userId: req.tokenData.id,
         photoType: req.body.photoType,
-        photoName: file,
+        photoContent: file,
         mimeType: req.body.mimeType,
       });
     })
   );
-
   if (upload.length <= 0) {
     return next(new AppError("Failed to upload!", 400));
   }
-  res.status(200).json({
+  upload = upload.map(el => el.toJSON());
+  return res.status(200).json({
     status: "success",
-    message: "successfully uploaded",
+    data : {
+      album : upload,
+    }
   });
 });
 exports.getPhotos = catchAsync(async (req, res, next) => {
@@ -233,8 +237,8 @@ exports.deletePhoto = catchAsync(async (req, res, next) => {
     );
   }
   //create delete path of photo
-  const photoFilePath = path.join("public", "images", photo.photoName); //`public/images/${photo.photoName}`;
-  await promisify(fs.unlink)(photoFilePath);
+  //const photoFilePath = path.join("public", "images", photo.photoName); //`public/images/${photo.photoName}`;
+  //await promisify(fs.unlink)(photoFilePath);
   await photo.destroy();
   return res.status(204).json({
     status: "success",
@@ -243,11 +247,11 @@ exports.deletePhoto = catchAsync(async (req, res, next) => {
 });
 
 exports.activatePhoto = catchAsync(async (req, res, next) => {
-  const oldphoto = await Photo.findByPk(req.params.photoid);
-  if (!oldphoto) {
+  let photo = await Photo.findByPk(req.params.photoid);
+  if (!photo) {
     return next(new AppError("No photo found with given id!", 404));
   }
-  if (oldphoto.userId !== req.tokenData.id) {
+  if (photo.userId !== req.tokenData.id) {
     return next(
       new AppError(
         `You are not authorized to set photo as ${req.body.photoType}!`,
@@ -270,7 +274,7 @@ exports.activatePhoto = catchAsync(async (req, res, next) => {
   if (!change) {
     return next(new AppError(`Failed to set ${req.body.photoType} photo`, 404));
   }
-  const update = await Photo.update(
+  photo = await photo.update(
     { isActive: true },
     {
       where: {
@@ -281,12 +285,14 @@ exports.activatePhoto = catchAsync(async (req, res, next) => {
       individualHooks: true,
     }
   );
-  if (!update) {
-    return next(new AppError(`Failed to set ${req.body.photoType} photo`, 404));
-  }
+  // if (!update) {
+  //   return next(new AppError(`Failed to set ${req.body.photoType} photo`, 404));
+  // }
   res.status(200).json({
     status: "success",
-    message: `${req.body.photoType} photo is set!`,
+    data : {
+      photo,
+    }
   });
 });
 

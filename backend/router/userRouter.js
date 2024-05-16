@@ -107,7 +107,11 @@ router.get("/myfollowerlist", verifyToken, userController.followerList);
 router.get("/followinglist/:userid", verifyToken, userController.followingList);
 router.get("/myfollowinglist", verifyToken, userController.followingList);
 router.get("/isfollowed/:userid", verifyToken, userController.isFollowed);
-router.delete("/removefollower/:userid",verifyToken,userController.removeFollower);
+router.delete(
+  "/removefollower/:userid",
+  verifyToken,
+  userController.removeFollower
+);
 
 //lock profile
 router.patch("/lockpofile", verifyToken, userController.lockProfile);
@@ -129,5 +133,5 @@ router.delete(
 );
 
 //google login
-router.patch('/googlelogin', googleLogin);
+router.patch("/googlelogin", googleLogin);
 module.exports = router;

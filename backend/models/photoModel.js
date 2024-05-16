@@ -13,10 +13,17 @@ module.exports = (sequelize, DataTypes, UUIDV4) => {
         type: DataTypes.ENUM("profile", "cover", "other"),
         allowNull: false,
       },
-      photoName: {
-        type: DataTypes.STRING,
-        allowNull: false,
+      photoContent: {
+        type: DataTypes.BLOB("long"),
+        get() {
+          const contentBuffer = this.getDataValue("photoContent");
+          return contentBuffer ? contentBuffer.toString("utf-8") : null;
+        },
       },
+      // photoName: {
+      //   type: DataTypes.STRING,
+      //   allowNull: false,
+      // },
       userId: {
         type: DataTypes.UUID,
         allowNull: false,

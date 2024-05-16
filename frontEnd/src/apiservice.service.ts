@@ -302,7 +302,7 @@ export class APIService {
   getAllConversation(): Observable<any> {
     const baseUrl = 'http://localhost:8081/api/v1/chats';
 
-    let page = 0;
+    let page = 1;
     const params = new HttpParams().set('page', page.toString());
 
     return this.http.get<any>(`${baseUrl}/allconversation`, {

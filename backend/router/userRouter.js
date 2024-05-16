@@ -114,7 +114,7 @@ router.delete(
 );
 
 //lock profile
-router.patch("/lockpofile", verifyToken, userController.lockProfile);
+router.patch("/lockprofile", verifyToken, userController.lockProfile);
 
 //bio
 router.patch("/addbio", verifyToken, userController.addBio);

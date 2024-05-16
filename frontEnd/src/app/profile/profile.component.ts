@@ -64,22 +64,20 @@ export class ProfileComponent implements OnInit {
     this.getBio();
     this.getSocialLinks();
   }
-  getSocialLinks(){
+  getSocialLinks() {
     const socialTypes = ['facebook', 'linkedin', 'instagram', 'twitter'];
     socialTypes.forEach((item) => {
-      this.api.getSocialLinks(item,this.profileId).subscribe({
+      this.api.getSocialLinks(item, this.profileId).subscribe({
         next: (response) => {
           if (
             'status' in response &&
             response.status === 'success' &&
             'data' in response
-          ){
+          ) {
             this.link[item] = response.data.social.socialAccountLink;
-            if (this.link[item] == null)
+            if (this.link[item] == null) {
               this.link[item] = `https://www.${item}.com/`;
-          }
-          else{
-            this.link[item] = `https://www.${item}.com/`;
+            }
           }
         },
         error: (error) => {
@@ -292,9 +290,7 @@ export class ProfileComponent implements OnInit {
   getBio() {
     this.api.getBio(this.profileId).subscribe({
       next: (response) => {
-        console.log(response);
         this.bio = response.data.bio;
-        console.log(this.bio);
       },
       error: (error) => {
         console.log(error);

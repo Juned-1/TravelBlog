@@ -69,8 +69,11 @@ export class ToolbarComponent implements OnInit {
   routeToProfile() {
     this.router.navigate(['/myprofile']);
   }
-  openBlog(id: string) {
-    this.router.navigate(['/blogdetails'], { queryParams: { id } });
+  openBlog(title:string,id: string) {
+    title = title.toLowerCase();
+    title = title.replace(/ /g,"-");
+    this.showSearchResults = false;
+    this.router.navigate([`blogdetails/${title}`], { queryParams: { id } });
   }
   extractFirstImageURL(postContent: string): string | null {
     const regex = /<img src="(.*?)"/g;

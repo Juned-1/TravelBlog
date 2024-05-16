@@ -200,6 +200,7 @@ exports.sendMessage = async (req, res, next, io) => {
   //console.log(io);
   const convid = req.params.convid;
   const { messageText } = req.body;
+  console.log(messageText,convid);
   const senderId = req.tokenData.id;
   let conversation = await Conversation.findOne({
     where: {

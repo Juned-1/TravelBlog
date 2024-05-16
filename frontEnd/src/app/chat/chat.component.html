@@ -1,54 +1,62 @@
 <ion-row class="row">
   <ion-col class="persons" size="4">
     <ion-content color="light">
-      <ion-list style="padding: 0;">
+      <ion-list style="padding: 0">
         <ion-list-header color="primary">
-          <h1 style="padding-top: 10px;">Chats</h1>
+          <h1 style="padding-top: 10px">Chats</h1>
         </ion-list-header>
         <ion-item
-        
-          *ngFor="let person of persons"
-          (click)="selectPerson(person)"
+          *ngFor="let conversation of conversations"
+          (click)="selectPerson(conversation.conversationId)"
           class="select"
-          [ngClass]="{ 'selected-item': person === selectedPerson }"
+          [ngClass]="{
+            'selected-item':
+              conversation.conversationId === selectedConversationId
+          }"
         >
-        <strong>{{ person.name }}</strong>
-          
+          <strong>{{
+            conversation.participants[0].User.firstName +
+              " " +
+              conversation.participants[0].User.lastName
+          }}</strong>
         </ion-item>
       </ion-list>
     </ion-content>
   </ion-col>
-  <ion-col class="chat" size="8" style="padding: 0; margin: 0;">
+  <ion-col class="chat" size="8" style="padding: 0; margin: 0">
     <ion-content #content id="content" color="light">
-      <div id="empty-msg-container" *ngIf="this.selectedPerson === null">
+      <div
+        id="empty-msg-container"
+        *ngIf="this.selectedConversationId === null"
+      >
         <div id="empty-msg">
           <ion-card-title color="light">Select a Chat</ion-card-title>
+          
         </div>
       </div>
-      <div class="message-wrap" *ngIf="selectedPerson">
+      <div class="message-wrap" *ngIf="selectedConversationId">
         <div
-          *ngFor="let message of selectedPerson.messages"
+          *ngFor="let message of messages"
           class="message"
-          [class.right]="message.userIsSender === true"
+          [class.right]="message.senderId === loggedUserId"
         >
           <div class="msg-detail">
             <div class="msg-info">
-              <p> {{date.toLocaleString()}} </p>
+              <p>{{ message.timestamp.toLocaleString() }}</p>
+              <!-- Date.toLocaleString() -->
             </div>
             <div class="msg-content">
-              <p>{{ message.message }}</p>
+              <p>{{ message.messageText }}</p>
             </div>
           </div>
 
-
-
-          <div *ngIf="true||message.userIsSender" class="msg-status">
-            <div *ngIf="true|| message.status === 'pending';else sent">
+          <div *ngIf="true || message.senderId === id" class="msg-status">
+            <!-- <div *ngIf="true || message.status === 'pending'; else sent">
               pending
               <ion-icon name="checkmark-circle"></ion-icon>
             </div>
             <ng-template #sent>
-              <div *ngIf="message.status === 'sent';else seen">
+              <div *ngIf="message.status === 'sent'; else seen">
                 sent
                 <ion-icon name="checkmark-circle-outline"></ion-icon>
               </div>
@@ -58,15 +66,11 @@
                 seen
                 <ion-icon name="checkmark"></ion-icon>
               </div>
-            </ng-template>
+            </ng-template> -->
           </div>
-
-
-
         </div>
       </div>
     </ion-content>
-
 
     <!-- <ion-content #content id="content" class="ion-padding">
       <div class="message-wrap">
@@ -102,8 +106,7 @@
       <div id="bottom"></div>
     </ion-content> -->
 
-
-    <div *ngIf="this.selectedPerson" class="border input-msg">
+    <div *ngIf="this.selectedConversationId" class="border input-msg">
       <ion-input
         #chatInput
         maxlength="140"

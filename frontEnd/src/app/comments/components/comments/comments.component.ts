@@ -22,7 +22,6 @@ export class CommentsComponent implements OnInit {
   ngOnInit(): void {
     this.api.getComments(this.currentPostId, this.page, '').subscribe({
       next: (response) => {
-        console.log(response);
         const comentArr = (
           response as { status: string; resultLength: number; data: any }
         ).data.comments;

@@ -177,6 +177,7 @@ export class MyprofileComponent implements OnInit {
   submit() {
     this.api.uploadProfilePhoto(this.file).subscribe({
       next: (response) => {
+        console.log('Hello');
         console.log(response);
       },
       error: (error) => {

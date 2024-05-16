@@ -42,7 +42,7 @@ bootstrapApplication(AppComponent, {
             {
               id: GoogleLoginProvider.PROVIDER_ID,
               provider: new GoogleLoginProvider(
-                env.cliendId
+                env.clientId
               )
             },
           ],

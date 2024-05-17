@@ -13,7 +13,6 @@ import { Post, PostData, sendPostBulk } from 'src/DataTypes';
 import ImageCompress from 'quill-image-compress';
 import { Subscription } from 'rxjs';
 import { MyblogsService } from '../myblogs.service';
-import { blog } from 'src/DataTypes';
 
 Quill.register('modules/imageCompress', ImageCompress);
 

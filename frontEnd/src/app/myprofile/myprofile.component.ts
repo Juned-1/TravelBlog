@@ -43,7 +43,7 @@ export class MyprofileComponent implements OnInit {
     instagram: string;
     twitter: string;
   } = { facebook: '', linkedin: '', instagram: '', twitter: '' };
-  noOfPosts: number = 10;
+  noOfPosts: number = 0;
   reads: number = 0;
 
   constructor(private router: Router, private api: APIService) {}
@@ -94,6 +94,7 @@ export class MyprofileComponent implements OnInit {
   getMyProfileDetails() {
     this.api.getMyDetails().subscribe({
       next: (response) => {
+        console.log(response);
         if (
           'status' in response &&
           response.status === 'success' &&
@@ -110,6 +111,7 @@ export class MyprofileComponent implements OnInit {
                 modification: string;
                 lockProfile: boolean;
                 totalPostRead: number;
+                numberOfPost:number;
               };
             }
           ).userDetails;
@@ -117,7 +119,9 @@ export class MyprofileComponent implements OnInit {
           this.name = userDetails.firstName + ' ' + userDetails.lastName;
           this.lock = userDetails.lockProfile;
           this.reads = userDetails.totalPostRead;
+          this.noOfPosts = userDetails.numberOfPost;
           if (this.reads === null) this.reads = 0;
+          if(this.noOfPosts === null) this.noOfPosts = 0;
         }
       },
       error: (error) => {

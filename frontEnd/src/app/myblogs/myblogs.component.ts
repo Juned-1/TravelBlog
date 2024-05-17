@@ -50,7 +50,6 @@ export class MyblogsComponent implements OnInit {
   }
   onDeletePost(deletePostId: string) {
     //find and delete post that from post array
-    // this.myblogs = this.myblogs.filter((post) => post.id !== deletePostId);
     const indexToRemove = this.myblogs.findIndex(
       (post) => post.id === deletePostId
     );

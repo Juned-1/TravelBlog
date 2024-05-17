@@ -20,7 +20,6 @@ export class MyblogsService {
   parameter: FetchBlogsParameter = {
     page: 1,
     title: '',
-    //subtitle : 'W'
   };
 
   constructor(private http: HttpClient, private sanitizer: DomSanitizer) {}
@@ -55,10 +54,12 @@ export class MyblogsService {
           response.status === 'success' &&
           'data' in response
         ) {
-          this.myblogs = (response.data as data).blogs as blog[];
-          this.myblogs.forEach((blog) => {
+          const blogs:blog[] = (response.data as data).blogs as blog[];
+          this.myblogs.length = 0;
+          blogs.forEach((blog) => {
             this.myblogs.push(this.furnishBlog(blog));
           });
+          console.log(this.myblogs);
         }
       },
       error: (error) => {

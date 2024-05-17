@@ -94,8 +94,9 @@ export class MyblogsService {
   onIonInfiniteMyBlogsSearch() {} //Not Implemented
 
   addNewblog(response: any) {
-    const newBlog:blog = response.data.post;
-    console.log(newBlog);
+    const newBlog:newBlog = response.data.post;
+    newBlog.firstName = newBlog.user.firstName;
+    newBlog.lastName = newBlog.user.lastName;
     this.myblogs.push(this.furnishBlog(newBlog));
   }
 
@@ -139,5 +140,19 @@ export class MyblogsService {
     } else {
       return null;
     }
+  }
+}
+export interface newBlog{
+  content: string,
+  id: string;
+  title: string;
+  subtitle: string;
+  time: string;
+  firstName : string;
+  lastName : string;
+  imageURL : string | null;
+  user:{
+    firstName:string,
+    lastName:string
   }
 }

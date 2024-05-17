@@ -49,7 +49,7 @@ export interface blog{
   title: string;
   subtitle: string;
   time: string;
-  firstName : string;
+  firstName : string|null;
   lastName : string;
   imageURL : string | null;
 }

@@ -6,7 +6,7 @@ import {
   ApiResponseFollower,
   ApiResponseFollowing,
   Persons,
-  blogs,
+  blog,
   data,
 } from 'src/DataTypes';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -26,7 +26,7 @@ export class ProfileComponent implements OnInit {
   loggedUserId!: string;
   name!: string;
 
-  posts!: blogs[];
+  posts!: blog[];
   page: number = 1;
   noOfPost: number = 0;
   lock = false;
@@ -132,7 +132,7 @@ export class ProfileComponent implements OnInit {
           response.status === 'success' &&
           'data' in response
         ) {
-          this.posts = (response.data as data).blogs as blogs[];
+          this.posts = (response.data as data).blogs as blog[];
           for (let post of this.posts) {
             this.noOfPost = this.noOfPost + 1;
             post.time = new Date(post.time).toDateString().toString();
@@ -212,7 +212,7 @@ export class ProfileComponent implements OnInit {
           response.status === 'success' &&
           'data' in response
         ) {
-          let morePost = (response.data as data).blogs as blogs[];
+          let morePost = (response.data as data).blogs as blog[];
           for (let post of morePost) {
             post.time = new Date(post.time).toDateString().toString();
 

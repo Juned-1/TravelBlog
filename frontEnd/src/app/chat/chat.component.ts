@@ -16,38 +16,7 @@ import { error } from 'console';
 export class ChatComponent implements OnInit {
   date = new Date();
   messages!: Message[];
-  // persons = [
-  //   {
-  //     name: 'Person 1',
-  //     messages: [
-  //       {
-  //         message: 'Hi',
-  //         userIsSender: true,
-  //         createdAt: new Date(),
-  //       },
-  //       {
-  //         message: 'Hello',
-  //         userIsSender: false,
-  //         createdAt: new Date(),
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     name: 'Person 2',
-  //     messages: [
-  //       {
-  //         message: 'How are you',
-  //         userIsSender: true,
-  //         createdAt: new Date(),
-  //       },
-  //       {
-  //         message: 'I am good',
-  //         userIsSender: false,
-  //         createdAt: new Date(),
-  //       },
-  //     ],
-  //   },
-  // ];
+
   selectedConversationId: any = null;
   @ViewChild('content', { static: true }) private content: any;
   @ViewChild('chatInput', { static: true }) messageInput!: ElementRef;
@@ -55,10 +24,7 @@ export class ChatComponent implements OnInit {
   id: string | null = null;
   conversations: Conversation[] = [];
   loggedUserId!: string;
-  // messages!: Message[];
-  // conversationId: string = '';
-  // receiverFullName: string = '';
-  // receiverId;
+
   constructor(private api: APIService, private route: ActivatedRoute) {}
   ngOnInit() {
     this.id = this.route.snapshot.queryParams['id'];
@@ -88,7 +54,7 @@ export class ChatComponent implements OnInit {
               .createIndividualConversation({ recipientId: this.id })
               .subscribe(
                 (response) => {
-                  this.conversations.push(response.data.conversation[0])
+                  this.conversations.push(response.data.conversation[0]);
                   console.log('Succesfully created individual conversation');
                   console.log(response);
                 },

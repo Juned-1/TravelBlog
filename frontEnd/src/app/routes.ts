@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { SignupComponent } from './signup/signup.component';
-import { TexteditorComponent } from './texteditor/texteditor.component';
+import { TextEditorComponent } from './myblogs/text-editor/text-editor.component';
 import { LoginComponent } from './login/login.component';
 import { MyblogsComponent } from './myblogs/myblogs.component';
 import { BlogComponent } from './blog/blog.component';
@@ -35,7 +35,7 @@ const routeConfig: Routes = [
   },
   {
     path: 'texteditor',
-    component: TexteditorComponent,
+    component: TextEditorComponent,
     title: 'Editor',
     canActivate: [CanActivate],
   },

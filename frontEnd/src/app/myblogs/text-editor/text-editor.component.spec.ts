@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { TexteditorComponent } from './texteditor.component';
+import { TextEditorComponent } from './text-editor.component';
 
-describe('TexteditorComponent', () => {
-  let component: TexteditorComponent;
-  let fixture: ComponentFixture<TexteditorComponent>;
+describe('TextEditorComponent', () => {
+  let component: TextEditorComponent;
+  let fixture: ComponentFixture<TextEditorComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ TexteditorComponent ],
+      declarations: [ TextEditorComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(TexteditorComponent);
+    fixture = TestBed.createComponent(TextEditorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

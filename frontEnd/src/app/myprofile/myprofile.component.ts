@@ -6,7 +6,7 @@ import {
   ApiResponseFollower,
   ApiResponseFollowing,
   Persons,
-  blogs,
+  blog,
   data,
 } from 'src/DataTypes';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -30,7 +30,7 @@ export class MyprofileComponent implements OnInit {
   segmentValue: string = 'default';
   lock = false;
 
-  posts!: blogs[];
+  posts!: blog[];
   page: number = 1;
   followingList: Persons[] = [];
   followerList: Persons[] = [];

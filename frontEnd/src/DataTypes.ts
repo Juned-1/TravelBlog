@@ -43,7 +43,7 @@ export interface SearchParameter{
   subtitle? : string
 }
 
-export interface blogs{
+export interface blog{
   content: string,
   id: string;
   title: string;

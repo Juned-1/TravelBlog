@@ -43,23 +43,7 @@ export class APIService {
     const params = new HttpParams().set('page', page.toString());
     return this.http.get(baseurl, { params, withCredentials: true });
   }
-  getMyPost(parameter: SearchParameter, page: number) {
-    // return this.http.get('http://localhost:8081/api/v1/blogs/getmypost', {
-    //   withCredentials: true,
-    // });
-    let baseurl = 'http://localhost:8081/api/v1/blogs/getmypost';
-    let params = new HttpParams().set('page', parameter.page.toString());
-    if (parameter.title) {
-      params = params.append('title', encodeURIComponent(parameter.title));
-    }
-    if (parameter.subtitle) {
-      params = params.append(
-        'subtitle',
-        encodeURIComponent(parameter.subtitle)
-      );
-    }
-    return this.http.get(baseurl, { params, withCredentials: true });
-  }
+
   getSpecificPost(id: string) {
     const baseurl = `http://localhost:8081/api/v1/blogs/getspecificpost/${id}`;
     return this.http.get(baseurl, { withCredentials: true });

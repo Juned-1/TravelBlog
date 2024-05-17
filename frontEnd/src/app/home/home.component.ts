@@ -6,7 +6,7 @@ import { APIService } from 'src/apiservice.service';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BlogCardHomeComponent } from './blog-card-home/blog-card-home.component';
-import { blogs, data } from '../../DataTypes';
+import { blog, data } from '../../DataTypes';
 
 @Component({
   selector: 'app-home',
@@ -17,7 +17,7 @@ import { blogs, data } from '../../DataTypes';
 })
 export class HomeComponent implements OnInit, OnDestroy {
   slideIndex: number = 0;
-  posts!: blogs[];
+  posts!: blog[];
   timeoutid: any = 0;
   page: number = 1;
   emptyPosts = false;
@@ -39,7 +39,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           response.status === 'success' &&
           'data' in response
         ) {
-          this.posts = (response.data as data).blogs as blogs[];
+          this.posts = (response.data as data).blogs as blog[];
 
           if(this.posts.length===0){
             this.emptyPosts = true;
@@ -112,7 +112,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           response.status === 'success' &&
           'data' in response
         ) {
-          let morePost = (response.data as data).blogs as blogs[];
+          let morePost = (response.data as data).blogs as blog[];
           for (let post of morePost) {
             post.time = new Date(post.time).toDateString().toString();
 

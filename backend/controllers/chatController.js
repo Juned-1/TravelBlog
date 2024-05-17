@@ -196,8 +196,7 @@ exports.getAllConversation = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.sendMessage = async (req, res, next, io) => {
-  //console.log(io);
+exports.sendMessage = async (req, res, next, io, getReceiverSocketId) => {
   const convid = req.params.convid;
   const { messageText } = req.body;
   console.log(messageText,convid);
@@ -249,7 +248,11 @@ exports.sendMessage = async (req, res, next, io) => {
   user = user.toJSON();
   message.Attachments = attachments === undefined ? [] : attachments;
   message.User = user;
-  io.to(convid).emit('newMessage', message);
+  const receiverSocketId = getReceiverSocketId(conversation.conversationId);
+  if (receiverSocketId) {
+    // io.to(<socket_id>).emit() used to send events to specific client
+    io.to(receiverSocketId).emit("newMessage", message);
+  }
   //message = [{...message}];
   return res.status(201).json({
     status: "succcess",
@@ -260,7 +263,6 @@ exports.sendMessage = async (req, res, next, io) => {
 };
 
 exports.getMessage = catchAsync(async (req, res, next) => {
-  
   const convid = req.params.convid;
   const limitQuery = 50;
   const offsetVal = req.query.page ? (+req.query.page - 1) * limitQuery : 0;
@@ -303,7 +305,7 @@ exports.getMessage = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.deleteAttachment = catchAsync(async (req, res, next) => {
+exports.deleteAttachment = catchAsync(async (req, res, next, io, getReceiverSocketId) => {
   let attachment = await Attachment.findOne({
     include: [
       {
@@ -324,13 +326,18 @@ exports.deleteAttachment = catchAsync(async (req, res, next) => {
   const attachmentPath = path.join(uploadDirectory, attachment.attachmentName);
   await promisify(fs.unlink)(attachmentPath);
   await attachment.destroy();
+  const receiverSocketId = getReceiverSocketId(conversation.conversationId);
+  if (receiverSocketId) {
+    // io.to(<socket_id>).emit() used to send events to specific client
+    io.to(receiverSocketId).emit("deleteAttachment", req.params.attachmentId);
+  }
   return res.status(204).json({
     status: "success",
     data: null,
   });
 });
 
-exports.deleteMessage = catchAsync(async (req, res, next) => {
+exports.deleteMessage = catchAsync(async (req, res, next, io, getReceiverSocketId) => {
   let message = await Message.findOne({
     include: [
       {
@@ -360,6 +367,11 @@ exports.deleteMessage = catchAsync(async (req, res, next) => {
     );
   }
   await message.destroy();
+  const receiverSocketId = getReceiverSocketId(conversation.conversationId);
+  if (receiverSocketId) {
+    // io.to(<socket_id>).emit() used to send events to specific client
+    io.to(receiverSocketId).emit("deleteMessage", req.params.messageId);
+  }
   return res.status(204).json({
     status : "success",
     data : null,
@@ -394,6 +406,11 @@ exports.editMessage = catchAsync(async (req, res, next) => {
   message = await message.update({messageText : encryptedMessage});
   message = message.toJSON();
   message.messageText = await decryptAES(message.messageText, key);
+  const receiverSocketId = getReceiverSocketId(conversation.conversationId);
+  if (receiverSocketId) {
+    // io.to(<socket_id>).emit() used to send events to specific client
+    io.to(receiverSocketId).emit("editMessage", message);
+  }
   res.status(201).json({
     status : "success",
     data : {

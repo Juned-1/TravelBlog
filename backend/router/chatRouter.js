@@ -2,29 +2,7 @@ const { Router } = require("express");
 const { verifyToken } = require("../utils/token-manager");
 const chatController = require("../controllers/chatController");
 const catchAsync = require("../utils/catchAsync");
-module.exports = (io) => {
-  const userSocketMap = {}; // {userId: socketId}
-
-  const getReceiverSocketId = (receiverId) => {
-    return userSocketMap[receiverId];
-  };
-
-  io.on("connection", (socket) => {
-    console.log("user connected", socket.id);
-
-    const userId = socket.handshake.query.userId;
-    if (userId != "undefined") userSocketMap[userId] = socket.id;
-
-    // io.emit() is used to send events to all the connected clients
-    io.emit("getOnlineUsers", Object.keys(userSocketMap));
-
-    // socket.on() is used to listen to the events. can be used both on client and server side
-    socket.on("disconnect", () => {
-      console.log("user disconnected", socket.id);
-      delete userSocketMap[userId];
-      io.emit("getOnlineUsers", Object.keys(userSocketMap));
-    });
-  });
+module.exports = (io, getReceiverSocketId) => {
   const router = Router();
   router.use(verifyToken);
   router.post(
@@ -39,16 +17,28 @@ module.exports = (io) => {
     "/sendmessage/:convid",
     chatController.uploadAttachment,
     catchAsync(async (req, res, next) =>
-      chatController.sendMessage(req, res, next, io)
+      chatController.sendMessage(req, res, next, io, getReceiverSocketId)
     )
   );
   router.get("/allconversation", chatController.getAllConversation);
   router.get("/receivemessage/:convid", chatController.getMessage);
   router.delete(
     "/deleteattachment/:attachmentId",
-    chatController.deleteAttachment
+    catchAsync(async (req, res, next) => {
+      chatController.deleteAttachment(req, res, next, io, getReceiverSocketId);
+    })
   );
-  router.delete("/deletemessage/:messageId", chatController.deleteMessage);
-  router.patch("/editmessage/:messageId", chatController.editMessage);
+  router.delete(
+    "/deletemessage/:messageId",
+    catchAsync((req, res, next) => {
+      chatController.deleteMessage(req, res, next, io, getReceiverSocketId);
+    })
+  );
+  router.patch(
+    "/editmessage/:messageId",
+    catchAsync((req, res, next) => {
+      chatController.editMessage(req, res, next, io, getReceiverSocketId);
+    })
+  );
   return router;
 };

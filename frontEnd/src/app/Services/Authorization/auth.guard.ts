@@ -6,7 +6,6 @@ import { Observable, catchError, map, throwError } from 'rxjs';
 export function CanActivate(): Observable<boolean> | boolean {
   const router = inject(Router);
   const api = inject(APIService);
-  console.log('here');
 
   return api.authorise().pipe(
     map((response: any) => {

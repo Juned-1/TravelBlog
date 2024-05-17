@@ -95,7 +95,7 @@
       </ion-item>
       <br />
       <p class="signin-text">
-        I'm already a member&nbsp;<a (click)="change()">Sign In?</a>
+        I'm already a member&nbsp;<a (click)="change()">Log In?</a>
       </p>
       <ion-button
         class="signup-button"
@@ -128,10 +128,10 @@
         <span>Summit OTP <ion-spinner name="lines" *ngIf="OTPVerification"></ion-spinner
           ></span>
       </ion-button>
-      <ion-button (click)="loginWithGoogle()" *ngIf="!emailVerification">
+      <!-- <ion-button (click)="loginWithGoogle()" *ngIf="!emailVerification">
         <span>SignUp with Google</span>
         <ion-icon slot="start" name="logo-google"></ion-icon>
-      </ion-button>
+      </ion-button> -->
     </div>
   </div>
 </ion-content>

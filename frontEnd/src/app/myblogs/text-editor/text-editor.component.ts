@@ -7,22 +7,25 @@ import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { APIService } from 'src/apiservice.service';
 import { ToastrService } from 'ngx-toastr';
 import * as cheerio from 'cheerio';
-import { ToolbarComponent } from '../toolbar/toolbar.component';
+import { ToolbarComponent } from '../../toolbar/toolbar.component';
 import { FormsModule } from '@angular/forms';
 import { Post, PostData, sendPostBulk } from 'src/DataTypes';
 import ImageCompress from 'quill-image-compress';
 import { Subscription } from 'rxjs';
+import { MyblogsService } from '../myblogs.service';
+import { blog } from 'src/DataTypes';
 
 Quill.register('modules/imageCompress', ImageCompress);
 
 @Component({
-  selector: 'app-texteditor',
-  templateUrl: './texteditor.component.html',
-  styleUrls: ['./texteditor.component.scss'],
+  selector: 'app-text-editor',
+  templateUrl: './text-editor.component.html',
+  styleUrls: ['./text-editor.component.scss'],
   standalone: true,
   imports: [IonicModule, PreviewComponent, ToolbarComponent, FormsModule],
 })
-export class TexteditorComponent implements OnInit, OnDestroy {
+export class TextEditorComponent  implements OnInit, OnDestroy {
+
   linkCount: number = 0;
   maxLinks: number = 5;
   imageCount: number = 0;
@@ -77,7 +80,9 @@ export class TexteditorComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private api: APIService,
-    private toast: ToastrService
+    private toast: ToastrService,
+    private myBlogsService: MyblogsService
+
   ) {}
   ngOnInit() {
     this.routerService = this.router.events.subscribe((event) => {
@@ -194,10 +199,9 @@ export class TexteditorComponent implements OnInit, OnDestroy {
 
     this.api.post(postDetails).subscribe(
       (response) => {
-        //console.log(response);
+        this.myBlogsService.addNewblog(response)
         if ('status' in response && response.status === 'success') {
           this.toast.success('Posted successfully');
-          // this.router.navigate(['/userblog']);
           this.router.navigateByUrl('/userblog');
         }
       },
@@ -316,4 +320,5 @@ export class TexteditorComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.routerService.unsubscribe();
   }
+
 }

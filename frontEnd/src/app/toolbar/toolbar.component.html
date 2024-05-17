@@ -84,7 +84,7 @@
         sizeMd="6"
         *ngFor="let post of searchResults"
         class="home-cards"
-        (click)="openBlog(post.id)"
+        (click)="openBlog(post.title,post.id)"
       >
         <app-blog-card-home [post]="post"></app-blog-card-home>
         <h1></h1>

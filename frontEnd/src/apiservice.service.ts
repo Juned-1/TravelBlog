@@ -43,25 +43,8 @@ export class APIService {
     const params = new HttpParams().set('page', page.toString());
     return this.http.get(baseurl, { params, withCredentials: true });
   }
-  getMyPost(parameter: SearchParameter, page: number) {
-    // return this.http.get('http://localhost:8081/api/v1/blogs/getmypost', {
-    //   withCredentials: true,
-    // });
-    let baseurl = 'http://localhost:8081/api/v1/blogs/getmypost';
-    let params = new HttpParams().set('page', parameter.page.toString());
-    if (parameter.title) {
-      params = params.append('title', encodeURIComponent(parameter.title));
-    }
-    if (parameter.subtitle) {
-      params = params.append(
-        'subtitle',
-        encodeURIComponent(parameter.subtitle)
-      );
-    }
-    return this.http.get(baseurl, { params, withCredentials: true });
-  }
+
   getSpecificPost(id: string) {
-    console.log(id);
     const baseurl = `http://localhost:8081/api/v1/blogs/getspecificpost/${id}`;
     return this.http.get(baseurl, { withCredentials: true });
   }
@@ -255,24 +238,16 @@ export class APIService {
     return this.http.get(`http://localhost:8081/api/v1/blogs/userpost/${id}`);
   }
 
-  toggleProfile(lock: boolean) {
+  toggleProfile() {
     // const baseurl = `http://localhost:8081/api/v1/blogs/editpost/${id}`;
     // return this.http.patch(baseurl, data, { withCredentials: true });
     const data = {};
 
-    if (lock) {
-      return this.http.patch(
-        `http://localhost:8081/api/v1/users/unlockpofile`,
-        data,
-        { withCredentials: true }
-      );
-    } else {
-      return this.http.patch(
-        `http://localhost:8081/api/v1/users/lockpofile`,
-        data,
-        { withCredentials: true }
-      );
-    }
+    return this.http.patch(
+      `http://localhost:8081/api/v1/users/lockprofile`,
+      data,
+      { withCredentials: true }
+    );
   }
 
   //CHAT APIs
@@ -282,23 +257,6 @@ export class APIService {
       withCredentials: true,
     });
   }
-
-  deleteConversation(convid: string): Observable<any> {
-    const baseUrl = 'http://localhost:8081/api/v1/chats';
-
-    return this.http.delete<any>(`${baseUrl}/deleteconversation/${convid}`, {
-      withCredentials: true,
-    });
-  }
-
-  sendMessage(convid: string, data: any): Observable<any> {
-    const baseUrl = 'http://localhost:8081/api/v1/chats';
-
-    return this.http.post<any>(`${baseUrl}/sendmessage/${convid}`, data, {
-      withCredentials: true,
-    });
-  }
-
   getAllConversation(): Observable<any> {
     const baseUrl = 'http://localhost:8081/api/v1/chats';
 
@@ -311,25 +269,24 @@ export class APIService {
     });
   }
 
-  getMessage(convid: string): Observable<any> {
+  sendMessage(convid: string, messageText: any): Observable<any> {
     const baseUrl = 'http://localhost:8081/api/v1/chats';
 
-    return this.http.get<any>(`${baseUrl}/receivemessage/${convid}`, {
-      withCredentials: true,
-    });
-  }
-
-  deleteAttachment(attachmentId: string): Observable<any> {
-    const baseUrl = 'http://localhost:8081/api/v1/chats';
-
-    return this.http.delete<any>(
-      `${baseUrl}/deleteattachment/${attachmentId}`,
+    return this.http.post<any>(
+      `${baseUrl}/sendmessage/${convid}`,
+      { messageText },
       {
         withCredentials: true,
       }
     );
   }
-
+  getMessage(convid: string): Observable<any> {
+    const baseUrl = 'http://localhost:8081/api/v1/chats';
+    // router.get("/receivemessage/:convid", chatController.getMessage);
+    return this.http.get<any>(`${baseUrl}/receivemessage/${convid}`, {
+      withCredentials: true,
+    });
+  }
   deleteMessage(messageId: string): Observable<any> {
     const baseUrl = 'http://localhost:8081/api/v1/chats';
 
@@ -345,6 +302,23 @@ export class APIService {
       withCredentials: true,
     });
   }
+  deleteConversation(convid: string): Observable<any> {
+    const baseUrl = 'http://localhost:8081/api/v1/chats';
+
+    return this.http.delete<any>(`${baseUrl}/deleteconversation/${convid}`, {
+      withCredentials: true,
+    });
+  }
+  deleteAttachment(attachmentId: string): Observable<any> {
+    const baseUrl = 'http://localhost:8081/api/v1/chats';
+
+    return this.http.delete<any>(
+      `${baseUrl}/deleteattachment/${attachmentId}`,
+      {
+        withCredentials: true,
+      }
+    );
+  }
 
   //googlelogin
   googleLogin(token: string): Observable<any> {
@@ -358,7 +332,8 @@ export class APIService {
   }
 
   //social and bio
-  setBio(bio: string): Observable<any> {//setMybio
+  setBio(bio: string): Observable<any> {
+    //setMybio
     const baseUrl = 'http://localhost:8081/api/v1/users';
 
     return this.http.patch<any>(
@@ -400,7 +375,7 @@ export class APIService {
     });
   }
 
-  getSocialLinks(type:string, userid: string) {
+  getSocialLinks(type: string, userid: string) {
     const baseUrl = 'http://localhost:8081/api/v1/users';
 
     return this.http.get<any>(`${baseUrl}/getsocial/${type}/${userid}`, {

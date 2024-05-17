@@ -1,19 +1,13 @@
-import {
-  AfterViewInit,
-  Component,
-  OnInit,
-} from '@angular/core';
-import { InfiniteScrollCustomEvent, IonicModule } from '@ionic/angular';
+import { AfterViewInit, Component, OnInit, inject } from '@angular/core';
+import { IonicModule } from '@ionic/angular';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
-import { Router, ActivatedRoute } from '@angular/router';
-import { APIService } from 'src/apiservice.service';
-import { DomSanitizer } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { MyblogsBlogCardComponent } from './myblogs-blog-card/myblogs-blog-card.component';
-import { SearchParameter } from 'src/DataTypes';
-import { blogs, data } from 'src/DataTypes';
+import { blog } from 'src/DataTypes';
+import { MyblogsService } from './myblogs.service';
 @Component({
   selector: 'app-myblogs',
   templateUrl: 'myblogs.component.html',
@@ -27,158 +21,56 @@ import { blogs, data } from 'src/DataTypes';
     MyblogsBlogCardComponent,
   ],
 })
-export class MyblogsComponent implements OnInit, AfterViewInit {
-  posts!: blogs[];
+export class MyblogsComponent implements OnInit {
+  myblogs!: blog[];
   isSetToolbar: any;
-  page: number = 1;
   searchKeyword: string = '';
-  searchResults: blogs[] = [];
   showSearchResult: boolean = false;
-  parameter!: SearchParameter;
 
   constructor(
     private router: Router,
-    private api: APIService,
-    private sanitizer: DomSanitizer,
-    private toast: ToastrService
+    private toast: ToastrService,
+    private myBlogsService: MyblogsService
   ) {}
   ngOnInit(): void {
-    this.parameter = {
-      page: 1,
-      title: '',
-      //subtitle : 'W'
-    };
-      this.loadInitPost();
-  }
-  ngAfterViewInit() {}
-  loadInitPost() {
-    this.api.getMyPost(this.parameter,this.page).subscribe(
-      (response) => {
-        if (
-          'status' in response &&
-          response.status === 'success' &&
-          'data' in response
-        ) {
-          this.posts = (response.data as data).blogs as blogs[];
-          for (let post of this.posts) {
-            post.time = new Date(post.time).toDateString().toString();
-
-            let imageURL = this.extractFirstImageURL(post.content);
-            if (imageURL === null) {
-              imageURL = '../../assets/travelImage/no-image.jpg';
-            }
-            imageURL = (
-              this.sanitizer.bypassSecurityTrustResourceUrl(imageURL) as any
-            ).changingThisBreaksApplicationSecurity;
-            post.imageURL = imageURL;
-          }
-        }
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
-  }
-  extractFirstImageURL(postContent: string): string | null {
-    const regex = /<img src="(.*?)"/g;
-    const match = regex.exec(postContent);
-    if (match) {
-      return match[1];
-    } else {
-      return null;
-    }
+    this.myBlogsService.getPosts();
+    this.myblogs = this.myBlogsService.myblogs;
   }
 
-  onIonInfinite(ev: any) {
-    this.page++;
-    //console.log(this.page)
-    this.api.getPost(this.page)?.subscribe(
-      (response) => {
-        if (
-          'status' in response &&
-          response.status === 'success' &&
-          'data' in response
-        ) {
-          let morePost = (response.data as data).blogs as blogs[];
-          for (let post of morePost) {
-            post.time = new Date(post.time).toDateString().toString();
-
-            // Extract the first image URL from post.post_content
-            let imageURL = this.extractFirstImageURL(post.content);
-            if (imageURL === null) {
-              imageURL = '../../assets/travelImage/no-image.jpg';
-            }
-            imageURL = (
-              this.sanitizer.bypassSecurityTrustResourceUrl(imageURL) as any
-            ).changingThisBreaksApplicationSecurity;
-            post.imageURL = imageURL;
-          }
-          this.posts.push(...morePost);
-        }
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
-
-    setTimeout(() => {
-      (ev as InfiniteScrollCustomEvent).target.complete();
-    }, 300);
-  }
-
-  openBlog(title:string, id: string) {
+  openBlog(title: string, id: string) {
     title = title.toLowerCase();
-    title = title.replace(/ /g,"-");
+    title = title.replace(/ /g, '-');
     this.router.navigate([`/blogdetails/${title}`], { queryParams: { id } });
   }
   openEditor() {
     this.router.navigate(['/texteditor']);
   }
-  trackByPostId(index: number, post: blogs): string {
+  trackByPostId(index: number, post: blog): string {
     return post.id; // Assuming 'id' is the unique identifier for posts
   }
   onDeletePost(deletePostId: string) {
     //find and delete post that from post array
-    this.posts = this.posts.filter((post) => post.id !== deletePostId);
+    // this.myblogs = this.myblogs.filter((post) => post.id !== deletePostId);
+    const indexToRemove = this.myblogs.findIndex(
+      (post) => post.id === deletePostId
+    );
+    if (indexToRemove !== -1) {
+      this.myblogs.splice(indexToRemove, 1);
+    }
   }
   onSearch(searchTerm: any) {
     this.searchKeyword = searchTerm.target.value;
     if (this.searchKeyword === '') {
       this.showSearchResult = false;
+      this.myBlogsService.getPosts();
       return;
     } else {
       this.showSearchResult = true;
+      this.myBlogsService.getSearchResult(this.searchKeyword);
     }
 
-    this.parameter = {
-      page: 1,
-      title: this.searchKeyword,
-      //subtitle : 'W'
-    };
-
-    this.api
-      .getMyPost(this.parameter,1)
-      .subscribe((response) => {
-        if (
-          'status' in response &&
-          response.status === 'success' &&
-          'data' in response
-        ) {
-          this.searchResults = (response.data as data).blogs as blogs[];
-          console.log(this.searchResults);
-          for (let post of this.searchResults) {
-            post.time = new Date(post.time).toDateString().toString();
-            // Extract the first image URL from post.post_content
-            let imageURL = this.extractFirstImageURL(post.content);
-            if (imageURL === null) {
-              imageURL = '../../assets/travelImage/no-image.jpg';
-            }
-            imageURL = (
-              this.sanitizer.bypassSecurityTrustResourceUrl(imageURL) as any
-            ).changingThisBreaksApplicationSecurity;
-            post.imageURL = imageURL;
-          }
-        }
-      });
+  }
+  onScroll(e: any) {
+    this.myBlogsService.onIonInfiniteMyBlogs(e);
   }
 }

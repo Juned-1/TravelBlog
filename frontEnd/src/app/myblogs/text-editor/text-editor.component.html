@@ -1,0 +1,46 @@
+<ion-content>
+  <form id="title-container">
+    <ion-item>
+      <ion-input
+      name="title"
+      type="text"
+      [(ngModel)]="title"
+        label="Title: "
+        placeholder="Max 60 characters"
+        maxlength="60"
+        required
+      ></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input
+      name="subtitle"
+      type="text"
+      [(ngModel)]="subtitle"
+        label="Subtitle: "
+        placeholder="Max 90 characters"
+        maxlength="90"
+        required
+      ></ion-input>
+    </ion-item>
+  </form>
+  <div id="editor"></div>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar color="">
+    <ion-buttons slot="end">
+      <ion-button color="success" shape="round" (click)="post()">
+        <ion-icon slot="icon-only" name="navigate-sharp"></ion-icon>
+      </ion-button>
+      <ion-button color="primary" (click)="preview()">
+        <ion-icon slot="icon-only" name="save-outline"></ion-icon>
+      </ion-button>
+      <ion-button color="danger" (click)="clearEditor()">
+        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+      </ion-button>
+      <!-- <ion-button (click)="routeToHome()">
+      <ion-icon slot="icon-only" name="close"></ion-icon>
+    </ion-button> -->
+    </ion-buttons></ion-toolbar
+  >
+</ion-footer>

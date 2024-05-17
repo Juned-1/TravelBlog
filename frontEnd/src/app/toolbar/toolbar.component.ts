@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { APIService } from 'src/apiservice.service';
 import { BlogCardHomeComponent } from '../home/blog-card-home/blog-card-home.component';
-import { SearchParameter, blogs, data } from 'src/DataTypes';
+import { SearchParameter, blog, data } from 'src/DataTypes';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AuthService } from '../Services/Authentication/auth.service';
 
@@ -23,7 +23,7 @@ export class ToolbarComponent implements OnInit {
 
   user: string|null = this.authService.getUser();
   searchKeyword: string = '';
-  searchResults!: blogs[];
+  searchResults!: blog[];
   showSearchResults: boolean = false;
   constructor(
     private router: Router,
@@ -69,8 +69,11 @@ export class ToolbarComponent implements OnInit {
   routeToProfile() {
     this.router.navigate(['/myprofile']);
   }
-  openBlog(id: string) {
-    this.router.navigate(['/blogdetails'], { queryParams: { id } });
+  openBlog(title:string,id: string) {
+    title = title.toLowerCase();
+    title = title.replace(/ /g,"-");
+    this.showSearchResults = false;
+    this.router.navigate([`blogdetails/${title}`], { queryParams: { id } });
   }
   extractFirstImageURL(postContent: string): string | null {
     const regex = /<img src="(.*?)"/g;
@@ -101,7 +104,7 @@ export class ToolbarComponent implements OnInit {
         response.status === 'success' &&
         'data' in response
       ) {
-        this.searchResults = (response.data as data).blogs as blogs[];
+        this.searchResults = (response.data as data).blogs as blog[];
         console.log(this.searchResults);
         for (let post of this.searchResults) {
           post.time = new Date(post.time).toDateString().toString();

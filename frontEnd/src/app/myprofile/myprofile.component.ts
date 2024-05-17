@@ -6,7 +6,7 @@ import {
   ApiResponseFollower,
   ApiResponseFollowing,
   Persons,
-  blogs,
+  blog,
   data,
 } from 'src/DataTypes';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -30,7 +30,7 @@ export class MyprofileComponent implements OnInit {
   segmentValue: string = 'default';
   lock = false;
 
-  posts!: blogs[];
+  posts!: blog[];
   page: number = 1;
   followingList: Persons[] = [];
   followerList: Persons[] = [];
@@ -66,13 +66,10 @@ export class MyprofileComponent implements OnInit {
       this.api.getMySocialLinks(item).subscribe({
         next: (response) => {
           this.link[item] = response.data.social.socialAccountLink;
-          console.log('success from getmysociallink');
-          console.log(this.link);
           if (this.link[item] == null)
             this.link[item] = `https://www.${item}.com/`;
         },
         error: (error) => {
-          console.log(this.link);
           this.link[item] = `https://www.${item}.com/`;
         },
       });
@@ -81,7 +78,6 @@ export class MyprofileComponent implements OnInit {
   getMyBio() {
     this.api.getMyBio().subscribe({
       next: (response) => {
-        console.log('getmybio', response);
         if (
           'status' in response &&
           response.status === 'success' &&
@@ -103,7 +99,6 @@ export class MyprofileComponent implements OnInit {
           response.status === 'success' &&
           'data' in response
         ) {
-          console.log(response);
           const userDetails = (
             response.data as {
               userDetails: {
@@ -121,7 +116,6 @@ export class MyprofileComponent implements OnInit {
 
           this.name = userDetails.firstName + ' ' + userDetails.lastName;
           this.lock = userDetails.lockProfile;
-
           this.reads = userDetails.totalPostRead;
           if (this.reads === null) this.reads = 0;
         }
@@ -152,7 +146,6 @@ export class MyprofileComponent implements OnInit {
   getMyFollowerList() {
     this.api.getMyFollowerList().subscribe({
       next: (response) => {
-        console.log(response);
         this.followerList = (response as ApiResponseFollower).data.followers;
 
         this.followerList = this.followerList.map((obj) => {
@@ -160,7 +153,6 @@ export class MyprofileComponent implements OnInit {
           obj['id'] = obj['followerId'];
           // Delete old key
           delete obj['followerId'];
-          console.log(obj.firstName, obj.id);
           return obj;
         });
       },
@@ -195,18 +187,18 @@ export class MyprofileComponent implements OnInit {
   }
   segmentChanged(event: any) {
     this.segmentValue = event.detail.value;
-    console.log(this.segmentValue);
     if (this.segmentValue === 'default') this.list = this.followingList;
     if (this.segmentValue === 'segment') this.list = this.followerList;
   }
   toggleProfile() {
-    this.api.toggleProfile(this.lock).subscribe({
+    this.api.toggleProfile().subscribe({
       next: (response) => {
         if (
           'status' in response &&
           response.status === 'success' &&
           'data' in response
         ) {
+          this.lock = !this.lock;
           console.log(response);
         }
       },
@@ -218,13 +210,10 @@ export class MyprofileComponent implements OnInit {
   unfollowOrRemove(e: any) {
     const id = e.srcElement.id;
     if (this.segmentValue == 'default') {
-      console.log('Unfollow a User');
-
       //Unfollow a user
       this.api.followUnfollow(id).subscribe({
         next: (response) => {
           // Find index of object with the specified id
-          console.log(response);
           const indexToRemove = this.followingList.findIndex(
             (obj) => obj.id === id
           );
@@ -240,11 +229,8 @@ export class MyprofileComponent implements OnInit {
       });
     } else {
       //remove a user
-      console.log('removeFollower');
-      console.log(id);
       this.api.removeFollower(id).subscribe({
         next: (reponse) => {
-          console.log(reponse);
           this.followerList = this.followerList.filter((person) => {
             return person.id !== id;
           });

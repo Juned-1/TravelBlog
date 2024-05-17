@@ -34,12 +34,18 @@ const search = (query) => {
 };
 //writing post
 exports.writePost = catchAsync(async (req, res, next) => {
-  const post = await Post.create({
+  let post = await Post.create({
     userId: req.tokenData.id, //req.body.id,
     title: req.body.title,
     subtitle: req.body.subtitle,
     content: req.body.content,
   });
+  const user = await User.findOne({
+    attributes : [ "firstName", "lastName" ],
+    where : { id : req.tokenData.id },
+  });
+  post = post.toJSON();
+  post.user = user.toJSON(); 
   return res.status(201).json({
     status: "success",
     data: {

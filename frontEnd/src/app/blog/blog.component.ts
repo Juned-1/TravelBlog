@@ -123,7 +123,6 @@ export class BlogComponent implements OnInit, AfterViewInit {
   }
 
   toggleFollow() {
-    console.log(this.userid);
     this.api.followUnfollow(this.userid).subscribe({
       next: (response) => {
         this.following = !this.following;

@@ -4,8 +4,7 @@
   <ion-grid class="main-header">
     <div class="pic-name">
       <ion-avatar class="avatar">
-        <ion-img src="../../assets/2.png"></ion-img>
-        <!-- <ion-icon name="camera" class="camera-icon"></ion-icon> -->
+        <ion-img src="{{myProfileDetails[0].profilePicture}}"></ion-img>
       </ion-avatar>
       <ion-icon
         name="create"
@@ -13,7 +12,7 @@
         class="edit-profile-button"
         (click)="uploadPofilePicture()"
       ></ion-icon>
-      <h1 class="name">{{ name }}</h1>
+      <h1 class="name">{{ this.myProfileDetails[0].fullName }}</h1>
     </div>
   </ion-grid>
 
@@ -31,7 +30,7 @@
         <ion-label>Lock Profile</ion-label>
         <ion-toggle
           slot="end"
-          [checked]="lock"
+          [checked]="this.myProfileDetails[0].lockProfile"
           color="dark"
           (ionChange)="toggleProfile()"
         ></ion-toggle>
@@ -44,7 +43,7 @@
       <ion-item lines="none" color="primary">
         <ion-text>
           <em>
-            {{bio}}
+            {{this.myProfileDetails[0].bio}}
           </em>
         </ion-text>
       </ion-item>
@@ -55,7 +54,7 @@
           <ion-item lines="none" class="container info ion-text-center">
             <ion-icon name="water" color="primary"></ion-icon>
             <ion-label>
-              <h1>{{noOfPosts}}</h1>
+              <h1>{{this.myProfileDetails[0].noOfPosts}}</h1>
               <h2>Posts</h2>
             </ion-label>
           </ion-item>
@@ -64,7 +63,7 @@
           <ion-item lines="none" class="container info ion-text-center">
             <ion-icon name="water" color="primary"></ion-icon>
             <ion-label>
-              <h1>{{reads}}</h1>
+              <h1>{{this.myProfileDetails[0].totalPostRead}}</h1>
               <h2>Reads</h2>
             </ion-label>
           </ion-item>
@@ -72,16 +71,16 @@
         <ion-col>
           <div class="social-media">
             <span>Follow me in:</span>
-            <a href="{{link.facebook}}" class="media-link"
+            <a href="{{this.myProfileDetails[0].links.facebook}}" class="media-link"
               ><ion-icon name="logo-facebook" size="large"></ion-icon
             ></a>
-            <a href="{{link.linkedin}}" class="media-link"
+            <a href="{{this.myProfileDetails[0].links.linkedin}}" class="media-link"
               ><ion-icon name="logo-linkedin" size="large"></ion-icon
             ></a>
-            <a href="{{link.instagram}}" class="media-link"
+            <a href="{{this.myProfileDetails[0].links.instagram}}" class="media-link"
               ><ion-icon name="logo-instagram" size="large"></ion-icon
             ></a>
-            <a href="{{link.twitter}}" class="media-link"
+            <a href="{{this.myProfileDetails[0].links.twitter}}" class="media-link"
               ><ion-icon name="logo-twitter" size="large"></ion-icon
             ></a>
           </div>

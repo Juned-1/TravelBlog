@@ -115,3 +115,23 @@ export interface ApiResponseFollower {
       followers: Persons[];
   };
 }
+
+export interface ProfileDetails{
+  firstName: string,
+  lastName: string,
+  fullName: string,
+  id: string,
+  profilePicture: string,
+  followingList: Persons[],
+  followerList: Persons[],
+  bio: string,
+  links: {
+    facebook: string,
+    linkedin: string,
+    instagram: string,
+    twitter: string,
+  },
+  noOfPosts: number,
+  totalPostRead: number,
+  lockProfile: boolean
+}

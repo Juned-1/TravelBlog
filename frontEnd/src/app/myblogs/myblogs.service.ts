@@ -2,8 +2,6 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { InfiniteScrollCustomEvent } from '@ionic/angular';
-import { error } from 'console';
-import { Observable } from 'rxjs';
 import {
   SearchParameter as FetchBlogsParameter,
   blog as blog,
@@ -21,7 +19,7 @@ export class MyblogsService {
     page: 1,
     title: '',
   };
-
+ 
   constructor(private http: HttpClient, private sanitizer: DomSanitizer) {}
 
   getPosts() {

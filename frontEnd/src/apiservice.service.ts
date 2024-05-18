@@ -215,18 +215,6 @@ export class APIService {
     );
   }
 
-  uploadProfilePhoto(files: FileList) {
-    const formData = new FormData();
-    formData.append('photoType', 'profile');
-    formData.append('size', '256x256');
-    for (let i = 0; i < files.length; i++) {
-      formData.append('images', files.item(i) as File, `file${i}`);
-    }
-
-    const baseUrl = 'http://localhost:8081/api/v1/users/uploadphoto';
-    return this.http.post(baseUrl, formData, { withCredentials: true });
-  }
-
   getUserDetails(userid: string) {
     return this.http.get(
       `http://localhost:8081/api/v1/users/getuserdetails/${userid}`,

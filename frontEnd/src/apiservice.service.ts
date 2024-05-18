@@ -332,7 +332,6 @@ export class APIService {
   }
 
   addSocial(socialAccountType: string, socialAccountLink: string) {
-    console.log('type', socialAccountType, ':::link', socialAccountLink);
     const baseUrl = 'http://localhost:8081/api/v1/users';
 
     return this.http.patch<any>(

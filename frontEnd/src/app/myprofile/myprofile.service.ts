@@ -14,6 +14,7 @@ export class MyprofileService {
       firstName: '',
       lastName: '',
       fullName: '',
+      gender:'',
       id: '',
       profilePicture: '',
       followingList: [],
@@ -28,6 +29,7 @@ export class MyprofileService {
       noOfPosts: 0,
       totalPostRead: 0,
       lockProfile: true,
+      dob: new Date(),
     },
   ];
   constructor(
@@ -143,6 +145,7 @@ export class MyprofileService {
   getMyProfilePicture() {
     this.getMyActivatedPhotoApi('profile').subscribe({
       next: (response) => {
+        console.log(response);
         const mimeType = response.data.photo.mimeType;
         const photoContent = response.data.photo.photoContent;
         const imageDataUrl = `data:${mimeType};base64,${photoContent}`;

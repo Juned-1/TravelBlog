@@ -94,19 +94,19 @@
             <!-- <ion-label><strong>Following</strong></ion-label> -->
             <ion-segment value="default" (ionChange)="segmentChanged($event)">
               <ion-segment-button value="default">
-                <ion-label>Following ({{ followingList.length }})</ion-label>
+                <ion-label>Following ({{ myProfileDetails[0].followingList.length }})</ion-label>
               </ion-segment-button>
               <ion-segment-button value="segment">
-                <ion-label>Followers ({{ followerList.length }})</ion-label>
+                <ion-label>Followers ({{ myProfileDetails[0].followerList.length }})</ion-label>
               </ion-segment-button>
             </ion-segment>
           </ion-item>
 
           <div *ngIf="segmentValue === 'default'">
-            <ion-item *ngFor="let person of followingList; let index">
+            <ion-item *ngFor="let person of myProfileDetails[0].followingList; let index">
               <ion-avatar slot="start">
-                <img
-                [src]="'https://picsum.photos/80/80?random=' + index"
+                <ion-img
+                [src]="person.profilePhoto===null?defaultProfileImage:person.profilePhoto"
                 alt="avatar"
                 />
               </ion-avatar>
@@ -117,7 +117,7 @@
           </ion-item>
         </div>
         <div *ngIf="segmentValue !== 'default'">
-          <ion-item *ngFor="let person of followerList; let index">
+          <ion-item *ngFor="let person of myProfileDetails[0].followerList; let index">
             <ion-avatar slot="start">
               <img
               [src]="'https://picsum.photos/80/80?random=' + index"

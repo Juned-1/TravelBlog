@@ -497,6 +497,7 @@ exports.followerList = catchAsync(async (req, res, next) => {
       ) {
         el.following = true;
       }
+      el.profilePhoto = el.profilePhoto ? el.profilePhoto.toString('utf-8') : null;
       return el;
     })
   );
@@ -558,6 +559,7 @@ exports.followingList = catchAsync(async (req, res, next) => {
       ) {
         el.following = true;
       }
+      el.profilePhoto = el.profilePhoto ? el.profilePhoto.toString('utf-8') : null;
       return el;
     })
   );

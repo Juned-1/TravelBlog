@@ -53,7 +53,7 @@ export class MyprofileComponent implements OnInit {
     this.getMyFollowingList();
     // this.getMyFollowerList();
     // this.getMySocialLinks();
-    // this.myProfileService.getMyProfilePicture();
+    this.myProfileService.getMyProfilePicture();
   }
   getMySocialLinks() {
     const socialTypes = ['facebook', 'linkedin', 'instagram', 'twitter'];

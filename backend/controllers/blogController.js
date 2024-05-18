@@ -83,10 +83,11 @@ exports.getSpecificPost = catchAsync(async (req, res, next) => {
       {
         model: User,
         attributes: [],
-        where: { id: Sequelize.col("Post.userId") },
+        where: { /*id: Sequelize.col("Post.userId")*/ },
       },
     ],
     where: { id: req.params.id },
+    //logging : console.log
   });
   // console.log(result);
   // console.log(req.params.id);

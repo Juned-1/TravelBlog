@@ -467,7 +467,7 @@ exports.followerList = catchAsync(async (req, res, next) => {
       ],
       [
         Sequelize.literal(
-          `(SELECT photoName FROM Photos WHERE Photos.userId = Followship.followerId AND Photos.photoType = 'profile' AND Photos.isActive = 1)`
+          `(SELECT photoContent FROM Photos WHERE Photos.userId = Followship.followerId AND Photos.photoType = 'profile' AND Photos.isActive = 1)`
         ),
         "profilePhoto",
       ],
@@ -528,7 +528,7 @@ exports.followingList = catchAsync(async (req, res, next) => {
       ],
       [
         Sequelize.literal(
-          `(SELECT photoName FROM Photos WHERE Photos.userId = Followship.followingId AND Photos.photoType = 'profile' AND Photos.isActive = 1)`
+          `(SELECT photoContent FROM Photos WHERE Photos.userId = Followship.followingId AND Photos.photoType = 'profile' AND Photos.isActive = 1)`
         ),
         "profilePhoto",
       ],

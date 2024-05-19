@@ -199,9 +199,14 @@ exports.getAllConversation = catchAsync(async (req, res, next) => {
 exports.sendMessage = async (req, res, next, io, getReceiverSocketId) => {
   const convid = req.params.convid;
   const { messageText } = req.body;
-  console.log(messageText,convid);
   const senderId = req.tokenData.id;
   let conversation = await Conversation.findOne({
+    include : [
+      {
+        model : Participant,
+        attributes : ["userId"],
+      },
+    ],
     where: {
       conversationId: convid,
     },
@@ -248,7 +253,9 @@ exports.sendMessage = async (req, res, next, io, getReceiverSocketId) => {
   user = user.toJSON();
   message.Attachments = attachments === undefined ? [] : attachments;
   message.User = user;
-  const receiverSocketId = getReceiverSocketId(conversation.conversationId);
+  const [ receiver ] = conversation.toJSON().Participants.filter(el => el.userId !== senderId);
+  const { userId : receiverId } = receiver;
+  const receiverSocketId = getReceiverSocketId(receiverId);
   if (receiverSocketId) {
     // io.to(<socket_id>).emit() used to send events to specific client
     io.to(receiverSocketId).emit("newMessage", message);
@@ -305,12 +312,12 @@ exports.getMessage = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.deleteAttachment = catchAsync(async (req, res, next, io, getReceiverSocketId) => {
+exports.deleteAttachment = async (req, res, next, io, getReceiverSocketId) => {
   let attachment = await Attachment.findOne({
     include: [
       {
         model: Message,
-        attributes: ["senderId"],
+        attributes: ["senderId","conversationId"],
       },
     ],
     where: {
@@ -323,10 +330,23 @@ exports.deleteAttachment = catchAsync(async (req, res, next, io, getReceiverSock
   if (attachment.Message.senderId !== req.tokenData.id) {
     return next(new AppError("You are not authorize to perform deletion!", 401));
   }
+  const conversationId = attachment.Message.conversationId;
+  const senderId = attachment.Message.senderId;
+  const conversation = await Conversation.findByPk(conversationId, {
+    include : [
+      {
+        model : Participant,
+        attributes : ["userId"],
+      },
+    ],
+  });
+  const [ receiver ] = conversation.toJSON().Participants.filter(el => el.userId !== senderId);
+  const { userId : receiverId} = receiver;
+  //console.log(receiverId);
   const attachmentPath = path.join(uploadDirectory, attachment.attachmentName);
   await promisify(fs.unlink)(attachmentPath);
   await attachment.destroy();
-  const receiverSocketId = getReceiverSocketId(conversation.conversationId);
+  const receiverSocketId = getReceiverSocketId(receiverId);
   if (receiverSocketId) {
     // io.to(<socket_id>).emit() used to send events to specific client
     io.to(receiverSocketId).emit("deleteAttachment", req.params.attachmentId);
@@ -335,9 +355,9 @@ exports.deleteAttachment = catchAsync(async (req, res, next, io, getReceiverSock
     status: "success",
     data: null,
   });
-});
+};
 
-exports.deleteMessage = catchAsync(async (req, res, next, io, getReceiverSocketId) => {
+exports.deleteMessage = async (req, res, next, io, getReceiverSocketId) => {
   let message = await Message.findOne({
     include: [
       {
@@ -352,7 +372,7 @@ exports.deleteMessage = catchAsync(async (req, res, next, io, getReceiverSocketI
   if (!message) {
     return next(new AppError("No message is found with given id", 404));
   }
-  if (message.senderId == req.tokenData.id) {
+  if (message.senderId !== req.tokenData.id) {
     return next(new AppError("You are not authorize to perform deletion!", 401));
   }
   if (message.Attachments.length > 0) {
@@ -362,12 +382,27 @@ exports.deleteMessage = catchAsync(async (req, res, next, io, getReceiverSocketI
           uploadDirectory,
           attachment.attachmentName
         );
-        await promisify(fs.unlink)(attachmentPath);
+        const status = await promisify(fs.unlink)(attachmentPath);
+        if(!status){
+          await Attachment.destroy({where : {attachmentId : attachment.attachmentId}});
+        }
       })
     );
   }
+  const senderId = message.senderId;
+  const conversationId = message.conversationId;
+  const conversation = await Conversation.findByPk(conversationId, {
+    include : [
+      {
+        model : Participant,
+        attributes : ["userId"],
+      },
+    ]
+  })
+  const [ receiver ] = conversation.toJSON().Participants.filter(el => el.userId !== senderId);
+  const { userId : receiverId } = receiver;
   await message.destroy();
-  const receiverSocketId = getReceiverSocketId(conversation.conversationId);
+  const receiverSocketId = getReceiverSocketId(receiverId);
   if (receiverSocketId) {
     // io.to(<socket_id>).emit() used to send events to specific client
     io.to(receiverSocketId).emit("deleteMessage", req.params.messageId);
@@ -376,9 +411,9 @@ exports.deleteMessage = catchAsync(async (req, res, next, io, getReceiverSocketI
     status : "success",
     data : null,
   });
-});
+};
 
-exports.editMessage = catchAsync(async (req, res, next) => {
+exports.editMessage = async (req, res, next, io, getReceiverSocketId) => {
   const { messageText } = req.body;
   let message = await Message.findOne({
     include : [
@@ -406,7 +441,19 @@ exports.editMessage = catchAsync(async (req, res, next) => {
   message = await message.update({messageText : encryptedMessage});
   message = message.toJSON();
   message.messageText = await decryptAES(message.messageText, key);
-  const receiverSocketId = getReceiverSocketId(conversation.conversationId);
+  const conversationId = message.conversationId;
+  const senderId = message.senderId;
+  const conversation = await Conversation.findByPk(conversationId, {
+    include : [
+      {
+        model : Participant,
+        attributes : ["userId"],
+      },
+    ]
+  })
+  const [ receiver ] = conversation.toJSON().Participants.filter(el => el.userId !== senderId);
+  const { userId : receiverId } = receiver;
+  const receiverSocketId = getReceiverSocketId(receiverId);
   if (receiverSocketId) {
     // io.to(<socket_id>).emit() used to send events to specific client
     io.to(receiverSocketId).emit("editMessage", message);
@@ -417,4 +464,4 @@ exports.editMessage = catchAsync(async (req, res, next) => {
       message,
     }
   })
-});
+};

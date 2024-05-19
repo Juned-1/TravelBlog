@@ -16,29 +16,26 @@ module.exports = (io, getReceiverSocketId) => {
   router.post(
     "/sendmessage/:convid",
     chatController.uploadAttachment,
-    catchAsync(async (req, res, next) =>
-      chatController.sendMessage(req, res, next, io, getReceiverSocketId)
-    )
+    async (req, res, next) =>
+      catchAsync(chatController.sendMessage(req, res, next, io, getReceiverSocketId))
+    
   );
   router.get("/allconversation", chatController.getAllConversation);
   router.get("/receivemessage/:convid", chatController.getMessage);
   router.delete(
     "/deleteattachment/:attachmentId",
-    catchAsync(async (req, res, next) => {
-      chatController.deleteAttachment(req, res, next, io, getReceiverSocketId);
-    })
+    async (req, res, next) => 
+      catchAsync(chatController.deleteAttachment(req, res, next, io, getReceiverSocketId))
   );
   router.delete(
     "/deletemessage/:messageId",
-    catchAsync((req, res, next) => {
-      chatController.deleteMessage(req, res, next, io, getReceiverSocketId);
-    })
+    async (req, res, next) => 
+      catchAsync(chatController.deleteMessage(req, res, next, io, getReceiverSocketId))
   );
   router.patch(
     "/editmessage/:messageId",
-    catchAsync((req, res, next) => {
-      chatController.editMessage(req, res, next, io, getReceiverSocketId);
-    })
+    async(req, res, next) => 
+      catchAsync(chatController.editMessage(req, res, next, io, getReceiverSocketId))
   );
   return router;
 };

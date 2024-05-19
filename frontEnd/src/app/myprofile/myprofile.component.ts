@@ -31,8 +31,6 @@ export class MyprofileComponent implements OnInit {
   page: number = 1;
   defaultProfileImage = '../../assets/2.png';
 
-  list: Persons[] = [];
-
   constructor(
     private router: Router,
     private api: APIService,
@@ -42,16 +40,15 @@ export class MyprofileComponent implements OnInit {
   ngOnInit() {
     this.myProfileDetails = this.myProfileService.myProfileDetails;
     this.myProfileDetails[0].profilePicture = this.defaultProfileImage;
-    this.list = this.myProfileDetails[0].followingList;
 
     const id = localStorage.getItem('currentUserId');
     this.loggedUserId = id === null ? '' : id;
 
     this.myProfileService.getMyProfileDetails();
-    // this.myProfileService.getMyBio();
+    this.myProfileService.getMyBio();
     this.getMyFollowingList();
     this.getMyFollowerList();
-    // this.getMySocialLinks();
+    this.getMySocialLinks();
     this.myProfileService.getMyProfilePicture();
   }
   getMySocialLinks() {
@@ -92,7 +89,6 @@ export class MyprofileComponent implements OnInit {
         });
 
         this.myProfileDetails[0].followingList = followingList;
-        this.list = this.myProfileDetails[0].followingList;
       },
       error: (error) => {
         console.log(error);
@@ -112,6 +108,15 @@ export class MyprofileComponent implements OnInit {
           // Delete old key
           delete obj['followerId'];
           return obj;
+        });
+
+        followerList.forEach((person) => {
+          if (person.profilePhoto !== null) {
+            const mimeType = 'image';
+            const photoContent = person.profilePhoto;
+            const imageDataUrl = `data:${mimeType};base64,${photoContent}`;
+            person.profilePhoto = imageDataUrl;
+          }
         });
 
         this.myProfileDetails[0].followerList = followerList;
@@ -140,10 +145,6 @@ export class MyprofileComponent implements OnInit {
   }
   segmentChanged(event: any) {
     this.segmentValue = event.detail.value;
-    if (this.segmentValue === 'default')
-      this.list = this.myProfileDetails[0].followingList;
-    if (this.segmentValue === 'segment')
-      this.list = this.myProfileDetails[0].followerList;
   }
   toggleProfile() {
     this.api.toggleProfile().subscribe({
@@ -177,7 +178,6 @@ export class MyprofileComponent implements OnInit {
           if (indexToRemove !== -1) {
             this.myProfileDetails[0].followingList.splice(indexToRemove, 1);
           }
-          this.list = this.myProfileDetails[0].followingList;
         },
         error: (error) => {
           console.log(error);

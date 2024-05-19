@@ -7,7 +7,7 @@
         </ion-list-header>
         <ion-item
           *ngFor="let conversation of conversations"
-          (click)="selectPerson(conversation.conversationId)"
+          (click)="selectPerson(conversation.conversationId,conversation.participants[0].userId)"
           class="select"
           [ngClass]="{
             'selected-item':

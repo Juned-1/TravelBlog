@@ -259,6 +259,7 @@ exports.sendMessage = async (req, res, next, io, getReceiverSocketId) => {
   if (receiverSocketId) {
     // io.to(<socket_id>).emit() used to send events to specific client
     io.to(receiverSocketId).emit("newMessage", message);
+    console.log("newMessage Emiited");
   }
   //message = [{...message}];
   return res.status(201).json({

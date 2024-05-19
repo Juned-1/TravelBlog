@@ -42,6 +42,7 @@
     "quill-image-compress": "^1.2.30",
     "quill-image-resize-module": "^3.0.0",
     "rxjs": "~7.8.0",
+    "socket.io-client": "^4.7.5",
     "tslib": "^2.3.0",
     "zone.js": "~0.13.0"
   },

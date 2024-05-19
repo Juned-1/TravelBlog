@@ -10,6 +10,8 @@ import { ToastrService } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
 import { userDetails, data1 } from 'src/DataTypes';
 import { error } from 'console';
+import { MyprofileService } from '../myprofile/myprofile.service';
+import { AuthService } from '../Services/Authentication/auth.service';
 
 @Component({
   selector: 'editapp-profile',
@@ -52,7 +54,9 @@ export class EditProfileComponent implements OnInit {
     private router: Router,
     private api: APIService,
     private sanitizer: DomSanitizer,
-    private toast: ToastrService
+    private toast: ToastrService,
+    private myProfileService: MyprofileService,
+    private authService: AuthService,
   ) {}
 
   ngOnInit() {
@@ -79,7 +83,6 @@ export class EditProfileComponent implements OnInit {
   }
 
   makeChanges() {
-    console.log('hello');
     if (this.toggleChangePassword === true) {
       this.changePassword();
       return;
@@ -95,8 +98,21 @@ export class EditProfileComponent implements OnInit {
 
     this.api.setUserDetails(this.formData).subscribe(
       (response) => {
-        // console.log(response);
+        console.log(response);
         if ('status' in response && response.status === 'success') {
+          const firstName = (response as any).data.userDetails.firstName;
+          const lastName = (response as any).data.userDetails.lastName;
+          this.myProfileService.myProfileDetails[0].firstName = firstName;
+          this.myProfileService.myProfileDetails[0].lastName = lastName;
+          this.myProfileService.myProfileDetails[0].fullName = firstName+" "+lastName;
+          this.myProfileService.myProfileDetails[0].dob = (response as any).data.userDetails.dob;
+          this.myProfileService.myProfileDetails[0].gender = (response as any).data.userDetails.gender;
+
+          localStorage.setItem('travel-blog', String(firstName+" "+lastName));
+          this.authService.getUser();
+
+
+
           this.toast.success('Profile Edited successfully');
           this.router.navigate(['/myprofile']);
         }

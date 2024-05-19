@@ -28,11 +28,8 @@ export class MyprofileComponent implements OnInit {
   file!: FileList;
   uploadingProfilePicture: boolean = false;
   segmentValue: string = 'default';
-
   page: number = 1;
-  followingList: Persons[] = [];
-  followerList: Persons[] = [];
-  list: Persons[] = [];
+  defaultProfileImage = '../../assets/2.png';
 
   constructor(
     private router: Router,
@@ -42,17 +39,16 @@ export class MyprofileComponent implements OnInit {
 
   ngOnInit() {
     this.myProfileDetails = this.myProfileService.myProfileDetails;
-    this.myProfileDetails[0].profilePicture = '../../assets/2.png';
-    this.list = this.followingList;
+    this.myProfileDetails[0].profilePicture = this.defaultProfileImage;
 
     const id = localStorage.getItem('currentUserId');
     this.loggedUserId = id === null ? '' : id;
 
-    // this.myProfileService.getMyProfileDetails();
-    // this.myProfileService.getMyBio();
+    this.myProfileService.getMyProfileDetails();
+    this.myProfileService.getMyBio();
     this.getMyFollowingList();
-    // this.getMyFollowerList();
-    // this.getMySocialLinks();
+    this.getMyFollowerList();
+    this.getMySocialLinks();
     this.myProfileService.getMyProfilePicture();
   }
   getMySocialLinks() {
@@ -69,20 +65,30 @@ export class MyprofileComponent implements OnInit {
       });
     });
   }
-  
-  
+
   getMyFollowingList() {
     this.api.getMyFollowingList().subscribe({
       next: (response) => {
-        this.followingList = (response as ApiResponseFollowing).data.followings;
-        this.followingList = this.followingList.map((obj) => {
+        let followingList: Persons[] = (response as ApiResponseFollowing).data
+          .followings;
+        followingList = followingList.map((obj) => {
           // Assign new key
           obj['id'] = obj['followingId'];
           // Delete old key
           delete obj['followingId'];
           return obj;
         });
-        this.list = this.followingList;
+
+        followingList.forEach((person) => {
+          if (person.profilePhoto !== null) {
+            const mimeType = 'image';
+            const photoContent = person.profilePhoto;
+            const imageDataUrl = `data:${mimeType};base64,${photoContent}`;
+            person.profilePhoto = imageDataUrl;
+          }
+        });
+
+        this.myProfileDetails[0].followingList = followingList;
       },
       error: (error) => {
         console.log(error);
@@ -92,15 +98,28 @@ export class MyprofileComponent implements OnInit {
   getMyFollowerList() {
     this.api.getMyFollowerList().subscribe({
       next: (response) => {
-        this.followerList = (response as ApiResponseFollower).data.followers;
+        console.log(response);
+        let followerList: Persons[] = (response as ApiResponseFollower).data
+          .followers;
 
-        this.followerList = this.followerList.map((obj) => {
+        followerList = followerList.map((obj) => {
           // Assign new key
           obj['id'] = obj['followerId'];
           // Delete old key
           delete obj['followerId'];
           return obj;
         });
+
+        followerList.forEach((person) => {
+          if (person.profilePhoto !== null) {
+            const mimeType = 'image';
+            const photoContent = person.profilePhoto;
+            const imageDataUrl = `data:${mimeType};base64,${photoContent}`;
+            person.profilePhoto = imageDataUrl;
+          }
+        });
+
+        this.myProfileDetails[0].followerList = followerList;
       },
       error: (error) => {
         console.log(error);
@@ -126,8 +145,6 @@ export class MyprofileComponent implements OnInit {
   }
   segmentChanged(event: any) {
     this.segmentValue = event.detail.value;
-    if (this.segmentValue === 'default') this.list = this.followingList;
-    if (this.segmentValue === 'segment') this.list = this.followerList;
   }
   toggleProfile() {
     this.api.toggleProfile().subscribe({
@@ -153,14 +170,14 @@ export class MyprofileComponent implements OnInit {
       this.api.followUnfollow(id).subscribe({
         next: (response) => {
           // Find index of object with the specified id
-          const indexToRemove = this.followingList.findIndex(
-            (obj) => obj.id === id
-          );
+          const indexToRemove =
+            this.myProfileDetails[0].followingList.findIndex(
+              (obj) => obj.id === id
+            );
           // If index is found, remove the object
           if (indexToRemove !== -1) {
-            this.followingList.splice(indexToRemove, 1);
+            this.myProfileDetails[0].followingList.splice(indexToRemove, 1);
           }
-          this.list = this.followingList;
         },
         error: (error) => {
           console.log(error);
@@ -170,9 +187,10 @@ export class MyprofileComponent implements OnInit {
       //remove a user
       this.api.removeFollower(id).subscribe({
         next: (reponse) => {
-          this.followerList = this.followerList.filter((person) => {
-            return person.id !== id;
-          });
+          this.myProfileDetails[0].followerList =
+            this.myProfileDetails[0].followerList.filter((person) => {
+              return person.id !== id;
+            });
         },
         error: (error) => {
           console.log(error);

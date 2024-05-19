@@ -1,19 +1,17 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { APIService } from 'src/apiservice.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AuthService implements OnInit {
+export class AuthService {
   loggedIn: boolean = false;
   user: string | null = '';
   currentUserId: string = '';
 
   constructor(private api: APIService) {}
 
-  ngOnInit(): void {
-    console.log('AuthService OnInit');
-  }
+ 
 
   checkLoggedIn() {
     this.api.authorise().subscribe({

@@ -27,7 +27,6 @@ export class MyprofileComponent implements OnInit {
   fileName: string = '';
   file!: FileList;
   uploadingProfilePicture: boolean = false;
-  segmentValue: string = 'default';
   page: number = 1;
   defaultProfileImage = '../../assets/2.png';
 
@@ -143,9 +142,7 @@ export class MyprofileComponent implements OnInit {
     this.myProfileService.uploadProfilePicture(this.file);
     this.cancel();
   }
-  segmentChanged(event: any) {
-    this.segmentValue = event.detail.value;
-  }
+
   toggleProfile() {
     this.api.toggleProfile().subscribe({
       next: (response) => {
@@ -165,37 +162,36 @@ export class MyprofileComponent implements OnInit {
   }
   unfollowOrRemove(e: any) {
     const id = e.srcElement.id;
-    if (this.segmentValue == 'default') {
-      //Unfollow a user
-      this.api.followUnfollow(id).subscribe({
-        next: (response) => {
-          // Find index of object with the specified id
-          const indexToRemove =
-            this.myProfileDetails[0].followingList.findIndex(
-              (obj) => obj.id === id
-            );
-          // If index is found, remove the object
-          if (indexToRemove !== -1) {
-            this.myProfileDetails[0].followingList.splice(indexToRemove, 1);
-          }
-        },
-        error: (error) => {
-          console.log(error);
-        },
-      });
-    } else {
-      //remove a user
-      this.api.removeFollower(id).subscribe({
-        next: (reponse) => {
-          this.myProfileDetails[0].followerList =
-            this.myProfileDetails[0].followerList.filter((person) => {
-              return person.id !== id;
-            });
-        },
-        error: (error) => {
-          console.log(error);
-        },
-      });
-    }
+    //Unfollow a user
+    this.api.followUnfollow(id).subscribe({
+      next: (response) => {
+        // Find index of object with the specified id
+        const indexToRemove = this.myProfileDetails[0].followingList.findIndex(
+          (obj) => obj.id === id
+        );
+        // If index is found, remove the object
+        if (indexToRemove !== -1) {
+          this.myProfileDetails[0].followingList.splice(indexToRemove, 1);
+        }
+      },
+      error: (error) => {
+        console.log(error);
+      },
+    });
+  }
+  remove(e: any) {
+    const id = e.srcElement.id;
+
+    this.api.removeFollower(id).subscribe({
+      next: (reponse) => {
+        this.myProfileDetails[0].followerList =
+          this.myProfileDetails[0].followerList.filter((person) => {
+            return person.id !== id;
+          });
+      },
+      error: (error) => {
+        console.log(error);
+      },
+    });
   }
 }

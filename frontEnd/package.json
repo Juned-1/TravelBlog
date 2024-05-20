@@ -32,6 +32,7 @@
     "@capacitor/status-bar": "5.0.6",
     "@ionic/angular": "^7.0.0",
     "angular-jwt": "^0.1.11",
+    "bootstrap": "^5.3.3",
     "cheerio": "^1.0.0-rc.12",
     "ionicons": "^7.0.0",
     "moment": "^2.30.1",

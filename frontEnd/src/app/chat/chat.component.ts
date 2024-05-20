@@ -6,17 +6,18 @@ import { APIService } from 'src/apiservice.service';
 import { ActivatedRoute } from '@angular/router';
 import { error } from 'console';
 import { ChatService } from './chat.service';
+import { AuthService } from '../Services/Authentication/auth.service';
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, FormsModule],
+  imports: [CommonModule, IonicModule, FormsModule,],
 })
 export class ChatComponent implements OnInit {
   date = new Date();
-  messages!: Message[];
+  messages: Message[] = [];
 
   selectedConversationId: any = null;
   @ViewChild('content', { static: true }) private content: any;
@@ -30,9 +31,12 @@ export class ChatComponent implements OnInit {
   constructor(
     private api: APIService,
     private route: ActivatedRoute,
-    private chatService: ChatService
+    private chatService: ChatService,
+    public authService:AuthService
   ) {}
   ngOnInit() {
+    this.messages = this.chatService.messages;
+
     this.id = this.route.snapshot.queryParams['id'];
 
     const temp = localStorage.getItem('currentUserId');
@@ -62,7 +66,7 @@ export class ChatComponent implements OnInit {
                 .createIndividualConversation({ recipientId: this.id })
                 .subscribe(
                   (response) => {
-                    console.log('create individual conversation',response);
+                    console.log('create individual conversation', response);
                     this.conversations.push(response.data.conversation[0]);
                     this.selectPerson(
                       response.data.conversation[0].conversationId,
@@ -89,11 +93,16 @@ export class ChatComponent implements OnInit {
   selectPerson(selectedConversationId: string, receiverId: string) {
     this.receiverId = receiverId;
     this.selectedConversationId = selectedConversationId;
-    this.chatService.connectSocket(this.loggedUserId);
+    this.chatService.connectSocket(
+      this.loggedUserId,
+      this.scrollToBottom.bind(this)
+    );
 
     this.api.getMessage(selectedConversationId).subscribe({
       next: (response) => {
-        this.messages = response.data.message;
+        const messages = response.data.message;
+        this.messages.length = 0;
+        this.messages.push(...messages);
         this.messages.forEach((message) => {
           message.timestamp = new Date(message.timestamp);
         });
@@ -101,13 +110,12 @@ export class ChatComponent implements OnInit {
         this.messages.sort((a: Message, b: Message) => {
           return +new Date(a.timestamp) - +new Date(b.timestamp);
         });
+        this.scrollToBottom();
       },
       error: (error) => {
         console.log(error);
       },
     });
-
-    this.scrollToBottom();
   }
 
   onFocus() {
@@ -146,7 +154,7 @@ export class ChatComponent implements OnInit {
       if (this.content.scrollToBottom) {
         this.content.scrollToBottom();
       }
-    }, 1);
+    }, 2);
   }
 }
 

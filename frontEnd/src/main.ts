@@ -12,7 +12,7 @@ import { APIService } from './apiservice.service';
 import { HttpClientModule } from '@angular/common/http';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { GoogleLoginProvider, SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
-import env from './env'
+import {env} from '../env'
 
 
 

@@ -24,7 +24,11 @@ export class ProfileComponent implements OnInit {
   following!: boolean;
   profileId: string = '';
   loggedUserId!: string;
-  name!: string;
+  fullName!: string;
+  firstName = ''
+  lastName = ''
+  email = '';
+  dob='';
 
   posts!: blog[];
   page: number = 1;
@@ -32,17 +36,16 @@ export class ProfileComponent implements OnInit {
   lock = false;
   bio: string = '';
 
-  segmentValue: string = 'default';
   followingList: Persons[] = [];
   followerList: Persons[] = [];
   list: Persons[] = [];
   reads: number = 0;
   link: {
-    facebook: string;
-    linkedin: string;
-    instagram: string;
-    twitter: string;
-  } = { facebook: '', linkedin: '', instagram: '', twitter: '' };
+    facebook: string | null;
+    linkedin: string | null;
+    instagram: string | null;
+    twitter: string | null;
+  } = { facebook: null, linkedin: null, instagram: null, twitter: null };
 
   constructor(
     private router: Router,
@@ -74,14 +77,12 @@ export class ProfileComponent implements OnInit {
             response.status === 'success' &&
             'data' in response
           ) {
-            this.link[item] = response.data.social.socialAccountLink;
-            if (this.link[item] == null) {
-              this.link[item] = `https://www.${item}.com/`;
+            if (response.data.social.socialAccountLink != null || response.data.social.socialAccountLink !='') {
+              this.link[item] = response.data.social.socialAccountLink;
             }
           }
         },
         error: (error) => {
-          this.link[item] = `https://www.${item}.com/`;
         },
       });
     });
@@ -89,6 +90,7 @@ export class ProfileComponent implements OnInit {
   getProfileDetails() {
     this.api.getUserDetails(this.profileId).subscribe({
       next: (response) => {
+        console.log(response);
         if (
           'status' in response &&
           response.status === 'success' &&
@@ -109,8 +111,11 @@ export class ProfileComponent implements OnInit {
               };
             }
           ).userDetails;
-
-          this.name = userDetails.firstName + ' ' + userDetails.lastName;
+          this.email = userDetails.email;
+          this.dob = userDetails.dob;
+          this.firstName = userDetails.firstName;
+          this.lastName = userDetails.lastName;
+          this.fullName = this.firstName + ' ' + this.lastName;
           this.following = userDetails.following;
           this.lock = userDetails.lockProfile;
 
@@ -157,6 +162,7 @@ export class ProfileComponent implements OnInit {
   getFollowingList() {
     this.api.getFollowingList(this.profileId).subscribe({
       next: (response) => {
+        console.log('following list',response);
         this.followingList = (response as ApiResponseFollowing).data.followings;
 
         this.followingList = this.followingList.map((obj) => {
@@ -179,6 +185,9 @@ export class ProfileComponent implements OnInit {
   getFollowerList() {
     this.api.getFollowerList(this.profileId).subscribe({
       next: (response) => {
+        console.log('follower list',response);
+        console.log(this.loggedUserId);
+
         this.followerList = (response as ApiResponseFollower).data.followers;
         this.followerList = this.followerList.map((obj) => {
           obj['selfFollow'] =
@@ -280,12 +289,6 @@ export class ProfileComponent implements OnInit {
   gotoChat() {
     const id = this.profileId;
     this.router.navigate(['/chat'], { queryParams: { id } });
-  }
-
-  segmentChanged(event: any) {
-    this.segmentValue = event.detail.value;
-    if (this.segmentValue === 'default') this.list = this.followingList;
-    if (this.segmentValue === 'segment') this.list = this.followerList;
   }
   getBio() {
     this.api.getBio(this.profileId).subscribe({

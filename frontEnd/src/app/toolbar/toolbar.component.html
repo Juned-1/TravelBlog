@@ -1,4 +1,4 @@
-<ion-header class="ion-no-border">
+<!-- <ion-header class="ion-no-border">
   <ion-toolbar id="new-background-color">
     <ion-buttons slot="start">
       <ion-menu-button *ngIf="authService.loggedIn"></ion-menu-button>
@@ -46,9 +46,9 @@
       <ion-button
         class="toolbar-end-items"
         *ngIf="!authService.loggedIn"
+        (click)="signup()"
         shape="round"
         fill="solid"
-        (click)="signup()"
         color="primary"
         >SignUp</ion-button
       >
@@ -88,6 +88,117 @@
       >
         <app-blog-card-home [post]="post"></app-blog-card-home>
         <h1></h1>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content> -->
+<!-- ------------------------------------------------------------------------------------------------------------------- -->
+<nav
+  class="navbar navbar-expand-md"
+  style="
+    background: linear-gradient(
+      90deg,
+      rgb(145, 193, 253) 12.9%,
+      rgb(247, 224, 229) 91.2%
+    );
+  "
+>
+  <div class="container-fluid">
+    <a class="navbar-brand me-5" role="button" (click)="routeToHome()">
+      <img
+        (click)="routeToHome()"
+        src="../../assets/icon/favicon.ico"
+        alt="img"
+        class="logo"
+        id="logo"
+      />
+      Travel Blogging
+    </a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarScroll"
+      aria-controls="navbarScroll"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarScroll">
+      <!-- Search form -->
+      <form class="d-flex me-2" role="search">
+        <input
+          class="form-control me-2"
+          type="search"
+          placeholder="Type to Search"
+          aria-label="Search"
+          (input)="onSearch()"
+          name="search"
+          [(ngModel)]="searchKeyword"
+        />
+        <!-- <button class="btn btn-outline-success" (click)="onSearch($event)">Search</button> -->
+      </form>
+
+      <div class="d-flex ms-auto">
+        <!-- Conditional buttons/links -->
+        <div *ngIf="authService.loggedIn; else loggedOutButtons" class="me-2">
+          <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll">
+            <li class="nav-item" (click)="routeToHome()">
+              <a class="nav-link active">Home</a>
+            </li>
+            <li class="nav-item" (click)="routeToMyBlogs()">
+              <a class="nav-link active" >My Blogs</a>
+            </li>
+            <li class="nav-item" (click)="routeToChats()">
+              <a class="nav-link active">Chats</a>
+            </li>
+            <li class="nav-item" (click)="routeToProfile()">
+              <a class="nav-link active">{{authService.user}}</a>
+            </li>
+
+            <li class="nav-item" (click)="Logout()">
+              <a class="nav-link text-danger">Logout </a>
+            </li>
+          </ul>
+        </div>
+        <ng-template #loggedOutButtons>
+          <div class="btn-group">
+            <button
+              class="btn btn-outline-primary"
+              id="loginBtn"
+              (click)="LogIn()"
+            >
+              Login
+            </button>
+            <button
+              class="btn btn-outline-secondary"
+              id="signupBtn"
+              (click)="signup()"
+            >
+              Signup
+            </button>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</nav>
+<ion-content *ngIf="showSearchResults" class="search-result">
+  <p *ngIf="searchResults.length === 0" class="fw-bold text-warning">
+    No blogs found matching.
+  </p>
+
+  <ion-grid>
+    <ion-row>
+      <ion-col
+        size="12"
+        sizeMd="6"
+        *ngFor="let post of searchResults"
+        class="home-cards"
+        (click)="openBlog(post.title, post.id)"
+      >
+        <app-blog-card-home [post]="post"></app-blog-card-home>
       </ion-col>
     </ion-row>
   </ion-grid>

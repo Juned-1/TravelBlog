@@ -7,7 +7,7 @@
   cursor: pointer;
 }
 ion-content {
-  height: 90%;
+  // height: 90%;
 }
 
 @media screen and (max-width: 768px) {
@@ -104,9 +104,9 @@ h4 {
   animation-name: fade;
   animation-duration: 1.5s;
 }
-#homepage-header-container {
-  background: linear-gradient(to top left, #39b385, #9be15d);
-}
+// #homepage-header-container {
+//   background: linear-gradient(to top left, #39b385, #9be15d);
+// }
 @keyframes fade {
   from {
     opacity: 0.4;
@@ -116,18 +116,18 @@ h4 {
   }
 }
 
-#empty-msg-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-}
-#empty-msg {
-  background-color: #0000009d;
-  padding: 20px;
-  color: #ffff;
-  border-radius: 20px;
-}
+// #empty-msg-container {
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   height: 100%;
+// }
+// #empty-msg {
+//   background-color: #0000009d;
+//   padding: 20px;
+//   color: #ffff;
+//   border-radius: 20px;
+// }
 #empty-msg-container {
   display: flex;
   justify-content: center;

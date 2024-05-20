@@ -1,3 +1,4 @@
+<!-- 
 <ion-row class="row">
   <ion-col class="persons" size="4">
     <ion-content color="light">
@@ -42,7 +43,6 @@
           <div class="msg-detail">
             <div class="msg-info">
               <p>{{ message.timestamp.toLocaleString() }}</p>
-              <!-- Date.toLocaleString() -->
             </div>
             <div class="msg-content">
               <p>{{ message.messageText }}</p>
@@ -50,60 +50,13 @@
           </div>
 
           <div *ngIf="true || message.senderId === id" class="msg-status">
-            <!-- <div *ngIf="true || message.status === 'pending'; else sent">
-              pending
-              <ion-icon name="checkmark-circle"></ion-icon>
-            </div>
-            <ng-template #sent>
-              <div *ngIf="message.status === 'sent'; else seen">
-                sent
-                <ion-icon name="checkmark-circle-outline"></ion-icon>
-              </div>
-            </ng-template>
-            <ng-template #seen>
-              <div *ngIf="message.status === 'seen'">
-                seen
-                <ion-icon name="checkmark"></ion-icon>
-              </div>
-            </ng-template> -->
+
           </div>
         </div>
       </div>
     </ion-content>
 
-    <!-- <ion-content #content id="content" class="ion-padding">
-      <div class="message-wrap">
-        <div *ngFor="let message of selectedPerson.messages" class="message" [class.right]=" message.userIsSender === true">
-          <div class="msg-detail">
-            <div class="msg-info">
-              <p> {{message.senderFullName}}</p>
-            </div>
-            <div class="msg-content">
-              <p>{{message.message}}</p>
-            </div>
-          </div>
-          <div *ngIf="message.userIsSender" class="msg-status">
-            <div *ngIf="message.status === 'pending';else sent">
-              pending
-              <ion-icon name="checkmark-circle"></ion-icon>
-            </div>
-            <ng-template #sent>
-              <div *ngIf="message.status === 'sent';else seen">
-                sent
-                <ion-icon name="checkmark-circle-outline"></ion-icon>
-              </div>
-            </ng-template>
-            <ng-template #seen>
-              <div *ngIf="message.status === 'seen'">
-                seen
-                <ion-icon name="checkmark"></ion-icon>
-              </div>
-            </ng-template>
-          </div>
-        </div>
-      </div>
-      <div id="bottom"></div>
-    </ion-content> -->
+
 
     <div *ngIf="this.selectedConversationId" class="border input-msg">
       <ion-input
@@ -128,4 +81,107 @@
       </ion-button>
     </div>
   </ion-col>
-</ion-row>
+</ion-row> -->
+
+<!-- <ion-split-pane when="xs" contentId="main">
+
+<ion-menu type="reveal" contentId="chat-content">
+  <ion-content>
+    <ion-list id="inbox-list">
+      <ion-list-header>Chats</ion-list-header>
+      <ion-note>&#64;{{ authService.user }}</ion-note>
+      <ion-menu-toggle
+        auto-hide="true"
+        *ngFor="let p of conversations;"
+      >
+        <ion-item
+          lines="none"
+          detail="false"
+        >
+          <ion-icon
+            aria-hidden="true"
+            slot="start"
+            [ios]="p + '-outline'"
+            [md]="p + '-sharp'"
+          ></ion-icon>
+          <ion-label>{{ p.participants[0].User }}</ion-label>
+        </ion-item>
+      </ion-menu-toggle>
+    </ion-list>
+  </ion-content>
+</ion-menu>
+<div id="chat-content">
+  
+  <ul id="messages"></ul>
+  <form id="form" action="">
+    <input id="input" autocomplete="off" /><button>Send</button>
+  </form>
+  
+</div>
+</ion-split-pane> -->
+<ion-split-pane when="lg" contentId="main">
+  <ion-menu contentId="main">
+    <ion-header>
+      <ion-toolbar color="tertiary">
+        <ion-title>CHATS</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <!-- <ion-list id="inbox-list"> -->
+        <!-- <ion-list-header>Chats</ion-list-header> -->
+        <!-- <ion-note>&#64;{{ authService.user }}</ion-note> -->
+        <!-- <ion-menu-toggle
+          auto-hide="true"
+          *ngFor="let p of conversations;"
+        > -->
+        <!-- <ion-item
+          lines="none"
+          *ngFor="let conversation of conversations"
+        >
+          <ion-icon
+            aria-hidden="true"
+            slot="start"
+            ios="person"
+            md='person'
+          ></ion-icon>
+          <ion-label
+          class="pl-2"
+          >{{
+            conversation.participants[0].User.firstName +
+              " " +
+              conversation.participants[0].User.lastName
+          }}</ion-label>
+        </ion-item> -->
+        <!-- </ion-menu-toggle> -->
+      <!-- </ion-list> -->
+      <ul class="list-group">
+        <li class="list-group-item">Cras justo odio</li>
+        <li class="list-group-item">Dapibus ac facilisis in</li>
+        <li class="list-group-item">Morbi leo risus</li>
+        <li class="list-group-item">Porta ac consectetur ac</li>
+        <li class="list-group-item">Vestibulum at eros</li>
+      </ul>
+    </ion-content>
+  </ion-menu>
+
+  <div class="ion-page" id="main">
+    <ion-header>
+      <ion-toolbar>
+        <ion-buttons>
+          <ion-menu-button></ion-menu-button>
+          <ion-title>Main View</ion-title>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      Main View Content
+
+      <div id="chat-content">
+        <ul id="messages"></ul>
+        <form id="form" action="">
+          <input id="input" autocomplete="off" /><button>Send</button>
+        </form>
+      </div>
+    </ion-content>
+  </div>
+</ion-split-pane>

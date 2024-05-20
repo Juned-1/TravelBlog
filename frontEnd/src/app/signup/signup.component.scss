@@ -1,3 +1,7 @@
+fieldset, legend {
+  all: revert;
+}
+
 ion-content {
   height: 90%;
 }
@@ -22,7 +26,7 @@ ion-content {
   width: 100%;
   border-radius: 12px;
   border: 2px solid #e2e2e2;
-  height: 70px;
+  height: 50px;
   ion-input{
       margin-top: -12px;
   }

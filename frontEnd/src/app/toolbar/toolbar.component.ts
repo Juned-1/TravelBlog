@@ -8,27 +8,37 @@ import { BlogCardHomeComponent } from '../home/blog-card-home/blog-card-home.com
 import { SearchParameter, blog, data } from 'src/DataTypes';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AuthService } from '../Services/Authentication/auth.service';
+import { FormsModule } from '@angular/forms';
+
 
 @Component({
   selector: 'app-toolbar',
   templateUrl: './toolbar.component.html',
-  styleUrls: ['./toolbar.component.scss'],
+  styleUrls: [
+    './toolbar.component.scss',
+  ],
   standalone: true,
-  imports: [IonicModule, MatToolbarModule, CommonModule, BlogCardHomeComponent],
+  imports: [
+    IonicModule,
+    MatToolbarModule,
+    CommonModule,
+    BlogCardHomeComponent,
+    FormsModule,
+  ],
 })
 export class ToolbarComponent implements OnInit {
-
   // @Input() isLoggedIn: boolean = false;
-  authService:AuthService = inject(AuthService);
+  authService: AuthService = inject(AuthService);
 
-  user: string|null = this.authService.getUser();
+  user: string | null = this.authService.getUser();
   searchKeyword: string = '';
   searchResults!: blog[];
   showSearchResults: boolean = false;
+
   constructor(
     private router: Router,
     private api: APIService,
-    private sanitizer: DomSanitizer,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit() {
@@ -69,9 +79,10 @@ export class ToolbarComponent implements OnInit {
   routeToProfile() {
     this.router.navigate(['/myprofile']);
   }
-  openBlog(title:string,id: string) {
+  openBlog(title: string, id: string) {
+    this.searchKeyword = '';
     title = title.toLowerCase();
-    title = title.replace(/ /g,"-");
+    title = title.replace(/ /g, '-');
     this.showSearchResults = false;
     this.router.navigate([`blogdetails/${title}`], { queryParams: { id } });
   }
@@ -84,9 +95,8 @@ export class ToolbarComponent implements OnInit {
       return null;
     }
   }
-  onSearch(searchTerm: any) {
+  onSearch() {
     // Do something with the search term
-    this.searchKeyword = searchTerm.target.value;
     if (this.searchKeyword === '') {
       this.showSearchResults = false;
     } else {
@@ -105,7 +115,6 @@ export class ToolbarComponent implements OnInit {
         'data' in response
       ) {
         this.searchResults = (response.data as data).blogs as blog[];
-        console.log(this.searchResults);
         for (let post of this.searchResults) {
           post.time = new Date(post.time).toDateString().toString();
           // Extract the first image URL from post.post_content
@@ -121,5 +130,21 @@ export class ToolbarComponent implements OnInit {
       }
     });
   }
-}
 
+  // public appPages = [
+  //   { title: 'Home', url: '/', icon: 'home' },
+  //   { title: 'My Blogs', url: '/userblog', icon: 'paper-plane' },
+  //   { title: 'Chats', url: '/chat', icon: 'chatbubbles' },
+  //   { title: 'Profile', url: '/myprofile', icon: 'person' },
+  //   { title: 'Trash', url: '/trash', icon: 'trash' },
+  // ];
+  // routeToHome(){}
+  // routeToMyBlogs(){}
+  routeToChats() {
+    this.router.navigate(['/chat']);
+  }
+  // routeToProfile(){}
+  routeToTrash() {
+    this.router.navigate(['/userblog']);
+  }
+}

@@ -20,16 +20,17 @@ export class MyprofileService {
       followingList: [],
       followerList: [],
       bio: '',
+      email:'',
       links: {
-        facebook: 'https://www.facebook.com',
-        linkedin: 'https://www.linkedin.com',
-        instagram: 'https://www.instagram.com',
-        twitter: 'https://www.twitter.com',
+        facebook: '',
+        linkedin: '',
+        instagram: '',
+        twitter: '',
       },
       noOfPosts: 0,
       totalPostRead: 0,
       lockProfile: true,
-      dob: new Date(),
+      dob: new Date().toDateString(),
     },
   ];
   constructor(
@@ -61,7 +62,7 @@ export class MyprofileService {
               };
             }
           ).userDetails;
-
+          this.myProfileDetails[0].email = userDetails.email;
           this.myProfileDetails[0].fullName =
             userDetails.firstName + ' ' + userDetails.lastName;
           this.myProfileDetails[0].firstName = userDetails.firstName;

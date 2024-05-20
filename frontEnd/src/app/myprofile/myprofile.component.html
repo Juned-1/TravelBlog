@@ -1,4 +1,4 @@
-<ion-backdrop [visible]="true" *ngIf="uploadingProfilePicture"></ion-backdrop>
+<!-- <ion-backdrop [visible]="true" *ngIf="uploadingProfilePicture"></ion-backdrop>
 
 <ion-content [fullscreen]="true" color="light">
   <ion-grid class="main-header">
@@ -91,7 +91,6 @@
       <ion-content>
         <ion-list [inset]="true">
           <ion-item>
-            <!-- <ion-label><strong>Following</strong></ion-label> -->
             <ion-segment value="default" (ionChange)="segmentChanged($event)">
               <ion-segment-button value="default">
                 <ion-label>Following ({{ myProfileDetails[0].followingList.length }})</ion-label>
@@ -135,26 +134,9 @@
     </ion-col>
   </ion-row>
 
-  <!-- <ion-grid>
-    <ion-row>
-      <ion-col
-        size="12"
-        sizeMd="6"
-        *ngFor="let post of posts"
-        class="home-cards"
-        (click)="openBlog(post.id)"
-      >
-        <app-blog-card-home [post]="post"></app-blog-card-home>
-        <h1></h1>
-      </ion-col>
-      <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)">
-        <ion-infinite-scroll-content></ion-infinite-scroll-content>
-      </ion-infinite-scroll>
-    </ion-row>
-  </ion-grid> -->
+
 </ion-content>
 <div id="box" *ngIf="uploadingProfilePicture">
-  <!-- <input type="image"> -->
 
   <form>
     <input
@@ -168,4 +150,287 @@
   <ion-button class="ion-margin-start" color="light" (click)="cancel()"
     >Cancel</ion-button
   >
-</div>
+</div> -->
+
+<ion-content>
+  <section style="background-color: #eee">
+    <div class="container py-3">
+      <div class="row">
+        <div class="col-lg-5 mx-0 px-1">
+          <div class="card mb-0">
+            <div class="card-body text-center">
+              <img
+                src="{{ myProfileDetails[0].profilePicture }}"
+                alt="avatar"
+                class="rounded-circle img-fluid"
+                style="width: 150px; margin-left: 30px"
+              />
+              <ion-icon
+                name="create"
+                size="large"
+                class="edit-profile-button"
+                (click)="uploadPofilePicture()"
+              ></ion-icon>
+              <h2 class="text-muted mb-1 py-2">
+                {{ myProfileDetails[0].firstName }}
+              </h2>
+              <p class="text-muted mb-1 py-2">
+                <strong>BIO:</strong>
+                {{
+                  myProfileDetails[0].bio === "" ||
+                  myProfileDetails[0].bio === null
+                    ? "Not set"
+                    : myProfileDetails[0].bio
+                }}
+              </p>
+              <!-- <p class="text-muted mb-4">Bay Area, San Francisco, CA</p> -->
+              <div class="d-flex justify-content-center mb-2">
+                <button
+                  type="button"
+                  data-mdb-button-init
+                  data-mdb-ripple-init
+                  class="btn btn-primary"
+                  (click)="gotoEditProfile()"
+                >
+                  Edit Profile
+                </button>
+                <button
+                  type="button"
+                  data-mdb-button-init
+                  data-mdb-ripple-init
+                  class="btn ms-1"
+                  (click)="toggleProfile()"
+                  [ngClass]="
+                    myProfileDetails[0].lockProfile
+                      ? 'btn-dark'
+                      : 'btn-outline-dark'
+                  "
+                >
+                  {{
+                    myProfileDetails[0].lockProfile
+                      ? "Unlock Profile"
+                      : "Lock Profile"
+                  }}
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="card mb-0">
+            <div class="card-body">
+              <div class="row">
+                <p class="mb-0 px-4">
+                  <span class="text-primary font-italic me-1"
+                    ><h3 class="text-muted mb-0">
+                      <strong>Details</strong>
+                    </h3></span
+                  >
+                </p>
+                <div class="col-sm-3">
+                  <h3 class="text-muted mb-0">Full Name:</h3>
+                </div>
+                <div class="col-sm-9">
+                  <h3 class="text-muted mb-0">
+                    <strong>{{ myProfileDetails[0].fullName }}</strong>
+                  </h3>
+                </div>
+              </div>
+              <hr class="my-1"/>
+              <div class="row">
+                <div class="col-sm-3">
+                  <h3 class="text-muted mb-0">Email:</h3>
+                </div>
+                <div class="col-sm-9">
+                  <h3 class="text-muted mb-0">
+                    <strong>{{ myProfileDetails[0].email }}</strong>
+                  </h3>
+                </div>
+              </div>
+              <hr class="my-1" />
+              <div class="row">
+                <div class="col-sm-3">
+                  <h3 class="text-muted mb-0">DOB:</h3>
+                </div>
+                <div class="col-sm-9">
+                  <h3 class="text-muted mb-0">
+                    <strong>{{
+                      myProfileDetails[0].dob.toLocaleString() === "" ||
+                      myProfileDetails[0].dob === null
+                        ? "not set"
+                        : myProfileDetails[0].dob
+                    }}</strong>
+                  </h3>
+                </div>
+              </div>
+              <hr class="my-1"/>
+              <div class="row">
+                <div class="col-sm-3">
+                  <h3 class="text-muted mb-0">Total Posts:</h3>
+                </div>
+                <div class="col-sm-9">
+                  <h3 class="text-muted mb-0">
+                    <strong>{{ myProfileDetails[0].noOfPosts }}</strong>
+                  </h3>
+                </div>
+              </div>
+              <hr class="my-1"/>
+              <div class="row">
+                <div class="col-sm-3">
+                  <h3 class="text-muted mb-0">Total reads:</h3>
+                </div>
+                <div class="col-sm-9">
+                  <h3 class="text-muted mb-0">
+                    <strong>{{ myProfileDetails[0].totalPostRead }}</strong>
+                  </h3>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-7 mx-0 px-1">
+          <div class="row">
+            <div class="col-md-6" style="padding-right: 0px; overflow-y: auto">
+              <div class="card mb-4 mb-md-0" style="max-height: 450px; min-height: 250px;">
+                <!-- Adjust width as per your requirement -->
+                <div class="card-body px-0">
+                  <p class="mb-0 px-4">
+                    <span class="text-primary font-italic me-1"
+                      ><h3 class="text-muted mb-0">
+                        <strong>Followers</strong>
+                      </h3></span
+                    >
+                  </p>
+
+                  <ion-item
+                    *ngFor="
+                      let person of myProfileDetails[0].followerList;
+                      let index
+                    "
+                  >
+                    <ion-avatar slot="start">
+                      <img
+                        [src]="'https://picsum.photos/80/80?random=' + index"
+                        alt="avatar"
+                      />
+                    </ion-avatar>
+                    <ion-label>{{
+                      person.firstName + " " + person.lastName
+                    }}</ion-label>
+                    <button
+                      class="btn px-1 py-0"
+                      [ngClass]="
+                        person.following ? 'btn-outline-primary' : 'btn-primary'
+                      "
+                      id="{{ person.id }}"
+                      [disabled]="person.id === loggedUserId"
+                      (click)="remove($event)"
+                      id="{{ person.id }}"
+                    >
+                      Remove
+                    </button>
+                  </ion-item>
+                  <div
+                    class="d-flex justify-content-center align-items-center"
+                    *ngIf="myProfileDetails[0].followerList.length === 0"
+                  >
+                    <h3 class="text-muted mb-0">Follower list is empty</h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6" style="padding-left: 0px; overflow-y: auto">
+              <div class="card mb-4 mb-md-0" style="max-height: 450px; min-height: 250px;">
+
+                <!-- Adjust width as per your requirement -->
+                <div class="card-body px-0">
+                  <p class="mb-0 px-4">
+                    <span class="text-primary font-italic me-1"
+                      ><h3 class="text-muted mb-0">
+                        <strong>Following</strong>
+                      </h3></span
+                    >
+                  </p>
+                  <ion-item
+                    *ngFor="
+                      let person of myProfileDetails[0].followingList;
+                      let index
+                    "
+                  >
+                    <ion-avatar slot="start">
+                      <img
+                        [src]="'https://picsum.photos/80/80?random=' + index"
+                        alt="avatar"
+                      />
+                    </ion-avatar>
+                    <ion-label>{{
+                      person.firstName + " " + person.lastName
+                    }}</ion-label>
+                    <button
+                      class="btn px-1 py-0"
+                      [ngClass]="
+                        person.following ? 'btn-outline-primary' : 'btn-primary'
+                      "
+                      id="{{ person.id }}"
+                      size="small"
+                      [disabled]="person.id === loggedUserId"
+                      (click)="unfollowOrRemove($event)"
+                      id="{{ person.id }}"
+                    >
+                      Unfollow
+                    </button>
+                  </ion-item>
+                  <div
+                    class="d-flex justify-content-center align-items-center"
+                    *ngIf="myProfileDetails[0].followingList.length === 0"
+                  >
+                    <h3 class="text-muted mb-0">Following list is empty</h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card mb-4 mb-lg-0">
+            <div class="card-body p-0">
+                  <div class="social-media">
+                    <p class="mb-0 px-4 my-3">
+                      <span class="text-primary font-italic me-1"
+                        ><h3 class="text-muted mb-0">
+                          <strong>Connect me on: </strong>
+                        </h3></span
+                      >
+                    </p>
+                    <a href="{{this.myProfileDetails[0].links.facebook}}" class="media-link"
+                      ><ion-icon name="logo-facebook" size="large"></ion-icon
+                    ></a>
+                    <a href="{{this.myProfileDetails[0].links.linkedin}}" class="media-link"
+                      ><ion-icon name="logo-linkedin" size="large"></ion-icon
+                    ></a>
+                    <a href="{{this.myProfileDetails[0].links.instagram}}" class="media-link"
+                      ><ion-icon name="logo-instagram" size="large"></ion-icon
+                    ></a>
+                    <a href="{{this.myProfileDetails[0].links.twitter}}" class="media-link"
+                      ><ion-icon name="logo-twitter" size="large"></ion-icon
+                    ></a>
+                  </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="box" *ngIf="uploadingProfilePicture" style="border: black 2px solid; background-color: aliceblue;">
+    <form>
+      <input
+        type="file"
+        id="myFile"
+        name="filename"
+        (change)="onFileSelected($event)"
+      />
+      <ion-button (click)="submit()" color="dark">Submit</ion-button>
+    </form>
+    <ion-button class="ion-margin-start" color="light" (click)="cancel()"
+      >Cancel</ion-button
+    >
+  </div>
+</ion-content>

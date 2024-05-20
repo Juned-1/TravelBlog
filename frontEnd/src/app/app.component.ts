@@ -2,7 +2,6 @@ import { Component, EnvironmentInjector, inject } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { ToolbarComponent } from './toolbar/toolbar.component';
-import { MenuComponent } from './menu/menu.component';
 import { CommentsModule } from './comments/comments.module';
 import { SocialLoginModule } from '@abacritt/angularx-social-login';
 
@@ -16,7 +15,6 @@ import { SocialLoginModule } from '@abacritt/angularx-social-login';
     IonicModule,
     CommonModule,
     ToolbarComponent,
-    MenuComponent,
     CommentsModule,
     SocialLoginModule,
   ],

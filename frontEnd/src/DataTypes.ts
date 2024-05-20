@@ -121,6 +121,7 @@ export interface ProfileDetails{
   lastName: string,
   fullName: string,
   gender: string,
+  email:string,
   id: string,
   profilePicture: string,
   followingList: Persons[],
@@ -135,5 +136,5 @@ export interface ProfileDetails{
   noOfPosts: number,
   totalPostRead: number,
   lockProfile: boolean,
-  dob:Date,
+  dob:string,
 }

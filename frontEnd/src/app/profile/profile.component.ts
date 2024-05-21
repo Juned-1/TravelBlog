@@ -325,6 +325,12 @@ export class ProfileComponent implements OnInit {
             person.following = !person.following;
           }
         });
+
+        this.profileDetails[0].followerList.forEach((person) => {
+          if (person.id === id) {
+            person.following = !person.following;
+          }
+        });
       },
       error: (error) => {
         console.log(error);

@@ -19,7 +19,7 @@ export class MyblogsService {
     page: 1,
     title: '',
   };
- 
+
   constructor(private http: HttpClient, private sanitizer: DomSanitizer) {}
 
   getPosts() {
@@ -33,10 +33,10 @@ export class MyblogsService {
       ) {
         const result: blog[] = (response.data as data).blogs as blog[];
         console.log(result);
+        this.myblogs.length = 0;
         result.forEach((blog) => {
           this.myblogs.push(this.furnishBlog(blog));
         });
-
       }
     });
   }
@@ -52,7 +52,7 @@ export class MyblogsService {
           response.status === 'success' &&
           'data' in response
         ) {
-          const blogs:blog[] = (response.data as data).blogs as blog[];
+          const blogs: blog[] = (response.data as data).blogs as blog[];
           this.myblogs.length = 0;
           blogs.forEach((blog) => {
             this.myblogs.push(this.furnishBlog(blog));
@@ -92,7 +92,7 @@ export class MyblogsService {
   onIonInfiniteMyBlogsSearch() {} //Not Implemented
 
   addNewblog(response: any) {
-    const newBlog:newBlog = response.data.post;
+    const newBlog: newBlog = response.data.post;
     newBlog.firstName = newBlog.user.firstName;
     newBlog.lastName = newBlog.user.lastName;
     this.myblogs.push(this.furnishBlog(newBlog));
@@ -140,17 +140,17 @@ export class MyblogsService {
     }
   }
 }
-export interface newBlog{
-  content: string,
+export interface newBlog {
+  content: string;
   id: string;
   title: string;
   subtitle: string;
   time: string;
-  firstName : string;
-  lastName : string;
-  imageURL : string | null;
-  user:{
-    firstName:string,
-    lastName:string
-  }
+  firstName: string;
+  lastName: string;
+  imageURL: string | null;
+  user: {
+    firstName: string;
+    lastName: string;
+  };
 }

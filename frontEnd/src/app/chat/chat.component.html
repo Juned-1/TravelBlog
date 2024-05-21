@@ -122,8 +122,12 @@
 <ion-split-pane when="lg" contentId="main">
   <ion-menu contentId="main">
     <ion-header>
-      <ion-toolbar color="primary">
-        <ion-title>CHATS</ion-title>
+      <ion-toolbar color="light">
+        <ion-title
+          ><h2 class="text-muted mb-0">
+            <strong>Chats</strong>
+          </h2></ion-title
+        >
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding" color="light">
@@ -158,30 +162,30 @@
             <!-- <span class="badge rounded-pill badge-success">Active</span> -->
           </li>
         </ul>
+        <div
+          class="d-flex justify-content-center align-items-center mt-5 pt-5"
+          *ngIf="conversations.length === 0"
+        >
+          <h1 class="text-muted mb-0">Conversation list is empty</h1>
+        </div>
       </div>
     </ion-content>
   </ion-menu>
 
   <div class="ion-page" id="main">
     <ion-header>
-      <ion-toolbar color="primary">
+      <ion-toolbar color="light">
         <ion-buttons>
           <ion-menu-button></ion-menu-button>
-          <ion-title>{{
-            selectedConversation.participants[0].User.firstName +
-              " " +
-              selectedConversation.participants[0].User.lastName
-          }}</ion-title>
+          <ion-title
+          ><h2 class="text-muted mb-0">
+            <strong>{{ selectedConversationName }}</strong>
+          </h2></ion-title
+        >
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
-    <ion-content class="ion-padding" color="light">
-      <!-- <div id="chat-content">
-        <ul id="messages" ></ul>
-        <form id="form" action="">
-          <input id="input" autocomplete="off" /><button>Send</button>
-        </form>
-      </div> -->
+    <ion-content #content class="ion-padding" color="light">
       <div class="message-wrap" *ngIf="selectedConversationId">
         <div
           *ngFor="let message of messages"
@@ -200,9 +204,20 @@
           <!-- <div *ngIf="true || message.senderId === id" class="msg-status"></div> -->
         </div>
       </div>
-      <form id="form" action="">
-        <input id="input" autocomplete="off" /><button>Send</button>
+      <form *ngIf="selectedConversation" id="form" (submit)="sendMessage()">
+        <input
+          id="input"
+          name="messageInput"
+          [(ngModel)]="editorMsg"
+          autocomplete="off"
+        /><button>Send</button>
       </form>
+      <div
+        class="d-flex justify-content-center align-items-center mt-5 pt-5"
+        *ngIf="!selectedConversation"
+      >
+        <h1 class="text-muted mb-0">No conversation selected</h1>
+      </div>
     </ion-content>
   </div>
 </ion-split-pane>

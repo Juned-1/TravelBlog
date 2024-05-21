@@ -6,6 +6,7 @@ import {
   ApiResponseFollower,
   ApiResponseFollowing,
   Persons,
+  ProfileDetails,
   blog,
   data,
 } from 'src/DataTypes';
@@ -21,31 +22,38 @@ import { DomSanitizer } from '@angular/platform-browser';
   imports: [IonicModule, CommonModule, BlogCardHomeComponent],
 })
 export class ProfileComponent implements OnInit {
+  defaultProfileImage = '../../assets/2.png';
+
+  profileDetails: ProfileDetails[] = [
+    {
+      firstName: '',
+      lastName: '',
+      fullName: '',
+      gender: '',
+      id: '',
+      profilePicture: '../../assets/2.png',
+      followingList: [],
+      followerList: [],
+      bio: '',
+      email: '',
+      links: {
+        facebook: '',
+        linkedin: '',
+        instagram: '',
+        twitter: '',
+      },
+      noOfPosts: 0,
+      totalPostRead: 0,
+      lockProfile: true,
+      dob: new Date().toDateString(),
+    },
+  ];
+
   following!: boolean;
-  profileId: string = '';
   loggedUserId!: string;
-  fullName!: string;
-  firstName = ''
-  lastName = ''
-  email = '';
-  dob='';
 
   posts!: blog[];
   page: number = 1;
-  noOfPost: number = 0;
-  lock = false;
-  bio: string = '';
-
-  followingList: Persons[] = [];
-  followerList: Persons[] = [];
-  list: Persons[] = [];
-  reads: number = 0;
-  link: {
-    facebook: string | null;
-    linkedin: string | null;
-    instagram: string | null;
-    twitter: string | null;
-  } = { facebook: null, linkedin: null, instagram: null, twitter: null };
 
   constructor(
     private router: Router,
@@ -58,7 +66,7 @@ export class ProfileComponent implements OnInit {
     const id = localStorage.getItem('currentUserId');
     this.loggedUserId = id === null ? '' : id;
 
-    this.profileId = this.route.snapshot.queryParams['id'];
+    this.profileDetails[0].id = this.route.snapshot.queryParams['id'];
 
     this.getProfileDetails();
     this.getFollowingList();
@@ -70,25 +78,28 @@ export class ProfileComponent implements OnInit {
   getSocialLinks() {
     const socialTypes = ['facebook', 'linkedin', 'instagram', 'twitter'];
     socialTypes.forEach((item) => {
-      this.api.getSocialLinks(item, this.profileId).subscribe({
+      this.api.getSocialLinks(item, this.profileDetails[0].id).subscribe({
         next: (response) => {
           if (
             'status' in response &&
             response.status === 'success' &&
             'data' in response
           ) {
-            if (response.data.social.socialAccountLink != null || response.data.social.socialAccountLink !='') {
-              this.link[item] = response.data.social.socialAccountLink;
+            if (
+              response.data.social.socialAccountLink != null ||
+              response.data.social.socialAccountLink != ''
+            ) {
+              this.profileDetails[0].links[item] =
+                response.data.social.socialAccountLink;
             }
           }
         },
-        error: (error) => {
-        },
+        error: (error) => {},
       });
     });
   }
   getProfileDetails() {
-    this.api.getUserDetails(this.profileId).subscribe({
+    this.api.getUserDetails(this.profileDetails[0].id).subscribe({
       next: (response) => {
         console.log(response);
         if (
@@ -111,16 +122,20 @@ export class ProfileComponent implements OnInit {
               };
             }
           ).userDetails;
-          this.email = userDetails.email;
-          this.dob = userDetails.dob;
-          this.firstName = userDetails.firstName;
-          this.lastName = userDetails.lastName;
-          this.fullName = this.firstName + ' ' + this.lastName;
+          this.profileDetails[0].email = userDetails.email;
+          this.profileDetails[0].dob = userDetails.dob;
+          this.profileDetails[0].firstName = userDetails.firstName;
+          this.profileDetails[0].lastName = userDetails.lastName;
+          this.profileDetails[0].fullName =
+            this.profileDetails[0].firstName +
+            ' ' +
+            this.profileDetails[0].lastName;
           this.following = userDetails.following;
-          this.lock = userDetails.lockProfile;
+          this.profileDetails[0].lockProfile = userDetails.lockProfile;
 
-          this.reads = userDetails.totalPostRead;
-          if (this.reads === null) this.reads = 0;
+          this.profileDetails[0].totalPostRead = userDetails.totalPostRead;
+          if (this.profileDetails[0].totalPostRead === null)
+            this.profileDetails[0].totalPostRead = 0;
         }
       },
       error: (error) => {
@@ -130,7 +145,7 @@ export class ProfileComponent implements OnInit {
   }
 
   getPosts() {
-    this.api.getPostforProfile(this.profileId).subscribe({
+    this.api.getPostforProfile(this.profileDetails[0].id).subscribe({
       next: (response) => {
         if (
           'status' in response &&
@@ -139,7 +154,8 @@ export class ProfileComponent implements OnInit {
         ) {
           this.posts = (response.data as data).blogs as blog[];
           for (let post of this.posts) {
-            this.noOfPost = this.noOfPost + 1;
+            this.profileDetails[0].noOfPosts =
+              this.profileDetails[0].noOfPosts + 1;
             post.time = new Date(post.time).toDateString().toString();
             // Extract the first image URL from post.post_content
             let imageURL = this.extractFirstImageURL(post.content);
@@ -160,22 +176,36 @@ export class ProfileComponent implements OnInit {
   }
 
   getFollowingList() {
-    this.api.getFollowingList(this.profileId).subscribe({
+    this.api.getFollowingList(this.profileDetails[0].id).subscribe({
       next: (response) => {
-        console.log('following list',response);
-        this.followingList = (response as ApiResponseFollowing).data.followings;
+        console.log('following list', response);
+        this.profileDetails[0].followingList = (
+          response as ApiResponseFollowing
+        ).data.followings;
 
-        this.followingList = this.followingList.map((obj) => {
-          obj['selfFollow'] =
-            obj['followingId'] === this.loggedUserId ? false : true;
+        this.profileDetails[0].followingList =
+          this.profileDetails[0].followingList.map((obj) => {
+            obj['selfFollow'] =
+              obj['followingId'] === this.loggedUserId ? false : true;
 
-          // Assign new key
-          obj['id'] = obj['followingId'];
-          // Delete old key
-          delete obj['followingId'];
-          return obj;
+            // Assign new key
+            obj['id'] = obj['followingId'];
+            // Delete old key
+            delete obj['followingId'];
+            return obj;
+          });
+
+        this.profileDetails[0].followingList.forEach((person) => {
+          if (person.profilePhoto !== null) {
+            const mimeType = 'image';
+            const photoContent = person.profilePhoto;
+            const imageDataUrl = `data:${mimeType};base64,${photoContent}`;
+            person.profilePhoto = imageDataUrl;
+          } else {
+            person.profilePhoto = this.defaultProfileImage;
+          }
         });
-        this.list = this.followingList;
+        // this.list = this.profileDetails[0].followingList;
       },
       error: (error) => {
         console.log(error);
@@ -183,22 +213,37 @@ export class ProfileComponent implements OnInit {
     });
   }
   getFollowerList() {
-    this.api.getFollowerList(this.profileId).subscribe({
+    this.api.getFollowerList(this.profileDetails[0].id).subscribe({
       next: (response) => {
-        console.log('follower list',response);
+        console.log('follower list', response);
         console.log(this.loggedUserId);
 
-        this.followerList = (response as ApiResponseFollower).data.followers;
-        this.followerList = this.followerList.map((obj) => {
-          obj['selfFollow'] =
-            obj['followerId'] === this.loggedUserId ? false : true;
+        this.profileDetails[0].followerList = (
+          response as ApiResponseFollower
+        ).data.followers;
+        this.profileDetails[0].followerList =
+          this.profileDetails[0].followerList.map((obj) => {
+            obj['selfFollow'] =
+              obj['followerId'] === this.loggedUserId ? false : true;
 
-          // Assign new key
-          obj['id'] = obj['followerId'];
-          // Delete old key
-          delete obj['followerId'];
-          return obj;
-        });
+            // Assign new key
+            obj['id'] = obj['followerId'];
+            // Delete old key
+            delete obj['followerId'];
+            return obj;
+          });
+
+          this.profileDetails[0].followerList.forEach((person) => {
+            if (person.profilePhoto !== null) {
+              const mimeType = 'image';
+              const photoContent = person.profilePhoto;
+              const imageDataUrl = `data:${mimeType};base64,${photoContent}`;
+              person.profilePhoto = imageDataUrl;
+            }
+            else{
+              person.profilePhoto = this.defaultProfileImage;
+            }
+          });
       },
       error: (error) => {
         console.log(error);
@@ -260,7 +305,7 @@ export class ProfileComponent implements OnInit {
 
   toggleFollow() {
     //Follow or Unfollow the profile
-    this.api.followUnfollow(this.profileId).subscribe({
+    this.api.followUnfollow(this.profileDetails[0].id).subscribe({
       next: (response) => {
         this.following = !this.following;
       },
@@ -275,7 +320,7 @@ export class ProfileComponent implements OnInit {
 
     this.api.followUnfollow(id).subscribe({
       next: (response) => {
-        this.followingList.forEach((person) => {
+        this.profileDetails[0].followingList.forEach((person) => {
           if (person.id === id) {
             person.following = !person.following;
           }
@@ -287,13 +332,13 @@ export class ProfileComponent implements OnInit {
     });
   }
   gotoChat() {
-    const id = this.profileId;
+    const id = this.profileDetails[0].id;
     this.router.navigate(['/chat'], { queryParams: { id } });
   }
   getBio() {
-    this.api.getBio(this.profileId).subscribe({
+    this.api.getBio(this.profileDetails[0].id).subscribe({
       next: (response) => {
-        this.bio = response.data.bio;
+        this.profileDetails[0].bio = response.data.bio;
       },
       error: (error) => {
         console.log(error);

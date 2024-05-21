@@ -127,7 +127,6 @@
       <ion-item-divider>
         <ion-label> Posts</ion-label>
       </ion-item-divider>
-
       <ion-item>
         <ion-grid>
           <ion-row>
@@ -166,15 +165,15 @@
           <div class="card mb-0">
             <div class="card-body text-center">
               <img
-                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
+                src="{{profileDetails[0].profilePicture}}"
                 alt="avatar"
                 class="rounded-circle img-fluid"
                 style="width: 150px"
               />
-              <h2 class="text-muted mb-1 py-2">{{ firstName }}</h2>
+              <h2 class="text-muted mb-1 py-2">{{ profileDetails[0].firstName }}</h2>
               <p class="text-muted mb-1 py-2">
                 <strong>BIO:</strong>
-                {{ bio === "" || bio === null ? "Not set" : bio }}
+                {{ profileDetails[0].bio === "" || profileDetails[0].bio === null ? "Not set" : profileDetails[0].bio }}
               </p>
               <!-- <p class="text-muted mb-4">Bay Area, San Francisco, CA</p> -->
               <div class="d-flex justify-content-center mb-2">
@@ -193,6 +192,7 @@
                   data-mdb-button-init
                   data-mdb-ripple-init
                   class="btn btn-primary ms-1"
+                  (click)="gotoChat()"
                 >
                   Message
                 </button>
@@ -207,7 +207,7 @@
                 </div>
                 <div class="col-sm-9">
                   <h3 class="text-muted mb-0">
-                    <strong>{{ fullName }}</strong>
+                    <strong>{{ profileDetails[0].fullName }}</strong>
                   </h3>
                 </div>
               </div>
@@ -218,7 +218,7 @@
                 </div>
                 <div class="col-sm-9">
                   <h3 class="text-muted mb-0">
-                    <strong>{{ email }}</strong>
+                    <strong>{{ profileDetails[0].email }}</strong>
                   </h3>
                 </div>
               </div>
@@ -230,7 +230,7 @@
                 <div class="col-sm-9">
                   <h3 class="text-muted mb-0">
                     <strong>{{
-                      dob === "" || dob === null ? "not set" : dob
+                      profileDetails[0].dob === "" || profileDetails[0].dob === null ? "not set" : profileDetails[0].dob
                     }}</strong>
                   </h3>
                 </div>
@@ -242,7 +242,7 @@
                 </div>
                 <div class="col-sm-9">
                   <h3 class="text-muted mb-0">
-                    <strong>{{ noOfPost }}</strong>
+                    <strong>{{ profileDetails[0].noOfPosts }}</strong>
                   </h3>
                 </div>
               </div>
@@ -253,7 +253,7 @@
                 </div>
                 <div class="col-sm-9">
                   <h3 class="text-muted mb-0">
-                    <strong>{{ reads }}</strong>
+                    <strong>{{ profileDetails[0].totalPostRead }}</strong>
                   </h3>
                 </div>
               </div>
@@ -264,22 +264,24 @@
         <div class="col-lg-7 mx-0 px-1">
           <div class="row">
             <div class="col-md-6" style="padding-right: 0px; overflow-y: auto">
-              <div class="card mb-4 mb-md-0" style="max-height: 450px; min-height: 250px;">
+              <div
+                class="card mb-4 mb-md-0"
+                style="max-height: 450px; min-height: 250px"
+              >
                 <!-- Adjust width as per your requirement -->
                 <div class="card-body px-0">
                   <p class="mb-0 px-4">
                     <span class="text-primary font-italic me-1"
-                    ><h3 class="text-muted mb-0">
-                      <strong>Followers</strong>
-                    </h3></span
+                      ><h3 class="text-muted mb-0">
+                        <strong>Followers</strong>
+                      </h3></span
                     >
                   </p>
 
-                  <ion-item *ngFor="let person of followerList; let index">
+                  <ion-item *ngFor="let person of profileDetails[0].followerList; let index">
                     <ion-avatar slot="start">
                       <img
-                        [src]="'https://picsum.photos/80/80?random=' + index"
-                        alt="avatar"
+                        src="{{person.profilePhoto}}"
                       />
                     </ion-avatar>
                     <ion-label>{{
@@ -291,7 +293,7 @@
                         person.following ? 'btn-outline-primary' : 'btn-primary'
                       "
                       id="{{ person.id }}"
-                      [disabled]="person.id===loggedUserId"
+                      [disabled]="person.id === loggedUserId"
                       (click)="followUnfollow($event)"
                     >
                       {{ person.following ? "Unfollow" : "Follow" }}
@@ -299,7 +301,7 @@
                   </ion-item>
                   <div
                     class="d-flex justify-content-center align-items-center"
-                    *ngIf="followerList.length === 0"
+                    *ngIf="profileDetails[0].followerList.length === 0"
                   >
                     <h3 class="text-muted mb-0">Follower list is empty</h3>
                   </div>
@@ -307,8 +309,10 @@
               </div>
             </div>
             <div class="col-md-6" style="padding-left: 0px; overflow-y: auto">
-              <div class="card mb-4 mb-md-0" style="max-height: 450px; min-height: 250px;">
-
+              <div
+                class="card mb-4 mb-md-0"
+                style="max-height: 450px; min-height: 250px"
+              >
                 <!-- Adjust width as per your requirement -->
                 <div class="card-body px-0">
                   <p class="mb-0 px-4">
@@ -318,11 +322,10 @@
                       </h3></span
                     >
                   </p>
-                  <ion-item *ngFor="let person of followingList; let index">
+                  <ion-item *ngFor="let person of profileDetails[0].followingList; let index">
                     <ion-avatar slot="start">
                       <img
-                        [src]="'https://picsum.photos/80/80?random=' + index"
-                        alt="avatar"
+                        src="{{person.profilePhoto}}"
                       />
                     </ion-avatar>
                     <ion-label>{{
@@ -335,7 +338,7 @@
                       "
                       id="{{ person.id }}"
                       size="small"
-                      [disabled]="person.id===loggedUserId"
+                      [disabled]="person.id === loggedUserId"
                       (click)="followUnfollow($event)"
                     >
                       {{ person.following ? "Unfollow" : "Follow" }}
@@ -343,7 +346,7 @@
                   </ion-item>
                   <div
                     class="d-flex justify-content-center align-items-center"
-                    *ngIf="followingList.length === 0"
+                    *ngIf="profileDetails[0].followingList.length === 0"
                   >
                     <h3 class="text-muted mb-0">Follower list is empty</h3>
                   </div>
@@ -361,16 +364,16 @@
                     </h3></span
                   >
                 </p>
-                <a href="{{link.facebook}}" class="media-link"
+                <a href="{{ profileDetails[0].links.facebook }}" class="media-link"
                   ><ion-icon name="logo-facebook" size="large"></ion-icon
                 ></a>
-                <a href="{{link.linkedin}}" class="media-link"
+                <a href="{{ profileDetails[0].links.linkedin }}" class="media-link"
                   ><ion-icon name="logo-linkedin" size="large"></ion-icon
                 ></a>
-                <a href="{{link.instagram}}" class="media-link"
+                <a href="{{ profileDetails[0].links.instagram }}" class="media-link"
                   ><ion-icon name="logo-instagram" size="large"></ion-icon
                 ></a>
-                <a href="{{link.twitter}}" class="media-link"
+                <a href="{{ profileDetails[0].links.twitter }}" class="media-link"
                   ><ion-icon name="logo-twitter" size="large"></ion-icon
                 ></a>
               </div>
@@ -380,4 +383,36 @@
       </div>
     </div>
   </section>
+
+  <ion-item-group>
+    <ion-item-divider color="light">
+      <ion-label>
+          
+            <h3 class="text-muted mb-0">
+              <strong>Blogs</strong>
+            </h3>
+          
+      </ion-label
+      >
+    </ion-item-divider>
+    <ion-item color="light">
+      <ion-grid>
+        <ion-row>
+          <ion-col
+            size="12"
+            sizeMd="6"
+            *ngFor="let post of posts"
+            class="home-cards"
+            (click)="openBlog(post.title, post.id)"
+          >
+            <app-blog-card-home [post]="post"></app-blog-card-home>
+            <h1></h1>
+          </ion-col>
+          <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)">
+            <ion-infinite-scroll-content></ion-infinite-scroll-content>
+          </ion-infinite-scroll>
+        </ion-row>
+      </ion-grid>
+    </ion-item>
+  </ion-item-group>
 </ion-content>

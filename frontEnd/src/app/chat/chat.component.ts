@@ -13,12 +13,12 @@ import { AuthService } from '../Services/Authentication/auth.service';
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, FormsModule,],
+  imports: [CommonModule, IonicModule, FormsModule],
 })
 export class ChatComponent implements OnInit {
   date = new Date();
   messages: Message[] = [];
-  defaultDp='../../assets/user-icon.png'
+  defaultDp = '../../assets/user-icon.png';
 
   selectedConversationId: any = null;
   @ViewChild('content', { static: true }) private content: any;
@@ -29,12 +29,13 @@ export class ChatComponent implements OnInit {
   loggedUserId!: string; //message sender
   receiverId!: string; //message receiver
   selectedConversation!: Conversation;
+  selectedConversationName = 'Select a conversation';
 
   constructor(
     private api: APIService,
     private route: ActivatedRoute,
     private chatService: ChatService,
-    public authService:AuthService
+    public authService: AuthService
   ) {}
   ngOnInit() {
     this.messages = this.chatService.messages;
@@ -49,17 +50,15 @@ export class ChatComponent implements OnInit {
         if (response.status === 'success') {
           this.conversations = response.data.conversation;
           console.log('conversations', this.conversations);
-          this.selectPerson(this.conversations[0])
-       
+          if (this.conversations.length != 0)
+            this.selectPerson(this.conversations[0]);
 
           if (this.id !== null && this.id !== undefined) {
             let present = false;
             this.conversations.forEach((conversation) => {
               const userId = conversation.participants[0].userId;
               if (userId === this.id) {
-                this.selectPerson(
-                  conversation
-                );
+                this.selectPerson(conversation);
                 present = true;
               }
             });
@@ -71,9 +70,7 @@ export class ChatComponent implements OnInit {
                   (response) => {
                     console.log('create individual conversation', response);
                     this.conversations.push(response.data.conversation[0]);
-                    this.selectPerson(
-                      response.data.conversation[0]
-                    );
+                    this.selectPerson(response.data.conversation[0]);
                   },
                   (error) => {
                     console.log(error);
@@ -93,6 +90,10 @@ export class ChatComponent implements OnInit {
   }
 
   selectPerson(selectedConversation: Conversation) {
+    this.selectedConversationName =
+      selectedConversation.participants[0].User.firstName +
+      ' ' +
+      selectedConversation.participants[0].User.lastName;
 
     this.receiverId = selectedConversation.participants[0].userId;
     this.selectedConversationId = selectedConversation.conversationId;
@@ -158,7 +159,7 @@ export class ChatComponent implements OnInit {
       if (this.content.scrollToBottom) {
         this.content.scrollToBottom();
       }
-    }, 2);
+    }, 1);
   }
 }
 

@@ -85,6 +85,9 @@ export class MyprofileComponent implements OnInit {
             const imageDataUrl = `data:${mimeType};base64,${photoContent}`;
             person.profilePhoto = imageDataUrl;
           }
+          else{
+            person.profilePhoto = this.defaultProfileImage;
+          }
         });
 
         this.myProfileDetails[0].followingList = followingList;
@@ -115,6 +118,9 @@ export class MyprofileComponent implements OnInit {
             const photoContent = person.profilePhoto;
             const imageDataUrl = `data:${mimeType};base64,${photoContent}`;
             person.profilePhoto = imageDataUrl;
+          }
+          else{
+            person.profilePhoto = this.defaultProfileImage;
           }
         });
 

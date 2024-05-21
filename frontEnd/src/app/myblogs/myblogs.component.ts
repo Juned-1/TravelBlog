@@ -31,11 +31,11 @@ export class MyblogsComponent implements OnInit {
     private router: Router,
     private toast: ToastrService,
     private myBlogsService: MyblogsService
-  ) {}
-  ngOnInit(): void {
-    this.myBlogsService.getPosts();
+  ) {
     this.myblogs = this.myBlogsService.myblogs;
+    this.myBlogsService.getPosts();
   }
+  ngOnInit(): void {}
 
   openBlog(title: string, id: string) {
     title = title.toLowerCase();
@@ -67,7 +67,6 @@ export class MyblogsComponent implements OnInit {
       this.showSearchResult = true;
       this.myBlogsService.getSearchResult(this.searchKeyword);
     }
-
   }
   onScroll(e: any) {
     this.myBlogsService.onIonInfiniteMyBlogs(e);

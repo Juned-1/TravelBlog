@@ -18,6 +18,7 @@ import { AuthService } from '../Services/Authentication/auth.service';
 export class ChatComponent implements OnInit {
   date = new Date();
   messages: Message[] = [];
+  defaultDp='../../assets/user-icon.png'
 
   selectedConversationId: any = null;
   @ViewChild('content', { static: true }) private content: any;
@@ -27,6 +28,7 @@ export class ChatComponent implements OnInit {
   conversations: Conversation[] = [];
   loggedUserId!: string; //message sender
   receiverId!: string; //message receiver
+  selectedConversation!: Conversation;
 
   constructor(
     private api: APIService,
@@ -47,6 +49,8 @@ export class ChatComponent implements OnInit {
         if (response.status === 'success') {
           this.conversations = response.data.conversation;
           console.log('conversations', this.conversations);
+          this.selectPerson(this.conversations[0])
+       
 
           if (this.id !== null && this.id !== undefined) {
             let present = false;
@@ -54,8 +58,7 @@ export class ChatComponent implements OnInit {
               const userId = conversation.participants[0].userId;
               if (userId === this.id) {
                 this.selectPerson(
-                  conversation.conversationId,
-                  conversation.participants[0].userId
+                  conversation
                 );
                 present = true;
               }
@@ -69,8 +72,7 @@ export class ChatComponent implements OnInit {
                     console.log('create individual conversation', response);
                     this.conversations.push(response.data.conversation[0]);
                     this.selectPerson(
-                      response.data.conversation[0].conversationId,
-                      response.data.conversation[0].participants[0].userId
+                      response.data.conversation[0]
                     );
                   },
                   (error) => {
@@ -90,15 +92,17 @@ export class ChatComponent implements OnInit {
     );
   }
 
-  selectPerson(selectedConversationId: string, receiverId: string) {
-    this.receiverId = receiverId;
-    this.selectedConversationId = selectedConversationId;
+  selectPerson(selectedConversation: Conversation) {
+
+    this.receiverId = selectedConversation.participants[0].userId;
+    this.selectedConversationId = selectedConversation.conversationId;
+    this.selectedConversation = selectedConversation;
     this.chatService.connectSocket(
       this.loggedUserId,
       this.scrollToBottom.bind(this)
     );
 
-    this.api.getMessage(selectedConversationId).subscribe({
+    this.api.getMessage(selectedConversation.conversationId).subscribe({
       next: (response) => {
         const messages = response.data.message;
         this.messages.length = 0;

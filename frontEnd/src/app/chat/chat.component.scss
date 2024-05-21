@@ -17,7 +17,7 @@ ion-icon {
 }
 
 .message-wrap {
-  padding: 0 10px;
+  // padding: 0 10px;
 
   .message {
     min-height: 100%;
@@ -290,7 +290,7 @@ ion-menu{
   #form {
     background: rgba(0, 0, 0, 0.15);
     padding: 0.25rem;
-    position: fixed;
+    // position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
@@ -330,3 +330,18 @@ ion-menu{
   #messages > li:nth-child(odd) {
     background: #efefef;
   }
+
+
+
+
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////
+  .list-group-item:hover:not(.active) {
+    background-color: #f0f0f0; /* Change this to the desired color */
+  }
+  .list-group-item:hover {
+    cursor: pointer;
+  }
+
+  //////////////////////////////////
+  

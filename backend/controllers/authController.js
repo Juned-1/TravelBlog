@@ -25,7 +25,7 @@ const createAndSendToken = (user, statusCode, res) => {
     domain: cookieDomain,
     //signed: true, -- only for deployment works for browser not postman
     path: "/",
-    sameSite: "None",
+    sameSite: "none",
     secure : true,
   });
   //create token and cookies as response
@@ -44,7 +44,7 @@ const createAndSendToken = (user, statusCode, res) => {
     expires,
     httpOnly: true,
     //signed: true,
-    sameSite: "None",
+    sameSite: "none",
     secure : true
   });
   return res.status(statusCode).json({
@@ -272,7 +272,7 @@ exports.userLogout = catchAsync(async (req, res, next) => {
     domain: cookieDomain,
     //signed: true,
     path: "/",
-    sameSite: "None",
+    sameSite: "none",
     secure : true,
   });
   return res

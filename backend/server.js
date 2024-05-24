@@ -52,7 +52,7 @@ process.on("uncaughtException", (err) => {
   process.exit(1);
 });
 
-const port = applicationPort || 8081;
+const port = applicationPort || 3000;
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

@@ -177,7 +177,7 @@ exports.likedislike = catchAsync(async (req, res, next) => {
   const userid = req.tokenData.id; //req.body.userId;
   //console.log(req.body);
   const likes = await PostLike.findOne({
-    attributes: ["likeId", "userId", "postId", "reactionType"],
+    attributes: ["userId", "postId", "reactionType"],
     where: { userId: userid, postId: postid },
   });
   if (!likes) {

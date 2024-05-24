@@ -20,5 +20,6 @@ module.exports = {
     prodMailPassword: process.env.PROD_MAIL_PASSWORD,
     messagePadding: process.env.MESSAGE_PADDING,
     googleClientID : process.env.GOOGLE_CLIENT_ID,
-    googleClientSecret : process.env.GOOGLE_CLIENT_SECRET
+    googleClientSecret : process.env.GOOGLE_CLIENT_SECRET,
+    crossOrigin : process.env.CROSS_ORIGIN
 };

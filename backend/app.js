@@ -5,14 +5,12 @@ const cookieParser = require("cookie-parser");
 const passport = require("passport");
 const appRouter = require("./router/index.js");
 const AppError = require("./utils/appError.js");
-
-const {
-  cookieSecret,
-} = require("./configuration");
+const { crossOrigin } = require("./configuration.js");
+const { cookieSecret } = require("./configuration");
 require("./models");
 const app = express();
 //cross site request
-app.use(cors({ credentials: true, origin: "http://localhost:8100" }));
+app.use(cors({ credentials: true, origin: crossOrigin }));
 //setting engine
 app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));
@@ -26,7 +24,10 @@ app.use(express.urlencoded({ extended: false, limit: "50mb" }));
 //cookie Parser
 app.use(cookieParser(cookieSecret));
 
-
+//testing route
+app.get("/", (req, res) => {
+  res.send("Hello world");
+});
 app.use("/api/v1", appRouter);
 
 module.exports = app;

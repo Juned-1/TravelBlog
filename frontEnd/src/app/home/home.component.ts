@@ -16,21 +16,47 @@ import { blog, data } from '../../DataTypes';
   imports: [IonicModule, CommonModule, ToolbarComponent, BlogCardHomeComponent],
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  slideIndex: number = 0;
   posts!: blog[];
-  timeoutid: any = 0;
   page: number = 1;
   emptyPosts = false;
+
+  imgs!: NodeListOf<HTMLImageElement>;
+  dots!: NodeListOf<HTMLImageElement>;
+  currentImg = 0; // index of the first image
+  interval = 3000; // duration(speed) of the slide
+  timer!: number;
   constructor(
     private router: Router,
     private api: APIService,
     private sanitizer: DomSanitizer
   ) {}
   ngOnInit(): void {
-    this.showSlides();
+    this.imgs = document.querySelectorAll('.slider img');
+    this.dots = document.querySelectorAll('.dot');
+    this.timer = setInterval(this.changeSlide.bind(this), this.interval);
+    console.log(this.imgs);
+    console.log(this.dots);
     this.loadInitPost();
   }
+  changeSlide(n: number) {
+    for (let i = 0; i < this.imgs.length; i++) {
+      // reset
+      this.imgs[i].style.opacity = '0';
+      this.dots[i].className = this.dots[i].className.replace(' active', '');
+    }
 
+    this.currentImg = (this.currentImg + 1) % this.imgs.length; // update the index number
+
+    if (n != undefined) {
+      clearInterval(this.timer);
+      this.timer = setInterval(this.changeSlide.bind(this), this.interval);
+      this.currentImg = n;
+    }
+
+    this.imgs[this.currentImg].style.opacity = '1';
+    this.dots[this.currentImg].className =
+      this.dots[this.currentImg].className + ' active';
+  }
   loadInitPost() {
     this.api.getPost(this.page)?.subscribe({
       next: (response) => {
@@ -41,10 +67,9 @@ export class HomeComponent implements OnInit, OnDestroy {
         ) {
           this.posts = (response.data as data).blogs as blog[];
 
-          if(this.posts.length===0){
+          if (this.posts.length === 0) {
             this.emptyPosts = true;
-          }
-          else{
+          } else {
             this.emptyPosts = false;
           }
 
@@ -78,29 +103,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
-  openBlog(title:string,id: string) {
+  openBlog(title: string, id: string) {
     title = title.toLowerCase();
-    title = title.replace(/ /g,"-");
+    title = title.replace(/ /g, '-');
     this.router.navigate([`blogdetails/${title}`], { queryParams: { id } });
-  }
-
-  showSlides(): void {
-    let i: number;
-    let slides: HTMLCollectionOf<Element> =
-      document.getElementsByClassName('mySlides');
-
-    for (i = 0; i < slides.length; i++) {
-      (slides[i] as HTMLElement).style.display = 'none';
-    }
-
-    this.slideIndex++;
-
-    if (this.slideIndex > slides.length) {
-      this.slideIndex = 1;
-    }
-
-    (slides[this.slideIndex - 1] as HTMLElement).style.display = 'block';
-    this.timeoutid = setTimeout(() => this.showSlides(), 3000); // Change image every 3 seconds
   }
 
   onIonInfinite(ev: any) {
@@ -139,6 +145,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     }, 300);
   }
   ngOnDestroy() {
-    clearTimeout(this.timeoutid);
+    clearTimeout(this.timer);
   }
 }

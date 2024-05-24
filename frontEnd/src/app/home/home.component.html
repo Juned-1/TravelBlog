@@ -9,31 +9,17 @@
         <span class="highlight">BLOGGER</span>
       </h1>
       <h4>A simple blogging experience for a traveller.</h4>
-      <!-- <button id="btn-read-blog">Read Blog &DownArrow;</button> -->
-      <!-- Slideshow container -->
     </div>
     <div class="slideshow-container">
-      <!-- Full-width images with number and caption text -->
-      <div class="mySlides fade">
-        <img
-          class="slide-img"
-          src="../../assets/travelImage/manwithwidehandsopen.webp"
-          style="width: 100%"
-        />
+      <div class="slider">
+        <img id="img-1" src="../../assets/travelImage/manwithwidehandsopen.webp" alt="Image 1"/>
+        <img id="img-2" src="../../assets/travelImage/pexels-te-lensfix-1371360.webp" alt="Image 2"/>
+        <img id="img-3" src="../../assets/travelImage/pexels-pawan-yadav-2577274.webp" alt="Image 3"/>
       </div>
-      <div class="mySlides fade">
-        <img
-          class="slide-img"
-          src="../../assets/travelImage/pexels-te-lensfix-1371360.webp"
-          style="width: 100%"
-        />
-      </div>
-      <div class="mySlides fade">
-        <img
-          class="slide-img"
-          src="../../assets/travelImage/pexels-pawan-yadav-2577274.webp"
-          style="width: 100%"
-        />
+      <div class="navigation-button">
+        <span class="dot active" (click)="changeSlide(0)"></span>
+        <span class="dot" (click)="changeSlide(1)"></span>
+        <span class="dot" (click)="changeSlide(2)"></span>
       </div>
     </div>
   </header>

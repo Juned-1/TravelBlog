@@ -145,20 +145,42 @@
         <!-- Conditional buttons/links -->
         <div *ngIf="authService.loggedIn; else loggedOutButtons" class="me-2">
           <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll">
-            <li class="nav-item mx-0 px-2" (click)="routeToHome()">
+            <li
+              class="nav-item mx-1 px-2"
+              (click)="routeToHome()"
+              style="border: black 1px solid; border-radius: 30px"
+            >
               <a class="nav-link active">Home</a>
             </li>
-            <li class="nav-item mx-0 px-2" (click)="routeToMyBlogs()">
+            <li
+              class="nav-item mx-1 px-2"
+              (click)="routeToMyBlogs()"
+              style="border: black 1px solid; border-radius: 30px"
+            >
               <a class="nav-link active">My Blogs</a>
             </li>
-            <li class="nav-item mx-0 px-2" (click)="routeToChats()">
+            <li
+              class="nav-item mx-1 px-2"
+              (click)="routeToChats()"
+              style="border: black 1px solid; border-radius: 30px"
+            >
               <a class="nav-link active">Chats</a>
             </li>
-            <li class="nav-item mx-0 px-2" (click)="routeToProfile()">
-              <a class="nav-link active">{{ authService.user }}</a>
+            <li
+              class="nav-item mx-1 px-2"
+              (click)="routeToProfile()"
+              style="border: black 1px solid; border-radius: 30px"
+            >
+              <a class="nav-link active text-muted">
+                <strong> My Profile </strong>
+              </a>
             </li>
 
-            <li class="nav-item mx-0 px-2" (click)="Logout()">
+            <li
+              class="nav-item mx-1 px-2"
+              (click)="Logout()"
+              style="border: black 1px solid; border-radius: 30px"
+            >
               <a class="nav-link text-danger">Logout </a>
             </li>
           </ul>

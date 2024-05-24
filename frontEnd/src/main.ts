@@ -11,7 +11,7 @@ import { APIService } from './apiservice.service';
 import { HttpClientModule } from '@angular/common/http';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { GoogleLoginProvider, SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
-import { environment } from './environments/environment';
+
 
 
 // if (environment.production) {
@@ -40,7 +40,7 @@ bootstrapApplication(AppComponent, {
             {
               id: GoogleLoginProvider.PROVIDER_ID,
               provider: new GoogleLoginProvider(
-                environment.clientId
+                '457194816818-lsd5pocegjv37tnistemfn5sm7c82pca.apps.googleusercontent.com'
               )
             },
           ],
@@ -50,4 +50,5 @@ bootstrapApplication(AppComponent, {
         } as SocialAuthServiceConfig,
       }
 ],
+
 });

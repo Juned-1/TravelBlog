@@ -4,6 +4,7 @@ const app = require("./app");
 const { applicationPort } = require("./configuration");
 const globalErrorHandler = require("./controllers/errorController.js");
 const { crossOrigin } = require('./configuration');
+const AppError = require('./utils/appError');
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {

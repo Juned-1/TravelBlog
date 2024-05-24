@@ -5,7 +5,7 @@ const {
   databaseUserName,
   databasePassword,
   databaseHost,
-  databasePort
+  databasePort,
 } = require("../configuration");
 
 const sequelize = new Sequelize(
@@ -23,7 +23,10 @@ const sequelize = new Sequelize(
 const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
-
+db.sequelize
+  .authenticate()
+  .then(() => console.log("Database connected successfully"))
+  .catch((err) => console.log("Error connecting database : ",err));
 db.User = require("./userModel")(sequelize, DataTypes, UUIDV4, compare);
 db.Token = require("./tokenModel")(sequelize, DataTypes, UUIDV4);
 db.User.hasOne(db.Token, {

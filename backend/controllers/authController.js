@@ -22,9 +22,9 @@ const gclient = new OAuth2Client(googleClientID);
 const createAndSendToken = (user, statusCode, res) => {
   res.clearCookie(COOKIE_NAME, {
     httpOnly: true,
-    //domain: cookieDomain,
+    domain: cookieDomain,
     //signed: true, -- only for deployment works for browser not postman
-    //path: "/",
+    path: "/",
   });
   //create token and cookies as response
   const token = createToken(
@@ -37,8 +37,8 @@ const createAndSendToken = (user, statusCode, res) => {
   expires.setDate(expires.getDate() + 7);
   //sending cookie HHTP only cookie from backend to front end, first parameter name of cookie, into root directories of cookies we want to show the cookies
   res.cookie(COOKIE_NAME, token, {
-    //path: "/",  -- for deployment
-    //domain: cookieDomain,
+    path: "/",
+    domain: cookieDomain,
     expires,
     httpOnly: true,
     //signed: true,
@@ -265,9 +265,9 @@ exports.userLogout = catchAsync(async (req, res, next) => {
   //clear cookies if user login again
   res.clearCookie(COOKIE_NAME, {
     httpOnly: true,
-    //domain: cookieDomain,
+    domain: cookieDomain,
     //signed: true,
-    //path: "/",
+    path: "/",
   });
   return res
     .status(200)

@@ -49,4 +49,5 @@ bootstrapApplication(AppComponent, {
         } as SocialAuthServiceConfig,
       }
 ],
+
 });

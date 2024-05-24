@@ -75,3 +75,5 @@ process.on('SIGTERM', () => {
   });
   //do not process.exit, sigterm will automatically exit from processs.
 });
+
+module.exports = server;

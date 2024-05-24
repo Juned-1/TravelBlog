@@ -5,6 +5,7 @@ const {
   databaseUserName,
   databasePassword,
   databaseHost,
+  databasePort
 } = require("../configuration");
 
 const sequelize = new Sequelize(
@@ -13,6 +14,7 @@ const sequelize = new Sequelize(
   databasePassword,
   {
     host: databaseHost,
+    port: databasePort,
     dialect: "mysql",
     logging: false, //prevent every sql command log in console
   }

@@ -2,12 +2,12 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { LikeObj, sendPostBulk, SearchParameter } from './DataTypes';
 import { Observable } from 'rxjs';
-import { environment } from './environments/environment';
 @Injectable({
   providedIn: 'root',
 })
 export class APIService {
-  url = environment.baseUrl;
+  url = 'https://travelblogbackend-kvtl.onrender.com';
+
   constructor(private http: HttpClient) {}
   signup(formData: any) {
     return this.http.post(

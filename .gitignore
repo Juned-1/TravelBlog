@@ -12,7 +12,8 @@ $RECYCLE.BIN/
 *.log
 log.txt
 
-/src/env.ts
+*.env
+
 
 /.sourcemaps
 /.versions
@@ -68,6 +69,9 @@ testem.log
 .DS_Store
 Thumbs.db
 
-./src/environments/
-./src/environments
-./src/environments/*
+#Config file
+/config.env
+/public/
+./frontEnd/env.ts
+./backEnd/config.env
+./frontEnd/src/environments

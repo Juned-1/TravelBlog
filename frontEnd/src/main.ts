@@ -4,7 +4,6 @@ import { RouteReuseStrategy} from '@angular/router';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 
 import { AppComponent } from './app/app.component';
-import { environment } from './environments/environment';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import routeConfig from './app/routes';
@@ -12,8 +11,6 @@ import { APIService } from './apiservice.service';
 import { HttpClientModule } from '@angular/common/http';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { GoogleLoginProvider, SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
-import {env} from '../env'
-
 
 
 // if (environment.production) {
@@ -42,7 +39,7 @@ bootstrapApplication(AppComponent, {
             {
               id: GoogleLoginProvider.PROVIDER_ID,
               provider: new GoogleLoginProvider(
-                env.clientId
+                '457194816818-lsd5pocegjv37tnistemfn5sm7c82pca.apps.googleusercontent.com'
               )
             },
           ],
@@ -52,4 +49,5 @@ bootstrapApplication(AppComponent, {
         } as SocialAuthServiceConfig,
       }
 ],
+
 });

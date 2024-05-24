@@ -5,6 +5,7 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
 import { CommentsModule } from './comments/comments.module';
 import { SocialLoginModule } from '@abacritt/angularx-social-login';
 
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -22,5 +23,6 @@ import { SocialLoginModule } from '@abacritt/angularx-social-login';
 export class AppComponent {
   public environmentInjector = inject(EnvironmentInjector);
 
-  constructor() {}
+  constructor() {
+  }
 }

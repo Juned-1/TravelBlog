@@ -36,7 +36,7 @@ export class MyprofileService {
   constructor(
     private http: HttpClient,
     private toast: ToastrService,
-    private api: APIService
+    private api: APIService,
   ) {}
 
   getMyProfileDetails() {
@@ -140,7 +140,7 @@ export class MyprofileService {
     for (let i = 0; i < files.length; i++) {
       formData.append('images', files.item(i) as File, `file${i}`);
     }
-    const baseUrl = 'http://localhost:8081/api/v1/users/uploadphoto';
+    const baseUrl = `${this.api.url}/api/v1/users/uploadphoto`;
     return this.http.post(baseUrl, formData, { withCredentials: true });
   }
   getMyProfilePicture() {
@@ -158,7 +158,7 @@ export class MyprofileService {
     });
   }
   activatePhotoApi(photoid: string, photoType: string): Observable<any> {
-    const baseUrl = 'http://localhost:8081/api/v1/users';
+    const baseUrl = `${this.api.url}/api/v1/users`;
 
     return this.http.patch<any>(
       `${baseUrl}/activatephoto/${photoid}`,
@@ -170,7 +170,7 @@ export class MyprofileService {
   }
 
   getMyActivatedPhotoApi(photoType: string) {
-    const baseUrl = 'http://localhost:8081/api/v1/users';
+    const baseUrl = `${this.api.url}/api/v1/users`;
 
     return this.http.get<any>(`${baseUrl}/getmyactivatedphoto/${photoType}`, {
       withCredentials: true,

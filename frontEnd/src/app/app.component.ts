@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { CommentsModule } from './comments/comments.module';
 import { SocialLoginModule } from '@abacritt/angularx-social-login';
-require('dotenv').config()
 
 
 @Component({
@@ -25,8 +24,5 @@ export class AppComponent {
   public environmentInjector = inject(EnvironmentInjector);
 
   constructor() {
-
-    require('dotenv').config()
-
   }
 }

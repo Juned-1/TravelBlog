@@ -74,3 +74,4 @@ Thumbs.db
 /public/
 ./frontEnd/env.ts
 ./backEnd/config.env
+./frontEnd/src/environments

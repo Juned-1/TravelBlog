@@ -7,6 +7,7 @@ import {
   blog as blog,
   data,
 } from 'src/DataTypes';
+import { APIService } from 'src/apiservice.service';
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +21,7 @@ export class MyblogsService {
     title: '',
   };
 
-  constructor(private http: HttpClient, private sanitizer: DomSanitizer) {}
+  constructor(private http: HttpClient, private sanitizer: DomSanitizer, private serviceApi:APIService) {}
 
   getPosts() {
     this.parameter.page = this.myblogsPage;
@@ -99,7 +100,7 @@ export class MyblogsService {
   }
 
   fetchMyBlogs(parameter: FetchBlogsParameter) {
-    let baseurl = 'http://localhost:8081/api/v1/blogs/getmypost';
+    let baseurl = `${this.serviceApi.url}/api/v1/blogs/getmypost`;
     let params = new HttpParams().set('page', parameter.page.toString());
     if (parameter.title) {
       params = params.append('title', encodeURIComponent(parameter.title));

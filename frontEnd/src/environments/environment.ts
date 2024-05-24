@@ -3,8 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false,
-  api: 'http://localhost:3000',//added
+  production: true,
+  baseUrl: 'https://travelblogbackend-kvtl.onrender.com',
+  clientId: '457194816818-lsd5pocegjv37tnistemfn5sm7c82pca.apps.googleusercontent.com'
 };
 
 /*

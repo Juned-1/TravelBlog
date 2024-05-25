@@ -10,12 +10,12 @@ const { cookieSecret } = require("./configuration");
 require("./models");
 const app = express();
 //cross site request
-app.use(cors({ credentials: true, origin: crossOrigin }));
+//app.use(cors({ credentials: true, origin: crossOrigin }));
 //setting engine
 app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));
 //serving static file
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "..", "frontEnd","www")));
 //bdoy parsing
 app.use(express.json({ limit: "50mb" }));
 //form parsing
@@ -26,7 +26,7 @@ app.use(cookieParser(cookieSecret));
 
 //testing route
 app.get("/", (req, res) => {
-  res.send("Hello world");
+  res.sendFile(path.join(__dirname,"..","frontEnd","www","index.html"));
 });
 app.use("/api/v1", appRouter);
 

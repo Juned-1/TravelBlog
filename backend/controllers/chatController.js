@@ -16,7 +16,7 @@ const AppError = require("../utils/appError");
 const { encryptAES, decryptAES } = require("../utils/encrypt");
 
 //creating file if does not exist
-const uploadDirectory = path.join("public", "chat-attachment");
+const uploadDirectory = path.join("uploads", "chat-attachment");
 if (!fs.existsSync(uploadDirectory)) {
   fs.mkdirSync(uploadDirectory, { recursive: true });
 }
@@ -259,7 +259,6 @@ exports.sendMessage = async (req, res, next, io, getReceiverSocketId) => {
   if (receiverSocketId) {
     // io.to(<socket_id>).emit() used to send events to specific client
     io.to(receiverSocketId).emit("newMessage", message);
-    console.log("newMessage Emiited");
   }
   //message = [{...message}];
   return res.status(201).json({

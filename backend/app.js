@@ -25,8 +25,8 @@ app.use(express.urlencoded({ extended: false, limit: "50mb" }));
 app.use(cookieParser(cookieSecret));
 
 //testing route
-app.route("/*").get((req, res) => {
-  return res.sendFile(path.join(__dirname,"..","frontEnd","www","index.html"));
+app.get('/',(req, res) => {
+  res.sendFile(path.join(__dirname,"..","frontEnd","www","index.html"));
 });
 app.use("/api/v1", appRouter);
 

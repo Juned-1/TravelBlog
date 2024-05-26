@@ -62,7 +62,7 @@ export class SignupComponent implements OnInit {
       ageDifferenceInMilliseconds / (1000 * 3600 * 24 * 365.25);
 
     // Check if user is above 12 years old
-    console.log(ageDifferenceInYears);
+    //console.log(ageDifferenceInYears);
     return ageDifferenceInYears > 12;
   }
   isValidPassword(password: string): boolean {
@@ -124,7 +124,7 @@ export class SignupComponent implements OnInit {
     this.signingIn = true;
     this.api.signup(this.formData).subscribe(
       (response) => {
-        console.log(response);
+        //console.log(response);
         if (
           'status' in response &&
           response.status === 'success' &&
@@ -157,7 +157,7 @@ export class SignupComponent implements OnInit {
     this.api.sendOTP(this.userId, this.otp).subscribe(
       (response) => {
         if ('status' in response && response.status === 'success') {
-          console.log(response);
+          //console.log(response);
           this.emailVerification = false;
           this.toast.success('Signup Successful');
           this.formData.dob = '';

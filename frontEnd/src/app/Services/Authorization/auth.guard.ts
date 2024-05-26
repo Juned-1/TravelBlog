@@ -13,7 +13,7 @@ export function CanActivate(): Observable<boolean> | boolean {
       if (res.status === 'success' && res.message === 'Token verified') {
         return true;
       } else {
-        console.log('Bad response');
+        //console.log('Bad response');
         router.navigate(['/login']);
         return false;
       }

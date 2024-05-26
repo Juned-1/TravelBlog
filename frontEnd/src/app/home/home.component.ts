@@ -34,8 +34,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.imgs = document.querySelectorAll('.slider img');
     this.dots = document.querySelectorAll('.dot');
     this.timer = setInterval(this.changeSlide.bind(this), this.interval);
-    console.log(this.imgs);
-    console.log(this.dots);
+    //console.log(this.imgs);
+    //console.log(this.dots);
     this.loadInitPost();
   }
   changeSlide(n: number) {
@@ -88,7 +88,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         }
       },
       error: (err) => {
-        console.log(err);
+        //console.log(err);
       },
     });
   }
@@ -136,7 +136,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         }
       },
       (err) => {
-        console.log(err);
+        //console.log(err);
       }
     );
 

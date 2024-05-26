@@ -98,7 +98,7 @@ export class TextEditorComponent  implements OnInit, OnDestroy {
     this.editor = new Quill(container!, this.options);
 
     const toolbar = this.editor.getModule('toolbar');
-    toolbar.addHandler('link', this.imageHandler.bind(this));
+    //toolbar.addHandler('link', this.imageHandler.bind(this));
     //this.imageLinkButton();
     let id = this.route.snapshot.queryParams['id'];
     if (id != undefined) {
@@ -126,17 +126,17 @@ export class TextEditorComponent  implements OnInit, OnDestroy {
         },
         (err) => {
           this.toast.error('Error loading post');
-          console.log(err);
+          //console.log(err);
         }
       );
     }
   }
   imageHandler() {
-    console.log('Hello');
-    console.log(this.editor);
+    //console.log('Hello');
+    //console.log(this.editor);
     const range = this.editor.getSelection();
 
-    console.log(range);
+    //console.log(range);
     const value = prompt('please copy paste the image url here.');
     if (value) {
       this.editor.insertEmbed(range!.index, 'image', value, Quill.sources.USER);
@@ -206,7 +206,7 @@ export class TextEditorComponent  implements OnInit, OnDestroy {
       },
       (err) => {
         this.toast.error('Post unsuccessful');
-        console.log(err);
+        //console.log(err);
       }
     );
   }
@@ -221,7 +221,7 @@ export class TextEditorComponent  implements OnInit, OnDestroy {
       },
       (err) => {
         this.toast.error('Edit unsuccessful');
-        console.log(err);
+        //console.log(err);
       }
     );
   }
@@ -319,5 +319,4 @@ export class TextEditorComponent  implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.routerService.unsubscribe();
   }
-
 }

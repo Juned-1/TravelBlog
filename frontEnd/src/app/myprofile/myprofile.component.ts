@@ -59,7 +59,7 @@ export class MyprofileComponent implements OnInit {
           if (link !== null) this.myProfileDetails[0].links[item] = link;
         },
         error: (error) => {
-          console.log(error);
+          //console.log(error);
         },
       });
     });
@@ -93,14 +93,14 @@ export class MyprofileComponent implements OnInit {
         this.myProfileDetails[0].followingList = followingList;
       },
       error: (error) => {
-        console.log(error);
+        //console.log(error);
       },
     });
   }
   getMyFollowerList() {
     this.api.getMyFollowerList().subscribe({
       next: (response) => {
-        console.log(response);
+        //console.log(response);
         let followerList: Persons[] = (response as ApiResponseFollower).data
           .followers;
 
@@ -127,7 +127,7 @@ export class MyprofileComponent implements OnInit {
         this.myProfileDetails[0].followerList = followerList;
       },
       error: (error) => {
-        console.log(error);
+        //console.log(error);
       },
     });
   }
@@ -162,7 +162,7 @@ export class MyprofileComponent implements OnInit {
         }
       },
       error: (err) => {
-        console.log(err);
+        //console.log(err);
       },
     });
   }
@@ -181,7 +181,7 @@ export class MyprofileComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.log(error);
+        //console.log(error);
       },
     });
   }
@@ -196,7 +196,7 @@ export class MyprofileComponent implements OnInit {
           });
       },
       error: (error) => {
-        console.log(error);
+        //console.log(error);
       },
     });
   }

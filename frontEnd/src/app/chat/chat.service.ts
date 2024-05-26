@@ -15,7 +15,7 @@ export class ChatService {
     this.socket = io(`http://localhost:8081?userId=${userId}`);
 
     this.socket.on('getOnlineUsers', (msg: any) => {
-      console.log(msg);
+      //console.log(msg);
     });
 
     this.socket.on('newMessage', (msg: any) => {
@@ -23,15 +23,15 @@ export class ChatService {
       newMessage.timestamp = new Date(newMessage.timestamp);
       this.messages.push(newMessage);
       scrollToBottom();
-      console.log(msg);
+      //console.log(msg);
     });
 
     this.socket.on('deleteMessage', (msg: any) => {
-      console.log(msg);
+      //console.log(msg);
     });
 
     this.socket.on('editMessage', (msg: any) => {
-      console.log(msg);
+      //console.log(msg);
     });
   }
 

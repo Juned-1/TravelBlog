@@ -8,11 +8,13 @@ import { Observable } from 'rxjs';
 export class ChatService {
   socket!: any;
   messages: Message[] = [];
+  url = 'https://travelblogbackend-kvtl.onrender.com';
+  // url = 'http://localhost:8081';
 
   constructor() {}
 
   connectSocket(userId: string, scrollToBottom:any): void {
-    this.socket = io(`http://localhost:8081?userId=${userId}`);
+    this.socket = io(`${this.url}?userId=${userId}`);
 
     this.socket.on('getOnlineUsers', (msg: any) => {
       console.log(msg);

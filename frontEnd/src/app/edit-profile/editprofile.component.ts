@@ -81,7 +81,24 @@ export class EditProfileComponent implements OnInit {
 
     this.getMyBio();
   }
+  isValidName(firstName: string, lastName: string): boolean {
+    // Check if first name and last name are non-empty strings
+    if (firstName.trim() === '' || lastName.trim() === '') {
+      this.toast.warning('First name or last name is empty');
+      return false; // First name or last name is empty
+    }
 
+    // Check if first name and last name contain only letters
+    const nameRegex = /^[a-zA-Z]+$/;
+    if (!nameRegex.test(firstName) || !nameRegex.test(lastName)) {
+      this.toast.warning(
+        'First name or last name contains special characters or numbers'
+      );
+      return false; // First name or last name contains special characters or numbers
+    }
+
+    return true; // Both first name and last name are valid
+  }
   makeChanges() {
     if (this.toggleChangePassword === true) {
       this.changePassword();
@@ -95,6 +112,10 @@ export class EditProfileComponent implements OnInit {
       this.updateEmailVerification();
       return;
     }
+    if(!this.isValidName(this.formData.firstName, this.formData.lastName)){
+      return;
+    }
+    
 
     this.api.setUserDetails(this.formData).subscribe(
       (response) => {

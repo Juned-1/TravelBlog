@@ -161,7 +161,7 @@ db.SocialAccount.belongsTo(db.User, {
   onDelete: "CASCADE",
 });
 db.sequelize
-  .sync({})
+  .sync({alter : true})
   .then(() => {
     console.log("Database Sync");
   })

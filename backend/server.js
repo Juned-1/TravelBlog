@@ -6,12 +6,13 @@ const globalErrorHandler = require("./controllers/errorController.js");
 const { crossOrigin } = require('./configuration');
 const AppError = require('./utils/appError');
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    //origin: crossOrigin,
-    methods: ["GET", "POST", "PATCH", "DELETE"],
-  },
-});
+// const io = new Server(server, {
+//   cors: {
+//     //origin: crossOrigin,
+//     methods: ["GET", "POST", "PATCH", "DELETE"],
+//   },
+// });
+const io = new Server(server);
 
 const getReceiverSocketId = (receiverId) => {
 	return userSocketMap[receiverId];

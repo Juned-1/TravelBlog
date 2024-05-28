@@ -64,7 +64,7 @@ exports.signupAuthorization = catchAsync(async (req, res, next) => {
   if (!user) return next();
   const result = user.toJSON();
   if (!result.isVerified) {
-    const token = createVerificationToken();
+  const token = "TB-" + crypto.randomBytes(4).toString("hex");
     const findToken = await Token.findOne({
       where: { userId: result.id },
     });
@@ -137,7 +137,7 @@ exports.userSignup = catchAsync(async (req, res, next) => {
   });
   const result = newUser.toJSON();
   if (newUser) {
-    const token = createVerificationToken();
+    const token = "TB-" + crypto.randomBytes(4).toString("hex");
     const curDate = new Date();
     const sendToken = await Token.create({
       userId: result.id,

@@ -101,7 +101,7 @@ export class ProfileComponent implements OnInit {
   getProfileDetails() {
     this.api.getUserDetails(this.profileDetails[0].id).subscribe({
       next: (response) => {
-        console.log(response);
+        //console.log(response);
         if (
           'status' in response &&
           response.status === 'success' &&
@@ -139,7 +139,7 @@ export class ProfileComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.log(error);
+        //console.log(error);
       },
     });
   }
@@ -170,7 +170,7 @@ export class ProfileComponent implements OnInit {
         }
       },
       error: (err) => {
-        console.log(err);
+        //console.log(err);
       },
     });
   }
@@ -178,7 +178,7 @@ export class ProfileComponent implements OnInit {
   getFollowingList() {
     this.api.getFollowingList(this.profileDetails[0].id).subscribe({
       next: (response) => {
-        console.log('following list', response);
+        //console.log('following list', response);
         this.profileDetails[0].followingList = (
           response as ApiResponseFollowing
         ).data.followings;
@@ -208,15 +208,15 @@ export class ProfileComponent implements OnInit {
         // this.list = this.profileDetails[0].followingList;
       },
       error: (error) => {
-        console.log(error);
+        //console.log(error);
       },
     });
   }
   getFollowerList() {
     this.api.getFollowerList(this.profileDetails[0].id).subscribe({
       next: (response) => {
-        console.log('follower list', response);
-        console.log(this.loggedUserId);
+        //console.log('follower list', response);
+        //console.log(this.loggedUserId);
 
         this.profileDetails[0].followerList = (
           response as ApiResponseFollower
@@ -246,7 +246,7 @@ export class ProfileComponent implements OnInit {
           });
       },
       error: (error) => {
-        console.log(error);
+        //console.log(error);
       },
     });
   }
@@ -284,7 +284,7 @@ export class ProfileComponent implements OnInit {
         }
       },
       (err) => {
-        console.log(err);
+        //console.log(err);
       }
     );
 
@@ -310,7 +310,7 @@ export class ProfileComponent implements OnInit {
         this.following = !this.following;
       },
       error: (error) => {
-        console.log(error);
+        //console.log(error);
       },
     });
   }
@@ -333,7 +333,7 @@ export class ProfileComponent implements OnInit {
         });
       },
       error: (error) => {
-        console.log(error);
+        //console.log(error);
       },
     });
   }
@@ -347,7 +347,7 @@ export class ProfileComponent implements OnInit {
         this.profileDetails[0].bio = response.data.bio;
       },
       error: (error) => {
-        console.log(error);
+        //console.log(error);
       },
     });
   }

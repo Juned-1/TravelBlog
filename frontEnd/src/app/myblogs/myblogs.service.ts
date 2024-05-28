@@ -33,7 +33,7 @@ export class MyblogsService {
         'data' in response
       ) {
         const result: blog[] = (response.data as data).blogs as blog[];
-        console.log(result);
+        //console.log(result);
         this.myblogs.length = 0;
         result.forEach((blog) => {
           this.myblogs.push(this.furnishBlog(blog));
@@ -58,11 +58,11 @@ export class MyblogsService {
           blogs.forEach((blog) => {
             this.myblogs.push(this.furnishBlog(blog));
           });
-          console.log(this.myblogs);
+          //console.log(this.myblogs);
         }
       },
       error: (error) => {
-        console.log(error);
+        //console.log(error);
       },
     });
   }

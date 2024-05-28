@@ -31,7 +31,7 @@ export class CommentsComponent implements OnInit {
         });
       },
       error: (error) => {
-        console.log(error);
+        //console.log(error);
       },
     });
   }
@@ -66,7 +66,7 @@ export class CommentsComponent implements OnInit {
         this.activeComment = null;
       },
       error: (error) => {
-        console.log(error);
+        //console.log(error);
 
         this.activeComment = null;
       },
@@ -81,7 +81,7 @@ export class CommentsComponent implements OnInit {
         );
       },
       error: (error) => {
-        console.log(error);
+        //console.log(error);
       },
     });
   }
@@ -103,13 +103,13 @@ export class CommentsComponent implements OnInit {
         const item = (
           response as { status: string; resultLength: number; data: any }
         ).data.comment;
-        console.log(item);
+        //console.log(item);
         const comment: CommentInterface = this.mapResponseToInterface(item);
         this.comments = [comment, ...this.comments];
         this.activeComment = null;
       },
       error: (error) => {
-        console.log(error);
+        //console.log(error);
       },
     });
   }
@@ -139,7 +139,7 @@ export class CommentsComponent implements OnInit {
         this.comments = this.comments;
       },
       error: (error) => {
-        console.log(error);
+        //console.log(error);
       },
     });
 
@@ -156,7 +156,7 @@ export class CommentsComponent implements OnInit {
   }) {
     this.api.getComments(this.currentPostId, replyPage, commentId).subscribe({
       next: (response) => {
-        console.log(response);
+        //console.log(response);
         const comentArr = (
           response as { status: string; resultLength: number; data: any }
         ).data.comments;
@@ -168,7 +168,7 @@ export class CommentsComponent implements OnInit {
         this.comments = this.comments;
       },
       error: (error) => {
-        console.log(error);
+        //console.log(error);
       },
     });
   }

@@ -75,7 +75,7 @@ export class EditProfileComponent implements OnInit {
         }
       },
       (err) => {
-        console.log(err);
+        //console.log(err);
       }
     );
 
@@ -119,7 +119,7 @@ export class EditProfileComponent implements OnInit {
 
     this.api.setUserDetails(this.formData).subscribe(
       (response) => {
-        console.log(response);
+        //console.log(response);
         if ('status' in response && response.status === 'success') {
           const firstName = (response as any).data.userDetails.firstName;
           const lastName = (response as any).data.userDetails.lastName;
@@ -140,13 +140,13 @@ export class EditProfileComponent implements OnInit {
       },
       (err) => {
         this.toast.error('Profile Edit unsuccessful');
-        console.log(err);
+        //console.log(err);
       }
     );
 
     this.api.setBio(this.formData.bio).subscribe({
       next: (response) => {
-        console.log(response);
+        //console.log(response);
       },
       error: (error) => {},
     });
@@ -160,10 +160,10 @@ export class EditProfileComponent implements OnInit {
     social.forEach((item) => {
       this.api.addSocial(item.type, item.link).subscribe({
         next: (response) => {
-          console.log(response);
+          //console.log(response);
         },
         error: (error) => {
-          console.log(error);
+          //console.log(error);
         },
       });
     });
@@ -173,7 +173,7 @@ export class EditProfileComponent implements OnInit {
     this.toggleChangeEmail = false;
     this.api.updatePasswordVerification(this.formData.email).subscribe({
       next: (response) => {
-        console.log(response);
+        //console.log(response);
         //{status: 'success', value: true}
         if ('status' in response && response.status === 'success') {
           if ('value' in response && response.value === true) {
@@ -222,14 +222,14 @@ export class EditProfileComponent implements OnInit {
       .updateEmailVerification(this.formData.email, this.newEmail)
       .subscribe({
         next: (response) => {
-          console.log(response);
+          //console.log(response);
           this.emailVerification = true;
           this.toast.success(`Otp sent to ${this.newEmail}`);
           this.processing = false;
           //{status: 'success', message: 'Verification code is sent to hi@gmail.com', data: {…}}
         },
         error: (error) => {
-          console.log(error);
+          //console.log(error);
           this.toast.error('Error! Please try again later');
           this.processing = false;
         },
@@ -239,7 +239,7 @@ export class EditProfileComponent implements OnInit {
     this.processing = true;
     this.api.updateEmail(this.otp, this.newEmail).subscribe({
       next: (response) => {
-        console.log(response);
+        //console.log(response);
 
         this.ngOnInit();
         this.toast.success('Email is updated successfully');
@@ -248,7 +248,7 @@ export class EditProfileComponent implements OnInit {
         this.newEmail = '';
       },
       error: (error) => {
-        console.log(error);
+        //console.log(error);
         this.toast.error('Error! Please try again later');
         this.processing = false;
         this.newEmail = '';
@@ -272,7 +272,7 @@ export class EditProfileComponent implements OnInit {
         }
       },
       error: (err) => {
-        console.log(err);
+        //console.log(err);
       },
     });
   }

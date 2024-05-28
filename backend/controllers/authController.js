@@ -22,9 +22,10 @@ const gclient = new OAuth2Client(googleClientID);
 const createAndSendToken = (user, statusCode, res) => {
   res.clearCookie(COOKIE_NAME, {
     httpOnly: true,
-    //domain: cookieDomain,
     //signed: true, -- only for deployment works for browser not postman
-    //path: "/",
+    path: "/",
+    //sameSite: "none",
+    secure : true,
   });
   //create token and cookies as response
   const token = createToken(
@@ -37,11 +38,12 @@ const createAndSendToken = (user, statusCode, res) => {
   expires.setDate(expires.getDate() + 7);
   //sending cookie HHTP only cookie from backend to front end, first parameter name of cookie, into root directories of cookies we want to show the cookies
   res.cookie(COOKIE_NAME, token, {
-    //path: "/",  -- for deployment
-    //domain: cookieDomain,
+    path: "/",
     expires,
     httpOnly: true,
     //signed: true,
+    //sameSite: "none",
+    secure : true
   });
   return res.status(statusCode).json({
     status: "success",
@@ -62,7 +64,7 @@ exports.signupAuthorization = catchAsync(async (req, res, next) => {
   if (!user) return next();
   const result = user.toJSON();
   if (!result.isVerified) {
-    const token = createVerificationToken();
+  const token = "TB-" + crypto.randomBytes(4).toString("hex");
     const findToken = await Token.findOne({
       where: { userId: result.id },
     });
@@ -135,7 +137,7 @@ exports.userSignup = catchAsync(async (req, res, next) => {
   });
   const result = newUser.toJSON();
   if (newUser) {
-    const token = createVerificationToken();
+    const token = "TB-" + crypto.randomBytes(4).toString("hex");
     const curDate = new Date();
     const sendToken = await Token.create({
       userId: result.id,
@@ -267,7 +269,9 @@ exports.userLogout = catchAsync(async (req, res, next) => {
     httpOnly: true,
     //domain: cookieDomain,
     //signed: true,
-    //path: "/",
+    path: "/",
+    //sameSite: "none",
+    secure : true,
   });
   return res
     .status(200)

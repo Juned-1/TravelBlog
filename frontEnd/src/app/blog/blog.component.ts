@@ -75,7 +75,7 @@ export class BlogComponent implements OnInit, AfterViewInit {
       },
       error: (err) => {
         this.toast.error('Error loading post');
-        console.log(err);
+        //console.log(err);
       },
     });
   }
@@ -95,7 +95,7 @@ export class BlogComponent implements OnInit, AfterViewInit {
       },
       error: (err) => {
         this.toast.error('Error');
-        console.log(err);
+        //console.log(err);
       },
     });
   }
@@ -126,10 +126,10 @@ export class BlogComponent implements OnInit, AfterViewInit {
     this.api.followUnfollow(this.userid).subscribe({
       next: (response) => {
         this.following = !this.following;
-        console.log(response);
+        //console.log(response);
       },
       error: (error) => {
-        console.log(error);
+        //console.log(error);
       },
     });
   }

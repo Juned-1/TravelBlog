@@ -33,7 +33,7 @@ export class MyblogsBlogCardComponent implements OnInit {
       text: 'Cancel',
       role: 'cancel',
       handler: () => {
-        console.log('Alert canceled');
+        //console.log('Alert canceled');
         this.idToDelete = '';
       },
     },
@@ -48,7 +48,7 @@ export class MyblogsBlogCardComponent implements OnInit {
           },
           error: (err) => {
             this.toast.error('Error deleting post');
-            console.log(err);
+            //console.log(err);
           },
         });
       },
@@ -56,7 +56,7 @@ export class MyblogsBlogCardComponent implements OnInit {
   ];
 
   setResult(ev:any) {
-    console.log(`Dismissed with role: ${ev.detail.role}`);
+    //console.log(`Dismissed with role: ${ev.detail.role}`);
   }
 
 

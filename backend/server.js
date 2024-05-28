@@ -8,7 +8,7 @@ const AppError = require('./utils/appError');
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: crossOrigin,
+    origin: 'https://travelblogbackend-kvtl.onrender.com',
     methods: ["GET", "POST", "PATCH", "DELETE"],
   },
 });

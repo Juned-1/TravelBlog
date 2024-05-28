@@ -75,7 +75,7 @@ export class MyprofileService {
         }
       },
       error: (error) => {
-        console.log(error);
+        //console.log(error);
       },
     });
   }
@@ -83,7 +83,7 @@ export class MyprofileService {
   uploadProfilePicture(files: FileList) {
     this.uploadPhotoApi(files).subscribe({
       next: (response) => {
-        console.log(response);
+        //console.log(response);
         const id: string = (response as any).data.album[0].photoId;
 
         const mimeType = (response as any).data.album[0].mimeType;
@@ -96,7 +96,7 @@ export class MyprofileService {
       },
       error: (error) => {
         this.toast.error('Picture uploaded failed. Try again later');
-        console.log(error);
+        //console.log(error);
       },
     });
   }
@@ -108,7 +108,7 @@ export class MyprofileService {
         // console.log(response);
       },
       error: (error) => {
-        console.log(error);
+        //console.log(error);
         this.toast.error('Error in setting profile picture');
       },
     });
@@ -126,7 +126,7 @@ export class MyprofileService {
         }
       },
       error: (err) => {
-        console.log(err);
+        //console.log(err);
       },
     });
   }
@@ -146,14 +146,14 @@ export class MyprofileService {
   getMyProfilePicture() {
     this.getMyActivatedPhotoApi('profile').subscribe({
       next: (response) => {
-        console.log(response);
+        //console.log(response);
         const mimeType = response.data.photo.mimeType;
         const photoContent = response.data.photo.photoContent;
         const imageDataUrl = `data:${mimeType};base64,${photoContent}`;
         this.myProfileDetails[0].profilePicture = imageDataUrl;
       },
       error: (error) => {
-        console.log(error);
+        //console.log(error);
       },
     });
   }

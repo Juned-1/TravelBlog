@@ -42,7 +42,7 @@ export class ForgotPasswordComponent implements OnInit {
       },
       error: (err) => {
         this.summiting = false;
-        console.log(err);
+        //console.log(err);
       },
     });
   }
@@ -75,7 +75,7 @@ export class ForgotPasswordComponent implements OnInit {
         this.router.navigate(['/login']);
       },
       error: (err) => {
-        console.log(err);
+        //console.log(err);
       },
     });
   }

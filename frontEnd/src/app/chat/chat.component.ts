@@ -49,7 +49,7 @@ export class ChatComponent implements OnInit {
       (response) => {
         if (response.status === 'success') {
           this.conversations = response.data.conversation;
-          console.log('conversations', this.conversations);
+          //console.log('conversations', this.conversations);
           if (this.conversations.length != 0)
             this.selectPerson(this.conversations[0]);
 
@@ -68,23 +68,23 @@ export class ChatComponent implements OnInit {
                 .createIndividualConversation({ recipientId: this.id })
                 .subscribe(
                   (response) => {
-                    console.log('create individual conversation', response);
+                    //console.log('create individual conversation', response);
                     this.conversations.push(response.data.conversation[0]);
                     this.selectPerson(response.data.conversation[0]);
                   },
                   (error) => {
-                    console.log(error);
+                    //console.log(error);
                   }
                 );
             }
           }
         } else {
-          console.error('Failed to fetch conversations:', response);
+          //console.error('Failed to fetch conversations:', response);
         }
       },
       (error) => {
         // Handle error
-        console.error(error);
+        //console.error(error);
       }
     );
   }
@@ -118,7 +118,7 @@ export class ChatComponent implements OnInit {
         this.scrollToBottom();
       },
       error: (error) => {
-        console.log(error);
+        //console.log(error);
       },
     });
   }
@@ -147,7 +147,7 @@ export class ChatComponent implements OnInit {
         this.scrollToBottom();
       },
       error: (error) => {
-        console.log(error);
+        //console.log(error);
       },
     });
 

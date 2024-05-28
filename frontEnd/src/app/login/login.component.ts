@@ -37,7 +37,7 @@ export class LoginComponent implements OnInit {
   ) {}
   ngOnInit(): void {
     this.authSocialService.authState.subscribe((user) => {
-      console.log('user',user);
+      //console.log('user',user);
       this.user = user;
       this.sendGoogleTokenToServer(user.idToken);
     });
@@ -45,7 +45,7 @@ export class LoginComponent implements OnInit {
   sendGoogleTokenToServer(idToken: string) {
     this.api.googleLogin(idToken).subscribe({
       next: (response) => {
-        console.log('response',response);
+        //console.log('response',response);
         if (
           'status' in response &&
           response.status === 'success' &&
@@ -62,7 +62,7 @@ export class LoginComponent implements OnInit {
           this.toast.success('LoggedIn Succesfully');
           this.router.navigate(['/']);
         } else {
-          console.log(response);
+          //console.log(response);
         }
       },
       error: (err) => {
@@ -77,7 +77,7 @@ export class LoginComponent implements OnInit {
   login() {
     this.api.login(this.formData).subscribe({
       next: (response) => {
-        console.log(response);
+        //console.log(response);
         if (
           'status' in response &&
           response.status === 'success' &&
@@ -94,7 +94,7 @@ export class LoginComponent implements OnInit {
           this.toast.success('LoggedIn Succesfully');
           this.router.navigate(['/']);
         } else {
-          console.log(response);
+          //console.log(response);
         }
       },
       error: (err) => {

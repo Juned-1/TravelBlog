@@ -7,8 +7,7 @@ import { env } from 'env';
   providedIn: 'root',
 })
 export class APIService {
-  //url = 'https://travelblogbackend-kvtl.onrender.com';
-  url='http://localhost:8081';
+  url = env.url;
   constructor(private http: HttpClient) {}
   signup(formData: any) {
     return this.http.post(

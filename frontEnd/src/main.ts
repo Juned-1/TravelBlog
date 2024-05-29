@@ -2,7 +2,7 @@ import { enableProdMode, importProvidersFrom } from '@angular/core';
 import { bootstrapApplication, provideProtractorTestingSupport } from '@angular/platform-browser';
 import { RouteReuseStrategy} from '@angular/router';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
-import { HashLocationStrategy, LocationStrategy } from '@angular/common';
+//import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { AppComponent } from './app/app.component';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
@@ -20,8 +20,8 @@ import { env } from 'env';
 
 bootstrapApplication(AppComponent, {
   providers: [
-    //{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    { provide: LocationStrategy, useClass: HashLocationStrategy },
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    //{ provide: LocationStrategy, useClass: HashLocationStrategy },
     importProvidersFrom(IonicModule.forRoot({})),
     provideAnimations(),
     provideAnimations(),

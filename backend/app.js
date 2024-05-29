@@ -9,7 +9,6 @@ const { crossOrigin } = require("./configuration.js");
 const { cookieSecret } = require("./configuration");
 require("./models");
 const app = express();
-
 //cross site request
 //app.use(cors({ credentials: true, origin: crossOrigin }));
 //setting engine

@@ -156,10 +156,22 @@
                       conversation.participants[0].User.lastName
                   }}
                 </p>
-                <!-- <p class="text-muted mb-0">john.doegmail.com</p> -->
+              </div>
+              <div slot="end" style="position: absolute; right: 10px">
+                <!-- <ion-button slot="end" ></ion-button> -->
+                <img
+                  id="{{conversation.conversationId}}"
+                  src="../../assets/icon/three-dots-vertical.svg"
+                  alt=""
+                />
+                <ion-action-sheet
+                  trigger="{{conversation.conversationId}}"
+                  header="Actions"
+                  [buttons]="actionSheetButtons"
+                  (didDismiss)="logResult($event, conversation)"
+                ></ion-action-sheet>
               </div>
             </div>
-            <!-- <span class="badge rounded-pill badge-success">Active</span> -->
           </li>
         </ul>
         <div
@@ -178,10 +190,10 @@
         <ion-buttons>
           <ion-menu-button></ion-menu-button>
           <ion-title
-          ><h2 class="text-muted mb-0">
-            <strong>{{ selectedConversationName }}</strong>
-          </h2></ion-title
-        >
+            ><h2 class="text-muted mb-0">
+              <strong>{{ selectedConversationName }}</strong>
+            </h2></ion-title
+          >
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -204,7 +216,7 @@
           <!-- <div *ngIf="true || message.senderId === id" class="msg-status"></div> -->
         </div>
       </div>
-      <form *ngIf="selectedConversation" id="form" (submit)="sendMessage()">
+      <form *ngIf="selectedConversation && conversations.length !== 0" id="form" (submit)="sendMessage()">
         <input
           id="input"
           name="messageInput"
@@ -214,7 +226,7 @@
       </form>
       <div
         class="d-flex justify-content-center align-items-center mt-5 pt-5"
-        *ngIf="!selectedConversation"
+        *ngIf="!selectedConversation || conversations.length===0"
       >
         <h1 class="text-muted mb-0">No conversation selected</h1>
       </div>

@@ -3,10 +3,11 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { APIService } from 'src/apiservice.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { error } from 'console';
 import { ChatService } from './chat.service';
 import { AuthService } from '../Services/Authentication/auth.service';
+import { data } from 'cheerio/lib/api/attributes';
 
 @Component({
   selector: 'app-chat',
@@ -28,15 +29,71 @@ export class ChatComponent implements OnInit {
   conversations: Conversation[] = [];
   loggedUserId!: string; //message sender
   receiverId!: string; //message receiver
-  selectedConversation!: Conversation;
+  selectedConversation!: Conversation|null;
   selectedConversationName = 'Select a conversation';
+
+  public actionSheetButtons = [
+    {
+      text: 'Delete',
+      role: 'destructive',
+      data: {
+        action: 'delete',
+      },
+    },
+    {
+      text: 'Cancel',
+      role: 'cancel',
+      data: {
+        action: 'cancel',
+      },
+    },
+  ];
 
   constructor(
     private api: APIService,
     private route: ActivatedRoute,
     private chatService: ChatService,
-    public authService: AuthService
+    public authService: AuthService,
+    private router: Router
   ) {}
+  logResult(ev: any, conversation: Conversation) {
+    // console.log(JSON.stringify(ev.detail, null, 2));
+    const action = ev.detail.data.action;
+    const id = conversation.conversationId;
+    console.log(id);
+    if (action === 'delete') {
+      console.log(action);
+      this.api.deleteConversation(id).subscribe({
+        next: (response) => {
+          const indexToRemove = this.conversations.findIndex(
+            (obj) => obj.conversationId === id
+          );
+          // If index is found, remove the object
+          if (indexToRemove !== -1) {
+            this.conversations.splice(indexToRemove, 1);
+          }
+          this.messages.length = 0;
+          if (this.conversations.length === 0) {
+            this.selectedConversation = null;
+            this.selectedConversationName = 'Select a conversation';
+            this.router.navigate(['/chat']);
+          } else {
+            let nextIndexToSelect = indexToRemove - 1;
+            if (nextIndexToSelect === -1) {
+              nextIndexToSelect = 0;
+            }
+            this.selectedConversation = this.conversations[nextIndexToSelect];
+            this.selectPerson(this.selectedConversation);
+            const id = this.selectedConversation.conversationId;
+            this.router.navigate(['/chat'], { queryParams: { id } });
+          }
+        },
+        error: (error) => {
+          console.log(error);
+        },
+      });
+    }
+  }
   ngOnInit() {
     this.messages = this.chatService.messages;
 

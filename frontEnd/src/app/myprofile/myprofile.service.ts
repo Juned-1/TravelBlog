@@ -62,6 +62,7 @@ export class MyprofileService {
               };
             }
           ).userDetails;
+          
           this.myProfileDetails[0].email = userDetails.email;
           this.myProfileDetails[0].fullName =
             userDetails.firstName + ' ' + userDetails.lastName;
@@ -72,6 +73,16 @@ export class MyprofileService {
             this.myProfileDetails[0].totalPostRead = userDetails.totalPostRead;
           if (userDetails.numberOfPost !== null)
             this.myProfileDetails[0].noOfPosts = userDetails.numberOfPost;
+          if(userDetails.dob === null){
+            this.myProfileDetails[0].dob = 'not set';
+          }else{
+            const dob = new Date(userDetails.dob);
+            const year = dob.getFullYear();
+            const mon = dob.getMonth()+1;
+            const day = dob.getDate();
+            const date =day+"/"+mon+"/"+year;
+            this.myProfileDetails[0].dob = date;
+          }
         }
       },
       error: (error) => {

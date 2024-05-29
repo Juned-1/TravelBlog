@@ -2,12 +2,12 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { LikeObj, sendPostBulk, SearchParameter } from './DataTypes';
 import { Observable } from 'rxjs';
+import { env } from 'env';
 @Injectable({
   providedIn: 'root',
 })
 export class APIService {
-  //url = 'https://travelblogbackend-kvtl.onrender.com';
-  url='http://localhost:8081';
+  url = env.url;
   constructor(private http: HttpClient) {}
   signup(formData: any) {
     return this.http.post(
@@ -286,18 +286,19 @@ export class APIService {
   }
 
   editMessage(messageId: string, data: any): Observable<any> {
-    const baseUrl = '${this.url}/api/v1/chats';
+    const baseUrl = `${this.url}/api/v1/chats`;
 
     return this.http.patch<any>(`${baseUrl}/editmessage/${messageId}`, data, {
       withCredentials: true,
     });
   }
   deleteConversation(convid: string): Observable<any> {
-    const baseUrl = '${this.url}/api/v1/chats';
+    const baseUrl = `${this.url}/api/v1/chats`;
 
     return this.http.delete<any>(`${baseUrl}/deleteconversation/${convid}`, {
       withCredentials: true,
     });
+
   }
   deleteAttachment(attachmentId: string): Observable<any> {
     const baseUrl = `${this.url}/api/v1/chats1`;

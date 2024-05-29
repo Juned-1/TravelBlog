@@ -122,8 +122,18 @@ export class ProfileComponent implements OnInit {
               };
             }
           ).userDetails;
+          if (userDetails.dob === null) {
+            this.profileDetails[0].dob = 'not set';
+          } else {
+            const dob = new Date(userDetails.dob);
+            console.log(dob);
+            const year = dob.getFullYear();
+            const mon = dob.getMonth() + 1;
+            const day = dob.getDate();
+            const date = day + '/' + mon + '/' + year;
+            this.profileDetails[0].dob = date;
+          }
           this.profileDetails[0].email = userDetails.email;
-          this.profileDetails[0].dob = userDetails.dob;
           this.profileDetails[0].firstName = userDetails.firstName;
           this.profileDetails[0].lastName = userDetails.lastName;
           this.profileDetails[0].fullName =
@@ -233,17 +243,16 @@ export class ProfileComponent implements OnInit {
             return obj;
           });
 
-          this.profileDetails[0].followerList.forEach((person) => {
-            if (person.profilePhoto !== null) {
-              const mimeType = 'image';
-              const photoContent = person.profilePhoto;
-              const imageDataUrl = `data:${mimeType};base64,${photoContent}`;
-              person.profilePhoto = imageDataUrl;
-            }
-            else{
-              person.profilePhoto = this.defaultProfileImage;
-            }
-          });
+        this.profileDetails[0].followerList.forEach((person) => {
+          if (person.profilePhoto !== null) {
+            const mimeType = 'image';
+            const photoContent = person.profilePhoto;
+            const imageDataUrl = `data:${mimeType};base64,${photoContent}`;
+            person.profilePhoto = imageDataUrl;
+          } else {
+            person.profilePhoto = this.defaultProfileImage;
+          }
+        });
       },
       error: (error) => {
         //console.log(error);
@@ -339,7 +348,9 @@ export class ProfileComponent implements OnInit {
   }
   gotoChat() {
     const id = this.profileDetails[0].id;
-    this.router.navigate(['/chat'], { queryParams: { id } });
+    this.router.navigate(['/chat'], { queryParams: { id } }).then(() => {
+      window.location.reload();
+    });
   }
   getBio() {
     this.api.getBio(this.profileDetails[0].id).subscribe({
@@ -350,5 +361,9 @@ export class ProfileComponent implements OnInit {
         //console.log(error);
       },
     });
+  }
+  gotoProfile(id: string) {
+    if (id === this.loggedUserId) this.router.navigate(['/myprofile']);
+    else this.router.navigate(['/profile'], { queryParams: { id } });
   }
 }

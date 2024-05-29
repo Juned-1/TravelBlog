@@ -311,7 +311,7 @@
                         [src]="person.profilePhoto"
                       />
                     </ion-avatar>
-                    <ion-label>{{
+                    <ion-label role="button" (click)="gotoProfile(person.id)">{{
                       person.firstName + " " + person.lastName
                     }}</ion-label>
                     <button
@@ -359,7 +359,7 @@
                         [src]="person.profilePhoto"
                       />
                     </ion-avatar>
-                    <ion-label>{{
+                    <ion-label role="button" (click)="gotoProfile(person.id)">{{
                       person.firstName + " " + person.lastName
                     }}</ion-label>
                     <button

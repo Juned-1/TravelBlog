@@ -200,4 +200,8 @@ export class MyprofileComponent implements OnInit {
       },
     });
   }
+  gotoProfile(id:string){
+    if (id === this.loggedUserId) this.router.navigate(['/myprofile']);
+    else this.router.navigate(['/profile'], { queryParams: { id } });
+  }
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import io from 'socket.io-client';
 import { Observable } from 'rxjs';
+import { env } from 'env';
 
 @Injectable({
   providedIn: 'root',
@@ -8,8 +9,7 @@ import { Observable } from 'rxjs';
 export class ChatService {
   socket!: any;
   messages: Message[] = [];
-  url = 'https://travelblogbackend-kvtl.onrender.com';
-  // url = 'http://localhost:8081';
+  url = env.url;
 
   constructor() {}
 

@@ -86,7 +86,7 @@ export class MyprofileService {
         }
       },
       error: (error) => {
-        //console.log(error);
+        console.log(error);
       },
     });
   }

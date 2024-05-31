@@ -165,15 +165,21 @@
           <div class="card mb-0">
             <div class="card-body text-center">
               <img
-                src="{{profileDetails[0].profilePicture}}"
+                src="{{ profileDetails[0].profilePicture }}"
                 alt="avatar"
                 class="rounded-circle img-fluid"
                 style="width: 150px"
               />
-              <h2 class="text-muted mb-1 py-2">{{ profileDetails[0].firstName }}</h2>
+              <h2 class="text-muted mb-1 py-2">
+                {{ profileDetails[0].firstName }}
+              </h2>
               <p class="text-muted mb-1 py-2">
                 <strong>BIO:</strong>
-                {{ profileDetails[0].bio === "" || profileDetails[0].bio === null ? "Not set" : profileDetails[0].bio }}
+                {{
+                  profileDetails[0].bio === "" || profileDetails[0].bio === null
+                    ? "Not set"
+                    : profileDetails[0].bio
+                }}
               </p>
               <!-- <p class="text-muted mb-4">Bay Area, San Francisco, CA</p> -->
               <div class="d-flex justify-content-center mb-2">
@@ -201,61 +207,83 @@
           </div>
           <div class="card mb-0">
             <div class="card-body">
-              <div class="row">
-                <div class="col-sm-3">
-                  <h3 class="text-muted mb-0">Full Name:</h3>
+              <p class="mb-0 px-2">
+                <span class="text-primary font-italic me-1"
+                  ><h3 class="text-muted mb-0">
+                    <strong>Details</strong>
+                  </h3></span
+                >
+              </p>
+              <div *ngIf="!profileDetails[0].lockProfile">
+                <div class="row">
+                  <div class="col-sm-3">
+                    <h3 class="text-muted mb-0">Full Name:</h3>
+                  </div>
+                  <div class="col-sm-9">
+                    <h3 class="text-muted mb-0">
+                      <strong>{{ profileDetails[0].fullName }}</strong>
+                    </h3>
+                  </div>
                 </div>
-                <div class="col-sm-9">
-                  <h3 class="text-muted mb-0">
-                    <strong>{{ profileDetails[0].fullName }}</strong>
-                  </h3>
+                <hr />
+                <div class="row">
+                  <div class="col-sm-3">
+                    <h3 class="text-muted mb-0">Email:</h3>
+                  </div>
+                  <div class="col-sm-9">
+                    <h3 class="text-muted mb-0">
+                      <strong>{{ profileDetails[0].email }}</strong>
+                    </h3>
+                  </div>
+                </div>
+                <hr />
+                <div class="row">
+                  <div class="col-sm-3">
+                    <h3 class="text-muted mb-0">DOB:</h3>
+                  </div>
+                  <div class="col-sm-9">
+                    <h3 class="text-muted mb-0">
+                      <strong>{{
+                        profileDetails[0].dob === "" ||
+                        profileDetails[0].dob === null
+                          ? "not set"
+                          : profileDetails[0].dob
+                      }}</strong>
+                    </h3>
+                  </div>
+                </div>
+                <hr />
+                <div class="row">
+                  <div class="col-sm-3">
+                    <h3 class="text-muted mb-0">Total Posts:</h3>
+                  </div>
+                  <div class="col-sm-9">
+                    <h3 class="text-muted mb-0">
+                      <strong>{{ profileDetails[0].noOfPosts }}</strong>
+                    </h3>
+                  </div>
+                </div>
+                <hr />
+                <div class="row">
+                  <div class="col-sm-3">
+                    <h3 class="text-muted mb-0">Total reads:</h3>
+                  </div>
+                  <div class="col-sm-9">
+                    <h3 class="text-muted mb-0">
+                      <strong>{{ profileDetails[0].totalPostRead }}</strong>
+                    </h3>
+                  </div>
                 </div>
               </div>
-              <hr />
-              <div class="row">
-                <div class="col-sm-3">
-                  <h3 class="text-muted mb-0">Email:</h3>
-                </div>
-                <div class="col-sm-9">
-                  <h3 class="text-muted mb-0">
-                    <strong>{{ profileDetails[0].email }}</strong>
-                  </h3>
-                </div>
-              </div>
-              <hr />
-              <div class="row">
-                <div class="col-sm-3">
-                  <h3 class="text-muted mb-0">DOB:</h3>
-                </div>
-                <div class="col-sm-9">
-                  <h3 class="text-muted mb-0">
-                    <strong>{{
-                      profileDetails[0].dob === "" || profileDetails[0].dob === null ? "not set" : profileDetails[0].dob
-                    }}</strong>
-                  </h3>
-                </div>
-              </div>
-              <hr />
-              <div class="row">
-                <div class="col-sm-3">
-                  <h3 class="text-muted mb-0">Total Posts:</h3>
-                </div>
-                <div class="col-sm-9">
-                  <h3 class="text-muted mb-0">
-                    <strong>{{ profileDetails[0].noOfPosts }}</strong>
-                  </h3>
-                </div>
-              </div>
-              <hr />
-              <div class="row">
-                <div class="col-sm-3">
-                  <h3 class="text-muted mb-0">Total reads:</h3>
-                </div>
-                <div class="col-sm-9">
-                  <h3 class="text-muted mb-0">
-                    <strong>{{ profileDetails[0].totalPostRead }}</strong>
-                  </h3>
-                </div>
+              <div
+                *ngIf="profileDetails[0].lockProfile"
+                style="text-align: center"
+              >
+                <img
+                  src="../../assets/locked-content-2.webp"
+                  alt="locked"
+                  style="height: 150px"
+                />
               </div>
             </div>
           </div>
@@ -277,33 +305,53 @@
                       </h3></span
                     >
                   </p>
-
-                  <ion-item *ngFor="let person of profileDetails[0].followerList; let index">
-                    <ion-avatar slot="start">
-                      <img
-                        src="{{person.profilePhoto}}"
-                      />
-                    </ion-avatar>
-                    <ion-label role="button" (click)="gotoProfile(person.id)">{{
-                      person.firstName + " " + person.lastName
-                    }}</ion-label>
-                    <button
-                      class="btn px-1 py-0"
-                      [ngClass]="
-                        person.following ? 'btn-outline-primary' : 'btn-primary'
+                  <div *ngIf="!profileDetails[0].lockProfile">
+                    <ion-item
+                      *ngFor="
+                        let person of profileDetails[0].followerList;
+                        let index
                       "
-                      id="{{ person.id }}"
-                      [disabled]="person.id === loggedUserId"
-                      (click)="followUnfollow($event)"
                     >
-                      {{ person.following ? "Unfollow" : "Follow" }}
-                    </button>
-                  </ion-item>
+                      <ion-avatar slot="start">
+                        <img src="{{ person.profilePhoto }}" />
+                      </ion-avatar>
+                      <ion-label
+                        role="button"
+                        (click)="gotoProfile(person.id)"
+                        >{{
+                          person.firstName + " " + person.lastName
+                        }}</ion-label
+                      >
+                      <button
+                        class="btn px-1 py-0"
+                        [ngClass]="
+                          person.following
+                            ? 'btn-outline-primary'
+                            : 'btn-primary'
+                        "
+                        id="{{ person.id }}"
+                        [disabled]="person.id === loggedUserId"
+                        (click)="followUnfollow($event)"
+                      >
+                        {{ person.following ? "Unfollow" : "Follow" }}
+                      </button>
+                    </ion-item>
+                    <div
+                      class="d-flex justify-content-center align-items-center"
+                      *ngIf="profileDetails[0].followerList.length === 0"
+                    >
+                      <h3 class="text-muted mb-0">Follower list is empty</h3>
+                    </div>
+                  </div>
                   <div
-                    class="d-flex justify-content-center align-items-center"
-                    *ngIf="profileDetails[0].followerList.length === 0"
+                    *ngIf="profileDetails[0].lockProfile"
+                    style="text-align: center"
                   >
-                    <h3 class="text-muted mb-0">Follower list is empty</h3>
+                    <img
+                      src="../../assets/locked-content-2.webp"
+                      alt="locked"
+                      style="height: 150px"
+                    />
                   </div>
                 </div>
               </div>
@@ -322,33 +370,55 @@
                       </h3></span
                     >
                   </p>
-                  <ion-item *ngFor="let person of profileDetails[0].followingList; let index">
-                    <ion-avatar slot="start">
-                      <img
-                        src="{{person.profilePhoto}}"
-                      />
-                    </ion-avatar>
-                    <ion-label role="button" (click)="gotoProfile(person.id)">{{
-                      person.firstName + " " + person.lastName
-                    }}</ion-label>
-                    <button
-                      class="btn px-1 py-0"
-                      [ngClass]="
-                        person.following ? 'btn-outline-primary' : 'btn-primary'
+                  <div *ngIf="!profileDetails[0].lockProfile">
+                    <ion-item
+                      *ngFor="
+                        let person of profileDetails[0].followingList;
+                        let index
                       "
-                      id="{{ person.id }}"
-                      size="small"
-                      [disabled]="person.id === loggedUserId"
-                      (click)="followUnfollow($event)"
                     >
-                      {{ person.following ? "Unfollow" : "Follow" }}
-                    </button>
-                  </ion-item>
+                      <ion-avatar slot="start">
+                        <img src="{{ person.profilePhoto }}" />
+                      </ion-avatar>
+                      <ion-label
+                        role="button"
+                        (click)="gotoProfile(person.id)"
+                        >{{
+                          person.firstName + " " + person.lastName
+                        }}</ion-label
+                      >
+                      <button
+                        class="btn px-1 py-0"
+                        [ngClass]="
+                          person.following
+                            ? 'btn-outline-primary'
+                            : 'btn-primary'
+                        "
+                        id="{{ person.id }}"
+                        size="small"
+                        [disabled]="person.id === loggedUserId"
+                        (click)="followUnfollow($event)"
+                      >
+                        {{ person.following ? "Unfollow" : "Follow" }}
+                      </button>
+                    </ion-item>
+                    <div
+                      class="d-flex justify-content-center align-items-center"
+                      *ngIf="profileDetails[0].followingList.length === 0"
+                    >
+                      <h3 class="text-muted mb-0">Follower list is empty</h3>
+                    </div>
+                  </div>
+
                   <div
-                    class="d-flex justify-content-center align-items-center"
-                    *ngIf="profileDetails[0].followingList.length === 0"
+                    *ngIf="profileDetails[0].lockProfile"
+                    style="text-align: center"
                   >
-                    <h3 class="text-muted mb-0">Follower list is empty</h3>
+                    <img
+                      src="../../assets/locked-content-2.webp"
+                      alt="locked"
+                      style="height: 150px"
+                    />
                   </div>
                 </div>
               </div>
@@ -364,16 +434,24 @@
                     </h3></span
                   >
                 </p>
-                <a href="{{ profileDetails[0].links.facebook }}" class="media-link"
+                <a
+                  href="{{ profileDetails[0].links.facebook }}"
+                  class="media-link"
                   ><ion-icon name="logo-facebook" size="large"></ion-icon
                 ></a>
-                <a href="{{ profileDetails[0].links.linkedin }}" class="media-link"
+                <a
+                  href="{{ profileDetails[0].links.linkedin }}"
+                  class="media-link"
                   ><ion-icon name="logo-linkedin" size="large"></ion-icon
                 ></a>
-                <a href="{{ profileDetails[0].links.instagram }}" class="media-link"
+                <a
+                  href="{{ profileDetails[0].links.instagram }}"
+                  class="media-link"
                   ><ion-icon name="logo-instagram" size="large"></ion-icon
                 ></a>
-                <a href="{{ profileDetails[0].links.twitter }}" class="media-link"
+                <a
+                  href="{{ profileDetails[0].links.twitter }}"
+                  class="media-link"
                   ><ion-icon name="logo-twitter" size="large"></ion-icon
                 ></a>
               </div>
@@ -387,13 +465,10 @@
   <ion-item-group>
     <ion-item-divider color="light">
       <ion-label>
-          
-            <h3 class="text-muted mb-0">
-              <strong>Blogs</strong>
-            </h3>
-          
-      </ion-label
-      >
+        <h3 class="text-muted mb-0">
+          <strong>Blogs</strong>
+        </h3>
+      </ion-label>
     </ion-item-divider>
     <ion-item color="light">
       <ion-grid>

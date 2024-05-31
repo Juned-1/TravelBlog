@@ -8,21 +8,17 @@ import { env } from 'env';
 })
 export class APIService {
   //url = 'https://travelblogbackend-kvtl.onrender.com';
-  url='http://localhost:8081';
+  url = env.url;
   constructor(private http: HttpClient) {}
   signup(formData: any) {
-    return this.http.post(
-      `${this.url}/api/v1/users/signup`,
-      formData,
-      { withCredentials: true }
-    );
+    return this.http.post(`${this.url}/api/v1/users/signup`, formData, {
+      withCredentials: true,
+    });
   }
   login(formData: any) {
-    return this.http.post(
-      `${this.url}/api/v1/users/login`,
-      formData,
-      { withCredentials: true }
-    );
+    return this.http.post(`${this.url}/api/v1/users/login`, formData, {
+      withCredentials: true,
+    });
   }
   authorise() {
     return this.http.get(`${this.url}/api/v1/users/authstatus`, {
@@ -35,11 +31,9 @@ export class APIService {
     });
   }
   post(data: sendPostBulk) {
-    return this.http.post(
-      `${this.url}/api/v1/blogs/writepost`,
-      data,
-      { withCredentials: true }
-    );
+    return this.http.post(`${this.url}/api/v1/blogs/writepost`, data, {
+      withCredentials: true,
+    });
   }
   getPost(page: number) {
     const baseurl = `${this.url}/api/v1/blogs/getpost`;
@@ -88,11 +82,9 @@ export class APIService {
     });
   }
   setUserDetails(data: any) {
-    return this.http.patch(
-      `${this.url}/api/v1/users/setuserdetails`,
-      data,
-      { withCredentials: true }
-    );
+    return this.http.patch(`${this.url}/api/v1/users/setuserdetails`, data, {
+      withCredentials: true,
+    });
   }
   sendOTP(userid: string, token: string) {
     const baseurl = `${this.url}/api/v1/users/authenticateEmail/${userid}`;
@@ -170,21 +162,15 @@ export class APIService {
   }
 
   getFollowingList(id: string) {
-    return this.http.get(
-      `${this.url}/api/v1/users/followinglist/${id}`,
-      {
-        withCredentials: true,
-      }
-    );
+    return this.http.get(`${this.url}/api/v1/users/followinglist/${id}`, {
+      withCredentials: true,
+    });
   }
 
   getFollowerList(id: string) {
-    return this.http.get(
-      `${this.url}/api/v1/users/followerlist/${id}`,
-      {
-        withCredentials: true,
-      }
-    );
+    return this.http.get(`${this.url}/api/v1/users/followerlist/${id}`, {
+      withCredentials: true,
+    });
   }
 
   getMyFollowingList() {
@@ -210,19 +196,15 @@ export class APIService {
   }
 
   getprofile(id: string) {
-    return this.http.get(
-      `${this.url}/api/v1/users/getprofile/${id}`,
-      {
-        withCredentials: true,
-      }
-    );
+    return this.http.get(`${this.url}/api/v1/users/getprofile/${id}`, {
+      withCredentials: true,
+    });
   }
 
   getUserDetails(userid: string) {
-    return this.http.get(
-      `${this.url}/api/v1/users/getuserdetails/${userid}`,
-      { withCredentials: true }
-    );
+    return this.http.get(`${this.url}/api/v1/users/getuserdetails/${userid}`, {
+      withCredentials: true,
+    });
   }
 
   getPostforProfile(id: string) {
@@ -234,11 +216,9 @@ export class APIService {
     // return this.http.patch(baseurl, data, { withCredentials: true });
     const data = {};
 
-    return this.http.patch(
-      `${this.url}/api/v1/users/lockprofile`,
-      data,
-      { withCredentials: true }
-    );
+    return this.http.patch(`${this.url}/api/v1/users/lockprofile`, data, {
+      withCredentials: true,
+    });
   }
 
   //CHAT APIs
@@ -299,7 +279,6 @@ export class APIService {
     return this.http.delete<any>(`${baseUrl}/deleteconversation/${convid}`, {
       withCredentials: true,
     });
-
   }
   deleteAttachment(attachmentId: string): Observable<any> {
     const baseUrl = `${this.url}/api/v1/chats1`;

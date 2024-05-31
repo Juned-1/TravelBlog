@@ -10,7 +10,7 @@ const { cookieSecret } = require("./configuration");
 require("./models");
 const app = express();
 //cross site request
-//app.use(cors({ credentials: true, origin: crossOrigin }));
+app.use(cors({ credentials: true, origin: crossOrigin }));
 //setting engine
 app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));

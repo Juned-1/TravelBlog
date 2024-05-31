@@ -208,7 +208,7 @@ exports.verifyEmail = catchAsync(async (req, res, next) => {
   }
   delete result.password;
   delete result.isVerified;
-  await new Email(user, "http://127.0.0.1:8100").sendWelcome();
+  await new Email(user, 'https://travelblogbackend-kvtl.onrender.com').sendWelcome();
   createAndSendToken(result, 200, res);
 });
 exports.resendSignUpToken = catchAsync(async (req, res, next) => {

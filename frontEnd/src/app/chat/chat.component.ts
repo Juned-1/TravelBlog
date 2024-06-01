@@ -29,7 +29,7 @@ export class ChatComponent implements OnInit {
   conversations: Conversation[] = [];
   loggedUserId!: string; //message sender
   receiverId!: string; //message receiver
-  selectedConversation!: Conversation|null;
+  selectedConversation!: Conversation | null;
   selectedConversationName = 'Select a conversation';
 
   public actionSheetButtons = [
@@ -96,6 +96,7 @@ export class ChatComponent implements OnInit {
   }
   ngOnInit() {
     this.messages = this.chatService.messages;
+    this.conversations = this.chatService.conversations;
 
     this.id = this.route.snapshot.queryParams['id'];
 
@@ -105,35 +106,21 @@ export class ChatComponent implements OnInit {
     this.api.getAllConversation().subscribe(
       (response) => {
         if (response.status === 'success') {
-          this.conversations = response.data.conversation;
+          this.conversations.length = 0;
+          response.data.conversation.forEach((conversation: Conversation) => {
+            this.conversations.push(conversation);
+          });
           //console.log('conversations', this.conversations);
           if (this.conversations.length != 0)
             this.selectPerson(this.conversations[0]);
 
           if (this.id !== null && this.id !== undefined) {
-            let present = false;
             this.conversations.forEach((conversation) => {
               const userId = conversation.participants[0].userId;
               if (userId === this.id) {
                 this.selectPerson(conversation);
-                present = true;
               }
             });
-
-            if (!present) {
-              this.api
-                .createIndividualConversation({ recipientId: this.id })
-                .subscribe(
-                  (response) => {
-                    //console.log('create individual conversation', response);
-                    this.conversations.push(response.data.conversation[0]);
-                    this.selectPerson(response.data.conversation[0]);
-                  },
-                  (error) => {
-                    //console.log(error);
-                  }
-                );
-            }
           }
         } else {
           //console.error('Failed to fetch conversations:', response);

@@ -160,12 +160,12 @@
               <div slot="end" style="position: absolute; right: 10px">
                 <!-- <ion-button slot="end" ></ion-button> -->
                 <img
-                  id="{{conversation.conversationId}}"
+                  id="{{ conversation.conversationId }}"
                   src="../../assets/icon/three-dots-vertical.svg"
                   alt=""
                 />
                 <ion-action-sheet
-                  trigger="{{conversation.conversationId}}"
+                  trigger="{{ conversation.conversationId }}"
                   header="Actions"
                   [buttons]="actionSheetButtons"
                   (didDismiss)="logResult($event, conversation)"
@@ -216,7 +216,11 @@
           <!-- <div *ngIf="true || message.senderId === id" class="msg-status"></div> -->
         </div>
       </div>
-      <form *ngIf="selectedConversation && conversations.length !== 0" id="form" (submit)="sendMessage()">
+      <form
+        *ngIf="selectedConversation && conversations.length !== 0"
+        id="form"
+        (submit)="sendMessage()"
+      >
         <input
           id="input"
           name="messageInput"
@@ -226,7 +230,7 @@
       </form>
       <div
         class="d-flex justify-content-center align-items-center mt-5 pt-5"
-        *ngIf="!selectedConversation || conversations.length===0"
+        *ngIf="!selectedConversation || conversations.length === 0"
       >
         <h1 class="text-muted mb-0">No conversation selected</h1>
       </div>

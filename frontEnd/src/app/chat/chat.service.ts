@@ -10,10 +10,11 @@ export class ChatService {
   socket!: any;
   messages: Message[] = [];
   url = env.url;
+  conversations: Conversation[]=[];
 
   constructor() {}
 
-  connectSocket(userId: string, scrollToBottom:any): void {
+  connectSocket(userId: string, scrollToBottom: any): void {
     this.socket = io(`${this.url}?userId=${userId}`);
 
     this.socket.on('getOnlineUsers', (msg: any) => {

@@ -13,6 +13,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { APIService } from 'src/apiservice.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ChatService } from '../chat/chat.service';
 
 @Component({
   selector: 'app-profile',
@@ -59,7 +60,8 @@ export class ProfileComponent implements OnInit {
     private router: Router,
     private api: APIService,
     private sanitizer: DomSanitizer,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private chatService: ChatService
   ) {}
 
   ngOnInit() {
@@ -323,6 +325,7 @@ export class ProfileComponent implements OnInit {
       },
     });
   }
+
   followUnfollow(e: any) {
     //follow or unfollow profiles following or followers
     const id = e.srcElement.id;
@@ -348,8 +351,47 @@ export class ProfileComponent implements OnInit {
   }
   gotoChat() {
     const id = this.profileDetails[0].id;
-    this.router.navigate(['/chat'], { queryParams: { id } }).then(() => {
-      window.location.reload();
+    // this.router.navigate(['/chat'], { queryParams: { id } }).then(() => {
+    //   window.location.reload();
+    // });
+    this.api.getAllConversation().subscribe({
+      next: (response) => {
+        if (response.status === 'success') {
+          this.chatService.conversations.length = 0;
+          response.data.conversation.forEach((conversation: Conversation) => {
+            this.chatService.conversations.push(conversation);
+          });
+
+          let found = false;
+          this.chatService.conversations.forEach((conversation) => {
+            const userId = conversation.participants[0].userId;
+            if (userId === this.profileDetails[0].id) {
+              found = true;
+            }
+          });
+
+          if (found) {
+            this.router.navigate(['/chat'], { queryParams: { id } });
+          } else {
+            const id = this.profileDetails[0].id;
+            this.api
+              .createIndividualConversation({ recipientId: id })
+              .subscribe(
+                (response) => {
+                  this.chatService.conversations.push(
+                    response.data.conversation[0]
+                  );
+
+                  this.router.navigate(['/chat'], { queryParams: { id } });
+                },
+                (error) => {
+                  //console.log(error);
+                }
+              );
+          }
+        }
+      },
+      error: (error) => {},
     });
   }
   getBio() {
@@ -366,4 +408,22 @@ export class ProfileComponent implements OnInit {
     if (id === this.loggedUserId) this.router.navigate(['/myprofile']);
     else this.router.navigate(['/profile'], { queryParams: { id } });
   }
+}
+
+interface Conversation {
+  conversationId: string;
+  conversationType: string;
+  conversationName: string | null;
+  createdAt: string;
+  participants: Participant[];
+}
+
+interface Participant {
+  userId: string;
+  User: User;
+}
+
+interface User {
+  firstName: string;
+  lastName: string;
 }

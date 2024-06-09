@@ -17,17 +17,17 @@ const routeConfig: Routes = [
   {
     path: '',
     component: HomeComponent,
-    title: 'Home page',
+    // title: 'Home page',
   },
   {
     path: 'login',
     component: LoginComponent,
-    title: 'Log In',
+    // title: 'Log In',
   },
   {
     path: 'signup',
     component: SignupComponent,
-    title: 'Sign Up',
+    // title: 'Sign Up',
   },
   {
     path: 'blogdetails/:title',
@@ -36,7 +36,7 @@ const routeConfig: Routes = [
   {
     path: 'texteditor',
     component: TextEditorComponent,
-    title: 'Editor',
+    // title: 'Editor',
     canActivate: [CanActivate],
   },
   {

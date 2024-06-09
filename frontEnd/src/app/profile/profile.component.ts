@@ -76,6 +76,21 @@ export class ProfileComponent implements OnInit {
     this.getPosts();
     this.getBio();
     this.getSocialLinks();
+    this.getMyProfilePicture();
+  }
+  getMyProfilePicture() {
+    this.api.getActivatedPhoto('profile', this.profileDetails[0].id).subscribe({
+      next: (response) => {
+        // console.log(response);
+        const mimeType = response.data.photo.mimeType;
+        const photoContent = response.data.photo.photoContent;
+        const imageDataUrl = `data:${mimeType};base64,${photoContent}`;
+        this.profileDetails[0].profilePicture = imageDataUrl;
+      },
+      error: (error) => {
+        //console.log(error);
+      },
+    });
   }
   getSocialLinks() {
     const socialTypes = ['facebook', 'linkedin', 'instagram', 'twitter'];
@@ -109,6 +124,7 @@ export class ProfileComponent implements OnInit {
           response.status === 'success' &&
           'data' in response
         ) {
+          // console.log(response);
           const userDetails = (
             response.data as {
               userDetails: {

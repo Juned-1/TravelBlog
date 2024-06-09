@@ -44,7 +44,8 @@ export class BlogComponent implements OnInit, AfterViewInit {
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
     private api: APIService,
-    private toast: ToastrService
+    private toast: ToastrService,
+    private auth: AuthService
   ) {}
   ngOnInit() {
 
@@ -123,6 +124,10 @@ export class BlogComponent implements OnInit, AfterViewInit {
   }
 
   toggleFollow() {
+    if(this.auth.loggedIn===false){
+      this.toast.warning("Please login first");
+      return;
+    }
     this.api.followUnfollow(this.userid).subscribe({
       next: (response) => {
         this.following = !this.following;

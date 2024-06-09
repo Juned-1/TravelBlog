@@ -351,4 +351,16 @@ export class APIService {
       withCredentials: true,
     });
   }
+  getActivatedPhoto(photoType:string,userid:string){
+    const baseUrl = `${this.url}/api/v1/users`;
+
+    return this.http.get<any>(`${baseUrl}/getactivatedphoto/${photoType}/${userid}`, {
+      withCredentials: true,
+    });
+  }
+
+  // router.get(
+  //   "/getactivatedphoto/:photoType/:userid",
+  //   userController.getActivatedPhoto
+  // );
 }

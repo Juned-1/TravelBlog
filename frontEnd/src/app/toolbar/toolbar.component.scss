@@ -1,10 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Exo+2:wght@900&display=swap");
 
 #logo {
-  width: 30px; /* Set your desired width */
-  height: auto; /* Maintain the aspect ratio */
+  width: auto; /* Set your desired width */
+  height: 40px; /* Maintain the aspect ratio */
   margin: 0;
-  padding: 0;
+  padding-bottom: 5px;
 }
 // #welcome-msg {
 //   margin: auto auto;
@@ -14,7 +14,7 @@
 // }
 .nav-item:hover {
   cursor: pointer;
-  background-color: #8DBDFA; 
+  background-color: #8dbdfa;
   border-radius: 20px;
 }
 // .list-group-item:hover:not(.active) {
@@ -81,14 +81,14 @@
 // }
 // #new-background-color{
 //   --background: linear-gradient(90deg, rgb(145, 193, 253) 12.9%, rgb(247, 224, 229) 91.2%);
-  // --background: linear-gradient(90deg, rgba(62, 147, 252, 0.57) 12.9%,
-  // rgba(239, 183, 192, 0.44) 91.2%);
-  // --background: radial-gradient(
-  //   circle 911px at 0% 0%,
-  //   rgba(62, 147, 252, 0.57) 12.9%,
-  //   rgba(239, 183, 192, 0.44) 91.2%
-  // );
-// 
+// --background: linear-gradient(90deg, rgba(62, 147, 252, 0.57) 12.9%,
+// rgba(239, 183, 192, 0.44) 91.2%);
+// --background: radial-gradient(
+//   circle 911px at 0% 0%,
+//   rgba(62, 147, 252, 0.57) 12.9%,
+//   rgba(239, 183, 192, 0.44) 91.2%
+// );
+//
 // }
 // @media screen and (max-width: 768px) {
 //   #dropdown{
@@ -101,9 +101,9 @@
 // #user-name:hover {
 //   cursor: pointer;
 // }
-.search-result{
+.search-result {
   z-index: 1;
-  // background-color: 
+  // background-color:
   --background: rgba(33, 46, 61, 0.57) 12.9%;
   height: 500%;
 }

@@ -1,4 +1,4 @@
-![Logo](frontEnd/src/assets/tripnw-logo/png/logo-no-background.png)
+<img src="frontEnd/src/assets/tripnw-logo/png/logo-no-background.png" width="80px" />
 
 # Travel Blogging (TripNW)
 

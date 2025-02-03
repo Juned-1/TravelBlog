@@ -264,4 +264,4 @@ Preview of Forgot Password
 
 ## 🔗 Links to Web
 
-- [@tripNW](https://tripnw.com)
+- [@tripNW](#)
